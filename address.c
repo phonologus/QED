@@ -1,12 +1,11 @@
-/*% cc -c -O %
- */
 #include "vars.h"
+
 int *
-address()
+address(void)
 {
-	register int sign, *a;
+	int sign, *a;
 	int opcnt, nextopand, *b;
-	register c;
+	int c;
 
 	nextopand = -1;
 	sign = 1;
