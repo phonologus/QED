@@ -382,7 +382,7 @@ condition(int n, int m, int cond, int negate)
 	else if(cond=='>')
 		retval = (n>m);
 	else
-		error("!");
+		error('!');
 	return(negate^retval);
 }
 
