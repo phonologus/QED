@@ -1,11 +1,14 @@
-/*% cc -c -O %
- */
-#include "vars.h"
-#define	ALWAYS	2
-#define GBSIZE	256
-until(nfl, n)
+#include "qed.h"
+
+enum {
+  ALWAYS = 2,
+  GBSIZE = 256
+};
+
+void
+until(int nfl, int n)
 {
-	register c, type;
+	int c, type;
 	char ubuf[GBSIZE];
 
 	c = getchar();
@@ -23,9 +26,11 @@ until(nfl, n)
 		   !((nfl && --n==0) || 
 		     (type != ALWAYS && type == truth())));
 }
-global(k)
+
+void
+global(int k)
 {
-	register int *a1;
+	int *a1;
 	char globuf[GBSIZE];
 	struct buffer *startbuf;
 
@@ -56,9 +61,10 @@ global(k)
 	gflag=FALSE;
 }
 
-globuf(k)
+void
+globuf(int k)
 {
-	register struct buffer *bp;
+	struct buffer *bp;
 	char globbuf[GBSIZE];
 
 	if (biggflag++)
@@ -79,11 +85,11 @@ globuf(k)
 	biggflag = FALSE;
 }
 
-getglob(globuf)
-	char globuf[];
+void
+getglob(char globuf[])
 {
-	register char *gp;
-	register c;
+	char *gp;
+	int c;
 	int getchar();
 	gp = globuf;
 	while ((c = getquote("\n", getchar)) != '\n') {
@@ -97,10 +103,10 @@ getglob(globuf)
 	*gp++ = 0;
 }
 
-exglob(cmd, dflt)
-	char *cmd, *dflt;
+int
+exglob(char *cmd, char *dflt)
 {
-	register int nesting;
+	int nesting;
 
 	pushinp(GLOB, eqstr(cmd,"\n")? dflt : cmd, FALSE);
 	nesting = ++nestlevel;

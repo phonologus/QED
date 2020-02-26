@@ -1,77 +1,51 @@
-/*% cc -c -O %
- */
-#include "vars.h"
-#ifdef	PDP11
-typedef	long ulong;
-#else
+#include "qed.h"
+
 typedef	unsigned long ulong;
-#endif
+
 int	col;
-putdn(i)
+
+void
+putdn(int i)
 {
 	putlong((ulong)i);
 	putchar('\n');
 }
-#ifdef	PDP11
-/*
- *	In version 6, ldiv() is in the library. In version 7, it is separate:
-	.globl	_ldiv, _ldivr
-	_ldiv:
-		mov	2(sp), r0
-		mov	4(sp), r1
-		div	6(sp), r0
-		mov	r1,_ldivr
-		rts	pc
-	.bss
-	_ldivr:	.=.+2
- */
-putlong(i)
-	long i;
-{
-	register char r;
-	extern int ldiv(), ldivr;
 
-	/* the following pornography saves bundles of memory */
-	i = ldiv(i,10);
-	r = ldivr + '0';
-	if (i)
-		putlong(i);
-	putchar(r);
-}
-#endif
-#ifndef	PDP11
-putlong(i)
-	ulong i;
+void
+putlong(ulong i)
 {
-	register r;
+	int r;
 	r = i%10;
 	i /= 10;
 	if(i)
 		putlong(i);
 	putchar('0'+r);
 }
-#endif
-putl(sp)
-	register char *sp;
+
+void
+putl(char *sp)
 {
 	listf++;
 	puts(sp);
 	listf = FALSE;
 }
-puts(sp)
-	register char *sp;
+
+void
+puts(char *sp)
 {
 	col = 0;
 	while (*sp)
 		putchar(*sp++);
 	putchar('\n');
 }
-display(lf)
+
+void
+display(int lf)
 {
-	register int *a1;
-	register int r;
-	register char *p;
-	register i;
+	int *a1;
+	int r;
+	char *p;
+	int i;
 	int nf;
 	listf = (lf == 'l' || lf == 'L');
 	nf = (lf == 'P' || lf == 'L');
@@ -100,14 +74,18 @@ display(lf)
 	dot = addr2;
 	listf = FALSE;
 }
-putct(c){
+
+void
+putct(int c)
+{
 	putchar(c);
 	putchar('\t');
 }
-putchar(c)
-register char c;
+
+void
+putchar(char c)
 {
-	register char *lp;
+	char *lp;
 
 	lp = linp;
 	if (listf) {
@@ -145,7 +123,9 @@ register char c;
 	}
 	linp = lp;
 }
-flush()
+
+void
+flush(void)
 {
 	if(linp != line){
 		write(1, line, linp-line);

@@ -1,6 +1,4 @@
-/*% cc -c -O %
- */
-#include "vars.h"
+#include "qed.h"
 char	*nextip;
 long	count;
 /*
@@ -18,10 +16,11 @@ long	count;
  *		always sets string[FILEBUF]
  *		zeroes count
  */
-newfile(nullerr, savspec, deffile)
-	char *deffile;
+
+int
+newfile(int nullerr, int savspec, char *deffile)
 {
-	register char c;
+	char c;
 
 	count = 0L;
 	cpstr(deffile, genbuf);	/* in case we strcompact() */
@@ -52,7 +51,9 @@ newfile(nullerr, savspec, deffile)
 	}
 	return(!eqstr(genbuf, string[FILEBUF].str));
 }
-exfile()
+
+void
+exfile(void)
 {
 	close(io);
 	io = -1;
@@ -64,10 +65,12 @@ exfile()
 	}
 	setcount((int)count);
 }
-getfile()
+
+int
+getfile(void)
 {
-	register c;
-	register char *lp, *fp;
+	int c;
+	char *lp, *fp;
 	lp = linebuf;
 	fp = nextip;
 	do {
@@ -93,11 +96,13 @@ getfile()
 	nextip = fp;
 	return(0);
 }
-putfile()
+
+void
+putfile(void)
 {
 	int *a1;
-	register char *fp, *lp;
-	register nib;
+	char *fp, *lp;
+	int nib;
 	nib = 512;
 	fp = genbuf;
 	a1 = addr1;
@@ -121,16 +126,21 @@ putfile()
 	}
 	write(io, genbuf, fp-genbuf);
 }
-#define SIGHUP	1
-#define SIGINTR	2
-#define SIGQUIT	3
-#define	SIGBPIPE 13
+
+enum {
+  SIGHUP = 1,
+  SIGINTR = 2,
+  SIGQUIT = 3,
+  SIGBPIPE = 13
+};
+
 int savint= -1;	/* awful; this is known in error() */
-Unix(type)
-	char type;
+
+void
+Unix(char type)
 {
-	register pid, rpid;
-	register char *s;
+	int pid, rpid;
+	char *s;
 	int *a, c;
 	int getsvc();
 	int onbpipe;

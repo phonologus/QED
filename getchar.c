@@ -1,10 +1,11 @@
-/*% cc -c -O %
- */
-#include "vars.h"
+#include "qed.h"
+
 char digits[] = "0123456789";	/* getnum() & atoi() work even on non-ASCII systems */
-getnum()
+
+int
+getnum(void)
 {
-	register n, i;
+	int n, i;
 	n=0;
 	while((i=posn(nextchar(), digits)) >= 0){
 		getchar();
@@ -13,8 +14,10 @@ getnum()
 	return(n);
 }
 
-getsigned(){
-	register sign;
+int
+getsigned(void)
+{
+	int sign;
 	if(nextchar()=='-'){
 		getchar();
 		sign = -1;
@@ -24,10 +27,10 @@ getsigned(){
 	return(getnum()*sign);
 }
 
-atoi(s)
-	register char *s;
+int
+atoi(char *s)
 {
-	register n, i;
+	int n, i;
 	int sign;
 
 	n = 0;
@@ -45,8 +48,8 @@ atoi(s)
 	return(sign*n);
 }
 
-alldigs(s)
-	register char *s;
+int
+alldigs(char *s)
 {
 	if(*s == '-')
 		s++;
@@ -57,32 +60,40 @@ alldigs(s)
 }
 
 char bname[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~";
-getname(e)
+
+int
+getname(int e)
 {
 	int getc();
 	return(getnm(e, getc));
 }
-getaz(e)
+
+int
+getaz(int e)
 {
 	int getchar();
 	return(getnm(e, getchar));
 }
-getnm(e, f)
-	int (*f)();
+
+int
+getnm(int e, int (*f)())
 {
-	register i;
+	int i;
 	i = posn((*f)(), bname);
 	if(i < 0)
 		error(e);
 	return(i);
 }
+
 char	special[] = "xgBbBcfFlprzN\"\\'";
 int	qcount;
 int	afterq;
-getchar()
+
+int
+getchar(void)
 {
-	register c;
-	register peek;
+	int c;
+	int peek;
 
 	peek=peekc;
 	c=getc();
@@ -94,11 +105,13 @@ getchar()
 	}
 	return(c);
 }
-getc()
+
+int
+getc(void)
 {
-	register c;
-	register struct buffer *bufp;
-	register struct stack *sp;
+	int c;
+	struct buffer *bufp;
+	struct stack *sp;
 	int *lp;
 	int numeric;
 	int delta;
@@ -256,7 +269,9 @@ getc()
 	lastc = c;
 	return(c);
 }
-ttyc()
+
+int
+ttyc(void)
 {
 	char c;
 	initflag = 0;
@@ -266,9 +281,9 @@ ttyc()
 		lastttyc = EOF;
 	return(lastttyc);
 }
-posn(c, s)
-	register char c;
-	register char *s;
+
+int
+posn(char c, char *s)
 {
 	register char *is;
 	is = s;
@@ -277,10 +292,11 @@ posn(c, s)
 			return(s - is - 1);
 	return(-1);
 }
-pushinp(type, arg, literal)
-	register arg;
+
+void
+pushinp(int type, int arg, int literal)
 {
-	register struct stack *s;
+	struct stack *s;
 
 	s = ++stackp;
 	if(s == stack+STACKSIZE)
@@ -328,7 +344,10 @@ pushinp(type, arg, literal)
 		putchar('=');
 	}
 }
-popinp(){
+
+void
+popinp(void)
+{
 	if(stackp->type == BUF)
 		bbempty = TRUE;
 	if(tflag){
@@ -337,10 +356,12 @@ popinp(){
 	}
 	--stackp;
 }
-gettty()
+
+int
+gettty(void)
 {
-	register c, gf;
-	register char *p;
+	int c, gf;
+	char *p;
 	p = linebuf;
 	gf = stackp->type;
 	while((c=getchar()) != '\n') {
@@ -360,11 +381,11 @@ gettty()
 		return(EOF);
 	return(0);
 }
-getquote(p, f)
-	register char *p;
-	int (*f)();
+
+int
+getquote(char *p, int (*f)())
 {
-	register c;
+	int c;
 	c = (*f)();
 	if(c == '\\') {
 		if(peekc == 0)

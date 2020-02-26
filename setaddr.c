@@ -1,15 +1,18 @@
-/*% cc -c -O %
- */
-#include "vars.h"
-extern noaddr;
-setdot()
+#include "qed.h"
+
+extern int noaddr;
+
+void
+setdot(void)
 {
 	if (addr2 == 0)
 		addr1 = addr2 = dot;
 	if (addr1 > addr2)
 		error('$');
 }
-setall()
+
+void
+setall(void)
 {
 	if (noaddr) {
 		addr1 = zero+1;
@@ -19,13 +22,17 @@ setall()
 	}
 	setdot();
 }
-setnoaddr()
+
+void
+setnoaddr(void)
 {
 	extern noaddr;
 	if (noaddr == FALSE)
 		error('$');
 }
-nonzero()
+
+void
+nonzero(void)
 {
 	if (addr1<=zero || addr2>dol)
 		error('$');

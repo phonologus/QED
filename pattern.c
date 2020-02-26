@@ -1,34 +1,40 @@
-/*% cc -c -O %
- */
-#include "vars.h"
-#define ESIZE	128	/* ESIZE-1 must fit in a signed byte */
+#include "qed.h"
+
+enum {
+  ESIZE = 128    /* ESIZE-1 must fit in a signed byte */
+};
+
 char	expbuf[ESIZE+4];
 int	expgood	/*0*/;		/* flag indicating if compiled exp is good */
-#define	CCHR	2
-#define	CDOT	4
-#define	CCL	6
-#define	NCCL	8
-#define CFUNNY	10
-#define	CALT	12
-#define	CBACK	14
 
-#define	STAR	01
+enum {
+  STAR = 1,
+  CCHR = 2,
+  CDOT = 4,
+  CCL = 6,
+  NCCL = 8,
+  CFUNNY = 10,
+  CALT = 12,
+  CBACK	= 14,
+  CKET = 16,
+  CDOL = 17,
+  CEOF = 18,
+  CBRA = 19,
+  CBOI = 20,
+  CEOI = 21,
+  CSPACE = 22
+};
+
 #define STARABLE CBACK
 
-#define	CKET	16
-#define	CDOL	17
-#define	CEOF	18
-#define	CBRA	19
-#define CBOI	20
-#define CEOI	21
-#define CSPACE	22
 int	circfl;
 char	pmagic[] = "/.$^*+\\()<|>{}[!_123456789";
-compile(eof)
-char eof;
+
+void
+compile(char eof)
 {
-	register c;
-	register char *ep, *penultep;
+	int c;
+	char *ep, *penultep;
 	char *lastep, *bracketp, bracket[NBRA];
 	int getsvc();
 	int getchar();
@@ -234,16 +240,19 @@ char eof;
    cerror:
 	error('p');
 }
-getsvc(){
-	register c;
+
+int
+getsvc(void)
+{
+	int c;
 	addstring(c=getchar());
 	return(c);
 }
+
 int
-execute(addr)
-	int *addr;
+execute(int *addr)
 {
-	register char *p1, *p2;
+	char *p1, *p2;
 
 	if (addr==0) {
 		if((p1=loc2) == 0)	/* G command */
@@ -272,10 +281,9 @@ execute(addr)
 }
 
 int
-advance(lp, ep)
-	register char *lp, *ep;
+advance(char *lp, char *ep)
 {
-	register char *curlp;
+	char *curlp;
 	char *althd, *altend;
 
 	for (;;) {
@@ -424,11 +432,10 @@ advance(lp, ep)
 	}
 }
 
-backref(i, lp)
-register i;
-register char *lp;
+int
+backref(int i, char *lp)
 {
-	register char *bp;
+	char *bp;
 
 	bp = braslist[i];
 	while (*bp++ == *lp++)
@@ -436,8 +443,9 @@ register char *lp;
 			return(TRUE);
 	return(FALSE);
 }
-int alfmatch(c,tail)
-register char c;
+
+int
+alfmatch(char c,int tail)
 {
 	return (('a' <= c && c <= 'z')  ||
 		('A' <= c && c <= 'Z')  ||
@@ -445,12 +453,10 @@ register char c;
 		(tail && '0' <= c && c<= '9'));
 }
 
-
-cclass(set, c, f)
-	register char *set;
-	register c;
+int
+cclass(char *set, int c, int f)
 {
-	register n;
+	int n;
 	if (c == 0)
 		return(0);
 	n = *set++;

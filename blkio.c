@@ -1,4 +1,4 @@
-#include "vars.h"
+#include "qed.h"
 
 enum {
   BLKSIZE = 512,
@@ -11,11 +11,6 @@ int	iblock = -1;
 int	oblock = 0;
 char	obuff[BLKSIZE];
 int	ooff;		/* offset of next byte in obuff */
-
-void initio(void);
-char *getline(int tl, char *lbuf);
-int putline(void);
-void blkio(int b, char *buf, int (*iofcn)());
 
 void
 initio(void)

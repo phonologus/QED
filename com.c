@@ -1,15 +1,19 @@
-/*% cc -c -O %
- */
-#include "vars.h"
-#define	OUT	10
-#define	BACKWARD 11
-#define FORWARD 12
+#include "qed.h"
+
+enum {
+  OUT = 10,
+  BACKWARD = 11,
+  FORWARD = 12
+};
+
 char	jumpcs[] = "0123456789o`'";
-jump()	/* this should be pronounced with a Swedish accent */
+
+void
+jump(void)	/* this should be pronounced with a Swedish accent */
 {
-	register int i;
-	register cond;
-	register c;
+	int i;
+	int cond;
+	int c;
 
 	if(stackp->type==TTY)
 		error('y');
@@ -59,13 +63,18 @@ jump()	/* this should be pronounced with a Swedish accent */
 			search(i==FORWARD);
 	}
 }
-stacktype(t)
+
+void
+stacktype(int t)
 {
 	if(stackp->type != t)
 		error('y');
 }
-getlabel(){
-	register char *p, c;
+
+void
+getlabel(void)
+{
+	char *p, c;
 	p = genbuf;
 	for(c=getchar(); posn(c," \"\t\n")<0; c=getchar()){
 		*p++ = c;
@@ -74,12 +83,12 @@ getlabel(){
 	if(p==genbuf)
 		error('y');
 }
-int *looper(a1,a2,str,dir)
-	register int *a1, *a2;
-	register char *str;
+
+int *
+looper(int *a1,int *a2,char *str,int dir)
 {
-	register char *p1;
-	register char *p2;
+	char *p1;
+	char *p2;
 	while(dir ? a1<=a2 : a1>=a2){
 		p2 = getline(*a1, linebuf);
 		while(*p2==' ' || *p2=='\t')
@@ -97,9 +106,11 @@ int *looper(a1,a2,str,dir)
 	}
 	return((int *)0);
 }
-search(forward)
+
+void
+search(int forward)
 {
-	register int *a1;
+	int *a1;
 	struct buffer *bufp;
 	bufp = stackp->bufptr;
 	if(forward){
@@ -118,10 +129,13 @@ search(forward)
 		stackp->charno = 0;
 	}
 }
+
 int pchar;
-setapp()
+
+void
+setapp(void)
 {
-	register c;
+	int c;
 	c=getchar();
 	if(posn(c, lchars)>=0) {
 		pchar = c;
@@ -135,12 +149,15 @@ setapp()
 	else if(c!='\n')
 		error('x');
 }
-#define	LDCHUNK	512
-append(f, a)
-int (*f)();
-int *a;
+
+enum {
+  LDCHUNK = 512
+};
+
+int
+append(int (*f)(), int *a)
 {
-	register *a1, *a2, *rdot;
+	int *a1, *a2, *rdot;
 	int nline, tl;
 	struct integer { int iint; };
 	appflag++;
@@ -178,12 +195,15 @@ int *a;
 	}
 	return(nline);
 }
+
 char bformat = 'p';
-bcom()
+
+void
+bcom(void)
 {
-	register dir, n;
-	register psize;
-	register *olddot=addr2;	/* for b. */
+	int dir, n;
+	int psize;
+	int *olddot=addr2;	/* for b. */
 	dir=1;
 	if((peekc=getchar())!='\n'){	/* really nextchar() */
 		if (peekc=='-' || peekc=='+' || peekc=='.') {
@@ -219,9 +239,11 @@ bcom()
 	if(dir==0)
 		dot=olddot;
 }
-delete()
+
+void
+delete(void)
 {
-	register *a1, *a2, *a3;
+	int *a1, *a2, *a3;
 	setdot();
 	a1 = addr1;
 	a2 = addr2;
@@ -247,10 +269,12 @@ delete()
 	unlock();
 	modified();
 }
-allnums()
+
+void
+allnums(void)
 {
-	register int i;
-	register char *p;
+	int i;
+	char *p;
 	setdot();
 	for(i=0; i<NBUFS; i++){
 		p = string[i].str;
@@ -260,11 +284,13 @@ allnums()
 		}
 	}
 }
-numcom(z)
+
+void
+numcom(int z)
 {
-	register n;
-	register struct string *sp;
-	register char *l;
+	int n;
+	struct string *sp;
+	char *l;
 	char c;
 	int numeric;
 	extern char digits[];		/* defined in getchar.c = "0123456789" */
@@ -344,8 +370,9 @@ numcom(z)
 	ungetchar(c);
 	numset(z, n);
 }
-condition(n, m, cond, negate)
-	register n, m, cond, negate;
+
+int
+condition(int n, int m, int cond, int negate)
 {
 	int retval;
 	if(cond=='=')
@@ -358,18 +385,19 @@ condition(n, m, cond, negate)
 		error("!");
 	return(negate^retval);
 }
-numset(z, n)
-	register z;
-	register n;
+
+void
+numset(int z, int n)
 {
 	startstring();
 	numbuild(n);
 	setstring(z);
 }
-numbuild(n)
-	register n;
+
+void
+numbuild(int n)
 {
-	register i;
+	int i;
 	if(n<0){
 		addstring('-');
 		n = -n;
@@ -379,12 +407,14 @@ numbuild(n)
 		numbuild(i);
 	addstring(n%10+'0');
 }
-strcom(z)
+
+void
+strcom(int z)
 {
-	register char *q;
-	register n;
+	char *q;
+	int n;
 	int getchar();
-	register struct string *sp;
+	struct string *sp;
 	int cond, c, negate;
 	setdot();
 	sp = &string[z];
@@ -542,17 +572,20 @@ strcom(z)
 	/* end of switch */
 	}
 }
-strinc(z, n)
+
+void
+strinc(int z, int n)
 {
-	register char *q;
+	char *q;
 	q=string[z].str;
 	while(*q)
 		*q++ += n;
 }
-locn(ap, aq)
-	char *ap, *aq;
+
+int
+locn(char *ap, char *aq)
 {
-	register char *p, *q, *lastq;
+	char *p, *q, *lastq;
 	p=ap;
 	q=aq;
 	for(;;){
@@ -568,12 +601,15 @@ locn(ap, aq)
 		q=lastq+1;
 	}
 }
+
 #define	EMPTY	(TRUE+1)	/* ==> ignore this buf in G/V */
-ncom(c)
+
+void
+ncom(int c)
 {
-	register struct buffer *bufp;
+	struct buffer *bufp;
 	struct buffer *stop;
-	register char *f, *lp;
+	char *f, *lp;
 	int globflag;
 
 	setnoaddr();
@@ -620,9 +656,11 @@ ncom(c)
 		}
 	}while(bufp++!=stop);
 }
-allstrs()
+
+void
+allstrs(void)
 {
-	register int i;
+	int i;
 	char *p;
 	setdot();
 	for(i=0; i<NBUFS; i++){
@@ -641,15 +679,19 @@ allstrs()
 		putl(string[BROWSE].str);
 	}
 }
+
 /*
  *	clean (string) to support zaC
  *	strips leading and trailing white space from a string
  *	and replaces interior white space by single blanks
  */
-clean(z) {
-	register char *s;
-	register char *d;
-	register char c;
+
+void
+clean(int z)
+{
+	char *s;
+	char *d;
+	char c;
 	d = genbuf;
 	for (s = string[z].str; (c = *s) == ' ' || c == '\t'; s++);
 	while (c = *s++) {

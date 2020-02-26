@@ -1,4 +1,4 @@
-#include "vars.h"
+#include "qed.h"
 
 int *
 address(void)

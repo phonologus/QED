@@ -1,9 +1,9 @@
-/*% cc -c -O %
- */
-#include "vars.h"
-move(copyflag)
+#include "qed.h"
+
+void
+move(int copyflag)
 {
-	register int *adt, *ad1, *ad2;
+	int *adt, *ad1, *ad2;
 	int fb, tb;
 	int todot;
 	int tonewdot;
@@ -86,11 +86,13 @@ move(copyflag)
 	dol = buffer[tb].dol;
 	unlock();
 }
-fixup(from,to,tot) int from, to, tot;
+
+void
+fixup(int from,int to,int tot)
 {
-	register int b;
-	register int n;
-	register int lo;
+	int b;
+	int n;
+	int lo;
 	int hi;
 	if(to == from){
 		return;
@@ -112,10 +114,11 @@ fixup(from,to,tot) int from, to, tot;
 	}
 	buffer[hi].zero += n;
 }
-reverse(a1, a2)
-	register int *a1, *a2;
+
+void
+reverse(int *a1,int *a2)
 {
-	register t;
+	int t;
 	for (;;) {
 		t = *--a2;
 		if (a2 <= a1)
@@ -124,7 +127,9 @@ reverse(a1, a2)
 		*a1++ = t;
 	}
 }
-getcopy()
+
+int
+getcopy(void)
 {
 	if (addr1 > addr2)
 		return(EOF);

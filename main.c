@@ -1,11 +1,16 @@
-/*% cc -c -O %
- */
-#include "vars.h"
-#define SIGHUP	1
-#define SIGINTR	2
-#define SIGQUIT	3
-#define	UP	1
-#define DOWN	0
+#include "qed.h"
+
+enum {
+SIGHUP = 1,
+SIGINTR = 2,
+SIGQUIT = 3
+};
+
+enum {
+  UP = 1,
+  DOWN = 0
+};
+
 char lchars[]="pPlL";
 struct buffer *curbuf = buffer;
 char	*linp = line;
@@ -24,11 +29,14 @@ int	*option[] = {
 };
 char	opcs[] = "cdeipTv";
 int	tfile = -1;
+/*
 struct	sgttyb ttybuf = { 0, 0, '\b', '\b', /*0*/};
+*/
 char	QEDFILE[]="QEDFILE";
 int	(*pending)();
 
-rescue()
+void
+rescue(void)
 {
 	/* Save in qed.hup:[ab]q on hangup */
 	signal(SIGHUP,1);
@@ -42,10 +50,12 @@ rescue()
 	savall();
 	exit(SIGHUP);
 }
-char *filea()
+
+char *
+filea(void)
 {
-	register struct string *sp;
-	register int i, d;
+	struct string *sp;
+	int i, d;
 	char c;
 
 	sp = &string[FILEBUF];
@@ -65,17 +75,20 @@ char *filea()
 	return(sp->str);
 }
 
-char *fileb()
+char *
+fileb(void)
 {
-	register struct string *sp;
+	struct string *sp;
 
 	sp = &string[FILEBUF];
 	sp->str[sp->len-2] = 'b';
 	return(sp->str);
 }
-savall()
+
+void
+savall(void)
 {
-	register fi;
+	int fi;
 
 	syncbuf();
 	addr1 = buffer[0].zero + 1;
@@ -99,10 +112,12 @@ savall()
 	unlock();
 	close(fi);
 }
-restor()
+
+void
+restor(void)
 {
-	register i, t;
-	register struct buffer *b;
+	int i, t;
+	struct buffer *b;
 	int fi;
 	int getfile();
 	curbuf = buffer;
@@ -149,7 +164,8 @@ restor()
  *	On INTR, generate error '?'
  */
 
-interrupt()
+void
+interrupt(void)
 {
 	signal(SIGINTR, interrupt);
 	if (lock) {
@@ -170,9 +186,10 @@ interrupt()
  * Unlock: exit a critical section, invoking any pending signal routines.
  */
 
-unlock()
+void
+unlock(void)
 {
-	register (*p)();
+	int (*p)();
 
 	p = pending;
 	pending = 0;
@@ -186,11 +203,11 @@ char setvflag[] = "ov?";
 char boot1[] = "G/^[";
 char boot2[] = "].+\t./r\n";
 
-main(argc, argv)
-char **argv;
+int
+main(int argc, char **argv)
 {
-	register char *p1;
-	register i;
+	char *p1;
+	int i;
 	char buf;
 	int rvflag;
 	char *startup=(char *)0;
@@ -295,10 +312,12 @@ char **argv;
 }
 
 int	noaddr;
-commands()
+
+void
+commands(void)
 {
-	register int *a;
-	register c, lastsep;
+	int *a;
+	int c, lastsep;
 	int getfile(), gettty();
 	int r;
 	int changed;
@@ -650,8 +669,9 @@ commands()
 	error('x');
 	}
 }
-setreset(opt)
-	register int *opt;
+
+void
+setreset(int *opt)
 {
 	register c;
 
@@ -660,7 +680,10 @@ setreset(opt)
 		error('x');
 	*opt = (c=='s');
 }
-delall(){
+
+void
+delall(void)
+{
 	if(dol!=zero){
 		addr1=zero+1;
 		addr2=dol;

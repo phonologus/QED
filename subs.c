@@ -1,16 +1,16 @@
-/*% cc -c -O %
- */
-#include "vars.h"
+#include "qed.h"
+
 char *next_new;
 char *next_old;
 int new_line;
 int old_line;
 char rhsbuf[RHSIZE];
 
-substitute(inglob, reg)
+void
+substitute(int inglob, int reg)
 {
-	register int n, m;
-	register char *p;
+	int n, m;
+	char *p;
 	char *q;
 	int *a1;
 	int gsubf;
@@ -82,13 +82,12 @@ substitute(inglob, reg)
 		}
 }
 
-compsub(subbing, autop)
-	int subbing;
-	int *autop;
+int
+compsub(int subbing, int *autop)
 {
-	register int seof, c;
+	int seof, c;
 	char *rhsmagic;
-	register char *p;
+	char *p;
 	int getsvc();
 
 	*autop=FALSE;
@@ -124,9 +123,11 @@ compsub(subbing, autop)
 	}
 	return(0);
 }
-int getsub()
+
+int
+getsub(void)
 {
-	register char *p1, *p2;
+	char *p1, *p2;
 
 	p1 = linebuf;
 	if ((p2 = linebp) == 0)
@@ -136,10 +137,11 @@ int getsub()
 	return(0);
 }
 
-dosub()
+void
+dosub(void)
 {
-	register int c;
-	register char *p;
+	int c;
+	char *p;
 
 	place(next_old,loc1,0);
 	next_old=loc2;
@@ -157,12 +159,11 @@ dosub()
 	}
 }
 
-place(l1, l2, ucase)
-	register char *l1;
-	char *l2;
+void
+place(char *l1, char *l2, int ucase)
 {
-	register char *sp;
-	register c;
+	char *sp;
+	c;
 
 	sp = next_new;
 	while (l1 < l2) {
@@ -195,9 +196,10 @@ place(l1, l2, ucase)
 	next_new = sp;
 }
 
-undo()
+void
+undo(void)
 {
-	register int *l;
+	int *l;
 
 	for (l=zero+1; l<=dol && (*l|01)!=new_line; l++)
 		;
@@ -206,11 +208,11 @@ undo()
 	replace(l,old_line);
 	dot=l;
 }
-replace(line,ptr)
-	register int *line;
-	register int ptr;
+
+void
+replace(int *line,int ptr)
 {
-	register int *p;
+	int *p;
 
 	*line |= 01;
 	for (p=names; p<names+NBUFS; p++)
@@ -220,10 +222,12 @@ replace(line,ptr)
 	*line = ptr;
 	new_line = ptr | 01;
 }
-join()
+
+void
+join(void)
 {
-	register int *l;
-	register char *p, *q;
+	int *l;
+	char *p, *q;
 	int rep;
 	int autop=FALSE;
 
@@ -271,12 +275,10 @@ join()
 	}
 }
 
-int next_col(col,cp,input)
-	register int col;
-	register char *cp;
-	int input;
+int
+next_col(int col,char *cp,int input)
 {
-	register c;
+	int c;
 
 	c = *cp;
 	if (c=='\t')
@@ -289,9 +291,10 @@ int next_col(col,cp,input)
 	return (++col);
 }
 
-xform()
+void
+xform(void)
 {
-	register char *i, *m, *o;
+	char *i, *m, *o;
 	int *line, insert, change, ic, mc, c;
 	char *tf, *tl;
 

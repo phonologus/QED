@@ -1,9 +1,11 @@
-/*% cc -c -O %
- */
-#include "vars.h"
-#define SIGINT	2
-bufinit(n)
-	int *n;
+#include "qed.h"
+
+enum {
+  SIGINT = 2
+};
+
+void
+bufinit(int *n)
 {
 	struct buffer *bufp;
 	register *fend;
@@ -15,24 +17,29 @@ bufinit(n)
 		bufp->cflag = FALSE;
 	}
 }
-chngbuf(bb)
-	int bb;
+
+void
+chngbuf(int bb)
 {
 	syncbuf();
 	newbuf(bb);
 	savedfile = FILE(curbuf-buffer);
 }
-newbuf(bb){
+
+void
+newbuf(int bb)
+{
 	curbuf = buffer+bb;
 	zero=curbuf->zero;
 	dot=curbuf->dot;
 	dol=curbuf->dol;
 	cflag = curbuf->cflag;
 }
-fixbufs(n)
-	register n;
+
+void
+fixbufs(int n)
 {
-	register struct buffer *bufp;
+	struct buffer *bufp;
 	lock++;
 	for(bufp=curbuf+1;bufp!=buffer+NBUFS;bufp++){
 		bufp->zero+=n;
@@ -41,16 +48,20 @@ fixbufs(n)
 	}
 	unlock();
 }
-syncbuf()
+
+void
+syncbuf(void)
 {
 	/* curbuf->zero = zero;	/* we never assign to it, so needn't save */
 	curbuf->dot=dot;
 	curbuf->dol=dol;
 	curbuf->cflag = cflag!=FALSE;	/* Normalize to fit in a char */
 }
-error(code)
+
+void
+error(int code)
 {
-	extern savint;	/* error during a ! > < | ?? */
+	extern int savint;	/* error during a ! > < | ?? */
 	unlock();
 	if(code){
 		for(;stackp != stack ;--stackp)
@@ -102,10 +113,12 @@ error(code)
 	}
 	reset();
 }
-init()
+
+void
+init(void)
 {
-	register char *p;
-	register pid;
+	char *p;
+	int pid;
 	lock++;
 	close(tfile);
 	tfname = "/tmp/qxxxxx";
@@ -128,9 +141,11 @@ init()
 	stackp->type=TTY;
 	unlock();
 }
-comment()
+
+void
+comment(void)
 {
-	register c, mesg;
+	int c, mesg;
 
 	c = getchar();
 	mesg = 0;
@@ -149,30 +164,38 @@ comment()
 		flush();
 	}
 }
-abs(n)
-register n;
+
+int
+abs(int n)
 {
 	return(n<0?-n:n);
 }
 /*
  * Slow, but avoids garbage collection
  */
-settruth(t)
-	register t;
+void
+settruth(int t)
 {
 	if(atoi(string[TRUTH].str) != t)
 		numset(TRUTH, t);
 }
-setcount(c)
-	register c;
+
+void
+setcount(int c)
 {
 	if(atoi(string[COUNT].str) != c)
 		numset(COUNT, c);
 }
-truth(){
+
+int
+truth(void)
+{
 	return(atoi(string[TRUTH].str) != FALSE);
 }
-modified(){
+
+void
+modified(void)
+{
 	cflag=TRUE;
 	eok=FALSE;
 	qok=FALSE;
