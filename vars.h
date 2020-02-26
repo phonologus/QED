@@ -1,55 +1,73 @@
 /*
  * QED
  */
-#define	VAX	VAX
-#ifdef	VAX
-#define	BIGTMP	LOTSOFBITS
-#endif
+
 /*	Fake setexit & reset from v6 using setjmp and longjmp	*/
 #include <setjmp.h>
 jmp_buf	env;
 #define	setexit()	setjmp(env)
 #define	reset()		longjmp(env, 0)
-#define TRUE	1
-#define FALSE	0
+
+enum {
+  TRUE = 1,
+  FALSE = 0
+} ;
+
 #define	LBSIZE	512
 #define RHSIZE	(LBSIZE/4)	/* ed says /2; but that's unreasonable! */
 #define	NBRA	9
 #define	EOF	(-1)
 #define	FILERR	0200
-#define	SAVENEVER	0
-#define	SAVEIFFIRST	1
-#define	SAVEALWAYS	2
+
+enum {
+  SAVENEVER = 0,
+  SAVEIFFIRST = 1,
+  SAVEALWAYS = 2
+} ; 
+
 /*
  * Stack types.  Must appear in the order as in cspec[]/getchar.
  * XTTY, GLOB and BRWS are special types with no corresponding special character.
  * Special is never used directly - it is just used in tracing
  *	pushinp()/getchar.c can be called with a negative index for cspec[]
  */
-char	special[]; /* "xgBbBcfFlprzN\"\\'" */
+char	special[]="xgBbBcfFlprzN\"\\'";
 #define	cspec	(special + 3)
-#define	XTTY		0175
-#define	GLOB		0176
-#define	BRWS		0177
-#define	BUF		0
-#define	CURBN		1
-#define	QUOTE		2
-#define	FILEN		3
-#define	BFILEN		4
-#define	TTY		5
-#define	PAT		6
-#define	RHS		7
-#define	STRING		8
-#define	NEWL		9
-#define	NOTHING		10
-#define	BACKSLASH	11
-#define	LITERAL		12
+
+enum {
+  XTTY = 0175,
+  GLOB = 0176,
+  BRWS = 0177
+} ;
+
+enum {
+  BUF=0,
+  CURBN=1,
+  QUOTE=2,
+  FILEN=3,
+  BFILEN=4,
+  TTY=5,
+  PAT=6,
+  RHS=7,
+  STRING=8,
+  NEWL=9,
+  NOTHING=10,
+  BACKSLASH=11,
+  LITERAL=12
+};
+
 /*
  * Getchar-linked macros
  */
 #define ungetchar(c)	(peekc = (c))
 #define nextchar()	(peekc = getchar())
-#define NBUFS 56
+
+char	bname[]="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~";
+
+enum {
+  NBUFS=56
+};
+
 /*
  * The buffer structure.  All info associated with each buffer stored here
  */
@@ -135,8 +153,10 @@ int	*addr1;
 int	*addr2;
 char	genbuf[LBSIZE];
 char	*linebp;
+/*
 #include	"sgtty.h"
 struct	sgttyb ttybuf;
+*/
 int	ninbuf;
 int	io;
 int	onhup;
@@ -144,7 +164,7 @@ int	onquit;
 int	onintr;
 char	lasterr;
 #define	PAGESIZE	22
-extern	pagesize;
+extern	int pagesize;
 extern char bformat;	/* = 'p' */
 int	appflag;
 int	cflag;
@@ -175,8 +195,7 @@ char	*braelist[NBRA];
 int	nbra;
 int	oneline;
 int	lock;
-char	bname[]; /* ="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~" */
-char	lchars[];	/* = "pPlL" */
+char	lchars[] = "pPlL";
 int	bbempty;	/* whether getc's internal buffer buffer needs reloading */
 char	*getline();
 int	*address();

@@ -1,19 +1,24 @@
-/*% cc -c -O %
- */
 #include "vars.h"
-#define BLKSIZE	512
-#ifdef	BIGTMP
-#define	MAXBLOCKS	4095
-#else
-#define	MAXBLOCKS	255
-#endif
-#define	BLMASK		MAXBLOCKS
-char	ibuff[512];
+
+enum {
+  BLKSIZE = 512,
+  MAXBLOCKS = 4095,
+  BLMASK = MAXBLOCKS
+};
+
+char	ibuff[BLKSIZE];
 int	iblock = -1;
 int	oblock = 0;
-char	obuff[512];
+char	obuff[BLKSIZE];
 int	ooff;		/* offset of next byte in obuff */
-initio()
+
+void initio(void);
+char *getline(int tl, char *lbuf);
+int putline(void);
+void blkio(int b, char *buf, int (*iofcn)());
+
+void
+initio(void)
 {
 	lock++;
 	iblock = -1;
@@ -21,12 +26,13 @@ initio()
 	ooff = 0;
 	unlock();
 }
-char *getline(tl, lbuf)
-	int tl;
-	char *lbuf;
+
+char
+*getline(int tl, char *lbuf)
 {
-	register char *bp, *lp;
-	register int nl;
+	char *bp, *lp;
+	int nl;
+
 	extern int read();
 
 	lp = lbuf;
@@ -52,15 +58,17 @@ char *getline(tl, lbuf)
 	} while (*lp++ = *bp++);
 	return(lbuf);
 }
-int putline()
+
+int
+putline(void)
 {
-	register char *op, *lp;
-	register int r;
+	char *op, *lp;
+	int r;
 	extern int write();
 
 	modified();
 	lp = linebuf;
-	r = (oblock<<8) + (ooff>>1);	/* ooff may be 512! */
+	r = (oblock<<8) + (ooff>>1);	/* ooff may be BLKSIZE! */
 	op = obuff + ooff;
 	lock++;
 	do {
@@ -80,13 +88,13 @@ int putline()
 	unlock();
 	return (r);
 }
-blkio(b, buf, iofcn)
-	char *buf;
-	int (*iofcn)();
+
+void
+blkio(int b, char *buf, int (*iofcn)())
 {
 	if (b>=MAXBLOCKS
-	|| (lseek(tfile, ((long) b) * 512L, 0)<0L)
-	|| (*iofcn)(tfile, buf, 512) != 512) {
+	|| (lseek(tfile, ((long) b) * ((long) BLKSIZE), 0)<0L)
+	|| (*iofcn)(tfile, buf, BLKSIZE) != BLKSIZE) {
 		error('T');
 	}
 }
