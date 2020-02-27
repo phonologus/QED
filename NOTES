@@ -1,0 +1,26 @@
+Notes on porting QED -- sj, 27 Feb 2020.
+
+Turning from K&R to ansi function declarations reasonably
+straightforward.
+
+public vs private functions and globals need to be teased
+apart, and in the first instance at least, put into headers.
+
+As in the v10 version of ed.c, there is
+a blkio() function which wraps either write() or read().
+Unfortunately in POSIX systems, write() and read() have
+(slightly) different prototypes, so passing a pointer to
+either in blkio() is impossible to do cleanly. My solution
+in ed.c was simply to split blkio() into blkread() and
+blkwrite(). Type-safe, at the cost of a duplicated function body.
+
+There are some hairy pointer <-> int casts, which of course fail
+hard on x86-64.
+
+Terminal I/O is still stuck in v6-land with sgtty code. Other
+pre-Standard Library anachronisms (signals, memory allocation)
+need porting to std*, and ultimately, Plan9.
+
+Character logic should eventually be ported to Runes (use Plan9 libbio).
+
+
