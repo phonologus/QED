@@ -139,6 +139,7 @@ int savint= -1;	/* awful; this is known in error() */
 void
 Unix(char type)
 {
+        union pint_t uc;
 	int pid, rpid;
 	char *s;
 	int *a, c;
@@ -164,7 +165,8 @@ Unix(char type)
 	/* Quick hack: if char is doubled, push \'zU */
 	if(nextchar()==type){
 		getchar();	/* throw it away */
-		pushinp(STRING, UNIX, TRUE);
+                uc.i=UNIX;
+		pushinp(STRING, uc, TRUE);
 	}
 	/*
 	 * Use c not *s as EOF and getchar() are int's

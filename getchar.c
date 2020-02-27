@@ -109,6 +109,7 @@ getchar(void)
 int
 getc(void)
 {
+        union pint_t uc; 
 	int c;
 	struct buffer *bufp;
 	struct stack *sp;
@@ -233,7 +234,8 @@ getc(void)
 					} else
 						strinc(c, delta);
 				}
-				pushinp(i, c, literal);
+                                uc.i=c;
+				pushinp(i, uc, literal);
 				literal = FALSE;
 				c=getc();
 				break;
@@ -247,7 +249,8 @@ getc(void)
 			case FILEN:
 			case PAT:
 			case RHS:
-				pushinp(i, c, literal);
+                                uc.i=c;
+				pushinp(i, uc, literal);
 				literal = FALSE;
 				/* fall through */
 			case NOTHING:
@@ -285,7 +288,7 @@ ttyc(void)
 int
 posn(char c, char *s)
 {
-	register char *is;
+	char *is;
 	is = s;
 	while(*s)
 		if(c == *s++)
@@ -294,7 +297,7 @@ posn(char c, char *s)
 }
 
 void
-pushinp(int type, int arg, int literal)
+pushinp(int type, union pint_t arg, int literal)
 {
 	struct stack *s;
 
@@ -312,10 +315,10 @@ pushinp(int type, int arg, int literal)
 	s->charno = 0;
 	switch(type){
 	case BFILEN:
-		s->strname = FILE(arg);
+		s->strname = FILE(arg.i);
 		break;
 	case STRING:
-		s->strname = arg;
+		s->strname = arg.i;
 		break;
 	case FILEN:
 		s->strname = savedfile;
@@ -330,17 +333,17 @@ pushinp(int type, int arg, int literal)
 		s->strname = BROWSE;
 		break;
 	case BUF:
-		if((s->bufptr=buffer+arg) == curbuf && appflag)
+		if((s->bufptr=buffer+arg.i) == curbuf && appflag)
 			error('\\');
 		s->lineno=1;
 		break;
 	case GLOB:
-		s->globp = (char *)arg;
+		s->globp = arg.p;
 		break;
 	}
 	if(tflag){
 		if(type==BFILEN || type==STRING || type==BUF)
-			putchar(bname[arg]);
+			putchar(bname[arg.i]);
 		putchar('=');
 	}
 }

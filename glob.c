@@ -106,9 +106,11 @@ getglob(char globuf[])
 int
 exglob(char *cmd, char *dflt)
 {
+        union pint_t uc;
 	int nesting;
 
-	pushinp(GLOB, eqstr(cmd,"\n")? dflt : cmd, FALSE);
+	uc.p=eqstr(cmd,"\n")? dflt : cmd;
+	pushinp(GLOB, uc, FALSE);
 	nesting = ++nestlevel;
 	commands();
 	if (nesting!=nestlevel)

@@ -1,5 +1,7 @@
 #include "qed.h"
 
+#include "debug.h"
+
 enum {
 SIGHUP = 1,
 SIGINTR = 2,
@@ -11,7 +13,6 @@ enum {
   DOWN = 0
 };
 
-char lchars[]="pPlL";
 struct buffer *curbuf = buffer;
 char	*linp = line;
 int	appflag = 0;
@@ -27,13 +28,14 @@ int	initflag = 1;
 int	*option[] = {
 	&cflag,	&dflag,	&eflag,	&iflag,	&prflag,&tflag,	&vflag,
 };
+char lchars[] = "pPlL";
 char	opcs[] = "cdeipTv";
 int	tfile = -1;
 /*
-struct	sgttyb ttybuf = { 0, 0, '\b', '\b', /*0*/};
+struct	sgttyb ttybuf = { 0, 0, '\b', '\b', 0};
 */
 char	QEDFILE[]="QEDFILE";
-int	(*pending)();
+void	(*pending)(void);
 
 void
 rescue(void)
@@ -189,7 +191,7 @@ interrupt(void)
 void
 unlock(void)
 {
-	int (*p)();
+	void (*p)(void);
 
 	p = pending;
 	pending = 0;
@@ -206,6 +208,7 @@ char boot2[] = "].+\t./r\n";
 int
 main(int argc, char **argv)
 {
+        union pint_t uc;
 	char *p1;
 	int i;
 	char buf;
@@ -241,6 +244,10 @@ main(int argc, char **argv)
 		/* Exit on error? */
 			eflag++;
 			break;
+		case 't':
+		/* Show stack traces? */
+			tflag++;
+			break;
 		case 'x':
 			if(argc == 2)
 				goto casedefault;
@@ -251,7 +258,7 @@ main(int argc, char **argv)
 		argv++;
 		--argc;
 	}
-	gtty(0,&ttybuf);
+
 	if(startup==0)
 		startup = getenv(QEDFILE);
 	fendcore = (int *)sbrk(0);
@@ -303,7 +310,8 @@ main(int argc, char **argv)
 		copystring(cleanup);
 		setstring(NBUFS-1);
 	}
-	pushinp(STRING, NBUFS-1, FALSE);
+        uc.i=NBUFS-1;
+	pushinp(STRING, uc, FALSE);
 	setexit();
 	lastttyc = '\n';
 	commands();
@@ -316,6 +324,7 @@ int	noaddr;
 void
 commands(void)
 {
+        union pint_t uc;
 	int *a;
 	int c, lastsep;
 	int getfile(), gettty();
@@ -511,7 +520,8 @@ commands(void)
 			if(stackp != &stack[0] || !startline)
 				continue;
 			if(*string[BROWSE].str){
-				pushinp(BRWS, 0, FALSE);
+                                uc.i=0;
+				pushinp(BRWS, uc, FALSE);
 				continue;
 			}
 			a = dot+1;
@@ -535,7 +545,7 @@ commands(void)
 		if(c!=EOF && (!startline || getchar()!='\n'))
 			error('x');
 		if(c!='Q' && !qok){
-			register struct buffer *bp;
+			struct buffer *bp;
 			syncbuf();
 			qok=TRUE;
 			for(bp=buffer; bp<&buffer[NBUFS]; bp++)
@@ -673,7 +683,7 @@ commands(void)
 void
 setreset(int *opt)
 {
-	register c;
+	int c;
 
 	c = getchar();
 	if(c!='s' && c!= 'r')

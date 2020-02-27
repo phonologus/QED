@@ -28,7 +28,7 @@ addstring(int c)
 }
 
 void
-dropstring(coid)
+dropstring(void)
 {
 	--strfree;
 }
@@ -42,7 +42,7 @@ cpstr(char *a, char *b)
 void
 shiftstring(int up)
 {	/* A highly machine-dependent routine */
-	register struct string *sp;
+	struct string *sp;
 	for(sp=string; sp<=string+NSTRING; sp++)
 		if(up)
 			sp->str += (int)strarea;
@@ -101,7 +101,7 @@ strcompact(void)
 {
 	struct string *cursor;
 	struct string *thisstr;
-	register char *s, *t;
+	char *s, *t;
 	lock++;
 	s=strchars;
 	for(;;){

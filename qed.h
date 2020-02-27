@@ -2,6 +2,8 @@
  * QED
  */
 
+#include "debug.h" /* REMOVE ME */
+
 #include "vars.h"
 
 /* address.c */
@@ -51,7 +53,7 @@ int getchar(void);
 int getc(void);
 int ttyc(void);
 int posn(char, char *);
-void pushinp(int, int, int);
+void pushinp(int, union pint_t, int);
 void popinp(void);
 int gettty(void);
 int getquote(char *, int (*)());
@@ -114,7 +116,7 @@ int getsvc(void);
 int execute(int *);
 int advance(char *, char *);
 int backref(int, char *);
-int alfmatch(c, int);
+int alfmatch(char, int);
 int cclass(char *, int, int);
 
 /* putchar.c */

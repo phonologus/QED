@@ -163,7 +163,7 @@ void
 place(char *l1, char *l2, int ucase)
 {
 	char *sp;
-	c;
+	int c;
 
 	sp = next_new;
 	while (l1 < l2) {
@@ -285,6 +285,7 @@ next_col(int col,char *cp,int input)
 		col |= 07;
 	else if (c<' ' || c=='\177')
 		error('t'); /* invalid character in x data */
+/*
 	else
 		if (input && (c==ttybuf.sg_erase || c==ttybuf.sg_kill))
 			col++;	/* One column for the backslash */
@@ -294,6 +295,7 @@ next_col(int col,char *cp,int input)
 void
 xform(void)
 {
+        union pint_t uc;
 	char *i, *m, *o;
 	int *line, insert, change, ic, mc, c;
 	char *tf, *tl;
@@ -306,7 +308,8 @@ xform(void)
 		dot=line;
 		for(;;){
 			puts(linebuf);
-			pushinp(XTTY, 0, FALSE);
+                        uc.i=0;
+			pushinp(XTTY, uc, FALSE);
 			m=rhsbuf;
 			while ((c = getchar())!='\n') {
 				if (c == EOF)

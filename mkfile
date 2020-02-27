@@ -1,4 +1,4 @@
-CFLAGS=-ansi -I. -O -D_POSIX_SOURCE
+CFLAGS=-ansi -I. -O -D_POSIX_SOURCE -fno-builtin
 CC=gcc
 
 HDRS=\
@@ -23,12 +23,15 @@ MODULES=\
 
 OBJS=${MODULES:%=%.o}
 
-%.o:  %.c $HDRS
+%.o:  %.c
   $CC -c $CFLAGS $prereq
 
 all:V: a.out
 
 a.out:	$OBJS 
+	$CC $prereq
+
+debug:  $OBJS debug.o
 	$CC $prereq
 
 clean:V:

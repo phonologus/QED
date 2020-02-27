@@ -1,5 +1,9 @@
 #include "qed.h"
 
+#include <sys/ioctl.h>  /* for FIOCLEX */
+
+char tfname[]="/tmp/qxxxxx";
+
 enum {
   SIGINT = 2
 };
@@ -8,7 +12,7 @@ void
 bufinit(int *n)
 {
 	struct buffer *bufp;
-	register *fend;
+	int *fend;
 	fend=n;
 	for(bufp=buffer;bufp!=buffer+NBUFS;bufp++){
 		bufp->zero=fend;
@@ -121,7 +125,6 @@ init(void)
 	int pid;
 	lock++;
 	close(tfile);
-	tfname = "/tmp/qxxxxx";
 	pid = getpid();
 	for (p = &tfname[11]; p > &tfname[6];) {
 		*--p = (pid%10) + '0';

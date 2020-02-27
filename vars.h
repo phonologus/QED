@@ -31,7 +31,7 @@ enum {
  * Special is never used directly - it is just used in tracing
  *	pushinp()/getchar.c can be called with a negative index for cspec[]
  */
-char	special[]="xgBbBcfFlprzN\"\\'";
+extern char special[]; /*="xgBbBcfFlprzN\"\\'"*/
 #define	cspec	(special + 3)
 
 enum {
@@ -62,7 +62,7 @@ enum {
 #define ungetchar(c)	(peekc = (c))
 #define nextchar()	(peekc = getchar())
 
-char	bname[]="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~";
+extern char	bname[]; /*="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~"*/
 
 enum {
   NBUFS=56
@@ -119,6 +119,12 @@ char strarea[NSTRCHARS + 2];
 /*
  * The getchar stack.
  */
+
+union pint_t{
+  char *p;
+  int i;
+};
+ 
 struct stack{
 	char type;
 	char literal;
@@ -153,10 +159,6 @@ int	*addr1;
 int	*addr2;
 char	genbuf[LBSIZE];
 char	*linebp;
-/*
-#include	"sgtty.h"
-struct	sgttyb ttybuf;
-*/
 int	ninbuf;
 int	io;
 int	onhup;
@@ -186,7 +188,7 @@ int	lastttyc;
 int	listf;
 int	tfile;
 int	tfile2;
-char	*tfname;
+extern char	tfname[];
 char	*loc1;
 char	*loc2;
 int	names[NBUFS];
@@ -195,7 +197,7 @@ char	*braelist[NBRA];
 int	nbra;
 int	oneline;
 int	lock;
-char	lchars[] = "pPlL";
+extern char	lchars[]; /*= "pPlL"*/
 int	bbempty;	/* whether getc's internal buffer buffer needs reloading */
 char	*getline();
 int	*address();
