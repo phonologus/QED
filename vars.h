@@ -196,7 +196,6 @@ char	*braslist[NBRA];
 char	*braelist[NBRA];
 int	nbra;
 int	oneline;
-int	lock;
 extern char	lchars[]; /*= "pPlL"*/
 int	bbempty;	/* whether getc's internal buffer buffer needs reloading */
 char	*getline();
