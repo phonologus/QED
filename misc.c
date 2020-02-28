@@ -44,13 +44,11 @@ void
 fixbufs(int n)
 {
 	struct buffer *bufp;
-	lock++;
 	for(bufp=curbuf+1;bufp!=buffer+NBUFS;bufp++){
 		bufp->zero+=n;
 		bufp->dot+=n;
 		bufp->dol+=n;
 	}
-	unlock();
 }
 
 void
@@ -66,7 +64,6 @@ void
 error(int code)
 {
 	extern int savint;	/* error during a ! > < | ?? */
-	unlock();
 	if(code){
 		for(;stackp != stack ;--stackp)
 			if(stackp->type == BUF || stackp->type == STRING){
@@ -123,7 +120,6 @@ init(void)
 {
 	char *p;
 	int pid;
-	lock++;
 	close(tfile);
 	pid = getpid();
 	for (p = &tfname[11]; p > &tfname[6];) {
@@ -142,7 +138,6 @@ init(void)
 	endcore = fendcore - 2;
 	stackp=stack;
 	stackp->type=TTY;
-	unlock();
 }
 
 void

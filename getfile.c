@@ -103,7 +103,7 @@ putfile(void)
 	int *a1;
 	char *fp, *lp;
 	int nib;
-	nib = 512;
+	nib = LBSIZE;
 	fp = genbuf;
 	a1 = addr1;
 	if(a1 == zero)
@@ -114,7 +114,7 @@ putfile(void)
 			if (--nib < 0) {
 				if(write(io, genbuf, fp-genbuf) < 0)
 					error('w');
-				nib = 511;
+				nib = LBSIZE-1;
 				fp = genbuf;
 			}
 			count++;

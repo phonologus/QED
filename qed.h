@@ -81,7 +81,6 @@ char *fileb(void);
 void savall(void);
 void restor(void);
 void interrupt(void);
-void unlock(void);
 void commands(void);
 void setreset(int *);
 void delall(void);

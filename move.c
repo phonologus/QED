@@ -31,7 +31,6 @@ move(int copyflag)
 	ad1 = addr1;
 	ad2 = addr2;
 	totmved = ad2 - ad1 + 1;
-	lock++;
 	if (copyflag) {
 		tonewdot = addr2 - buffer[fb].zero;
 		/*
@@ -84,7 +83,6 @@ move(int copyflag)
 	dot = buffer[tb].dot = buffer[tb].zero + todot + totmved;
 	zero = buffer[tb].zero;
 	dol = buffer[tb].dol;
-	unlock();
 }
 
 void

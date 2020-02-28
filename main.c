@@ -42,10 +42,6 @@ rescue(void)
 {
 	/* Save in qed.hup:[ab]q on hangup */
 	signal(SIGHUP,1);
-	if (lock) {
-		pending = rescue;
-		return;
-	}
 	startstring();
 	copystring("qed.hup");
 	setstring(FILEBUF);
@@ -107,11 +103,9 @@ savall(void)
 		error('o'|FILERR);
 	write(fi, (char *)buffer, sizeof buffer);
 	write(fi, strarea, sizeof strarea);
-	lock++;
 	shiftstring(DOWN);
 	write(fi, (char *)string, sizeof string);
 	shiftstring(UP);
-	unlock();
 	close(fi);
 }
 
@@ -136,7 +130,6 @@ restor(void)
 	exfile();
 	if((fi = open(fileb(),0)) < 0)
 		error('o'|FILERR);
-	lock++;
 	if(read(fi,(char *)buffer,sizeof buffer) != sizeof buffer
 		|| read(fi, strarea, sizeof strarea) != sizeof strarea
 		|| read(fi, (char *)string, sizeof string) != sizeof string)
@@ -159,7 +152,7 @@ restor(void)
 		}
 	}
 	newbuf(0);
-	error(0);	/* ==> error, but don't print anything. calls unlock() */
+	error(0);	/* ==> error, but don't print anything. */
 }
 
 /*
@@ -170,10 +163,6 @@ void
 interrupt(void)
 {
 	signal(SIGINTR, interrupt);
-	if (lock) {
-		pending = interrupt;
-		return;
-	}
 	if(iflag){
 		unlink(tfname);
 		exit(SIGINTR);
@@ -182,22 +171,6 @@ interrupt(void)
 	putchar('\n');
 	lastc = '\n';
 	error('?');
-}
-
-/*
- * Unlock: exit a critical section, invoking any pending signal routines.
- */
-
-void
-unlock(void)
-{
-	void (*p)(void);
-
-	p = pending;
-	pending = 0;
-	lock = 0;
-	if (p)
-		(*p)();
 }
 
 char cleanup[] = "ba z~:\n";

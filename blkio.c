@@ -15,11 +15,9 @@ int	ooff;		/* offset of next byte in obuff */
 void
 initio(void)
 {
-	lock++;
 	iblock = -1;
 	oblock = 0;
 	ooff = 0;
-	unlock();
 }
 
 char
@@ -65,7 +63,6 @@ putline(void)
 	lp = linebuf;
 	r = (oblock<<8) + (ooff>>1);	/* ooff may be BLKSIZE! */
 	op = obuff + ooff;
-	lock++;
 	do {
 		if (op >= obuff+BLKSIZE) {
 			/* delay updating oblock until after blkio succeeds */
@@ -80,7 +77,6 @@ putline(void)
 		}
 	} while (*op++);
 	ooff = (((op-obuff)+3)&~3);
-	unlock();
 	return (r);
 }
 

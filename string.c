@@ -102,7 +102,6 @@ strcompact(void)
 	struct string *cursor;
 	struct string *thisstr;
 	char *s, *t;
-	lock++;
 	s=strchars;
 	for(;;){
 		t=strchars+NSTRCHARS;
@@ -125,5 +124,4 @@ strcompact(void)
 		strfree=strstart;
 		error('Z');
 	}
-	unlock();
 }

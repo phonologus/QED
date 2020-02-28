@@ -155,7 +155,7 @@ enum {
 };
 
 int
-append(int (*f)(), int *a)
+append(int (*f)(void), int *a)
 {
 	int *a1, *a2, *rdot;
 	int nline, tl;
@@ -171,7 +171,6 @@ append(int (*f)(), int *a)
 		}
 		tl = putline();
 		nline++;
-		lock++;
 		++dol;
 		a1 = ++lastdol;
 		fixbufs(1);
@@ -180,7 +179,6 @@ append(int (*f)(), int *a)
 		while (a1 > rdot)
 			*--a2 = *--a1;
 		*rdot = tl;
-		unlock();
 		if(oneline)
 			break;
 	}
@@ -255,7 +253,6 @@ delete(void)
 	}
 	*(a2++);
 	a3 = lastdol;
-	lock++;
 	dol -= a2 - a1;
 	lastdol -= a2 - a1;
 	fixbufs(a1-a2);
@@ -266,7 +263,6 @@ delete(void)
 	if (a1 > dol)
 		a1 = dol;
 	dot = a1;
-	unlock();
 	modified();
 }
 
