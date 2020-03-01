@@ -159,7 +159,7 @@ append(int (*f)(void), int *a)
 {
 	int *a1, *a2, *rdot;
 	int nline, tl;
-	struct integer { int iint; };
+
 	appflag++;
 	nline = 0;
 	dot = a;
