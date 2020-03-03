@@ -127,14 +127,8 @@ putfile(void)
 	write(io, genbuf, fp-genbuf);
 }
 
-enum {
-  SIGHUP = 1,
-  SIGINTR = 2,
-  SIGQUIT = 3,
-  SIGBPIPE = 13
-};
-
-int savint= -1;	/* awful; this is known in error() */
+void (*savint)(int);	/* awful; this is known in error() */
+int savintf = -1;
 
 void
 Unix(char type)
@@ -144,7 +138,7 @@ Unix(char type)
 	char *s;
 	int *a, c;
 	int getsvc();
-	int onbpipe;
+	void (*onpipe)(int);
 	int retcode;
 	char unixbuf[512];
 	int	pipe1[2];
@@ -182,7 +176,7 @@ Unix(char type)
 	a2 = addr2;
 	if ((pid = fork()) == 0) {
 		signal(SIGHUP, onhup);
-		signal(SIGINTR, onintr);
+		signal(SIGINT, onintr);
 		signal(SIGQUIT, onquit);
 		if(type=='<' || type=='|'){
 			close(1);
@@ -207,7 +201,7 @@ Unix(char type)
 				close(pipe2[1]);
 				tfile = tfile2;	/* ugh */
 				/*
-				 * It's ok if we get SIGBPIPE here
+				 * It's ok if we get SIGPIPE here
 				 */
 				display('p');
 				exit(0);
@@ -231,7 +225,8 @@ Unix(char type)
 		puts("Can't fork");
 		error('!');
 	}
-	savint = signal(SIGINTR, 1);
+	savint = signal(SIGINT, SIG_IGN);
+        savintf++;
 	if(type=='<' || type=='|') {
 		close(pipe1[1]);
 		io = pipe1[0];
@@ -241,7 +236,7 @@ Unix(char type)
 		io = -1;
 		ndot = dot;
 	} else if(type == '>') {
-		onbpipe = signal(SIGBPIPE, 1);
+		onpipe = signal(SIGPIPE, SIG_IGN);
 		close(pipe1[0]);
 		a=addr1;
 		do{
@@ -254,12 +249,12 @@ Unix(char type)
 			}
 		}while (a<=addr2);
 		close(pipe1[1]);
-		signal(SIGBPIPE, onbpipe);
+		signal(SIGPIPE, onpipe);
 	}
 	while ((rpid = wait(&retcode)) != pid && rpid != -1);
 	retcode = (retcode>>8)&0377;
 	settruth(retcode);
-	signal(SIGINTR, savint);
+	signal(SIGINT, savint);
 	if(type == '|'){
 		if(retcode == 0){
 			addr1 = a1;

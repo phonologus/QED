@@ -74,8 +74,6 @@ becomes
 
   strarea[cp++]
 
-.
-
 string[0..NBUFS-1] : the registers
 string[NBUFS..2*(NBUFS-1)] : the file names : FILE(i)
 string[(2*NBUFS)..(2*NBUFS)+2]: saved pattern and its RHS : SAVPAT, SAVRHS
@@ -118,3 +116,15 @@ char linebuf[LBSIZE];
 char genbuf[LBSIZE];
 char tfname[]="/tmp/...";
 int names[NBUFS];
+
+
+====
+blkio
+
+The tmp file (tfile and tfile2), contains the contents of all the buffers,
+stored as 4095 (== MAXBLOCKS) fixed length blocks of 512 (== BLKSIZE).
+
+When user or file input is read into a buffer (line by line), each line is
+stored in the tmpfile aligned to a block, and also copied into core.
+
+

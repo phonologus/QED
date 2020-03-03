@@ -4,10 +4,6 @@
 
 char tfname[]="/tmp/qxxxxx";
 
-enum {
-  SIGINT = 2
-};
-
 void
 bufinit(int *n)
 {
@@ -63,7 +59,8 @@ syncbuf(void)
 void
 error(int code)
 {
-	extern int savint;	/* error during a ! > < | ?? */
+	extern void (*savint)(int);	/* error during a ! > < | ?? */
+        extern int savintf;
 	if(code){
 		for(;stackp != stack ;--stackp)
 			if(stackp->type == BUF || stackp->type == STRING){
@@ -108,9 +105,9 @@ error(int code)
 		cflag = TRUE;	/* well, maybe not, but better be safe */
 	}
 	appflag=0;
-	if(savint>=0){
+	if(savintf>=0){
 		signal(SIGINT, savint);
-		savint= -1;
+		savintf = -1;
 	}
 	reset();
 }

@@ -161,9 +161,9 @@ char	genbuf[LBSIZE];
 char	*linebp;
 int	ninbuf;
 int	io;
-int	onhup;
-int	onquit;
-int	onintr;
+void	(*onhup)(int);
+void	(*onquit)(int);
+void	(*onintr)(int);
 char	lasterr;
 #define	PAGESIZE	22
 extern	int pagesize;

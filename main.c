@@ -3,12 +3,6 @@
 #include "debug.h"
 
 enum {
-SIGHUP = 1,
-SIGINTR = 2,
-SIGQUIT = 3
-};
-
-enum {
   UP = 1,
   DOWN = 0
 };
@@ -38,10 +32,10 @@ char	QEDFILE[]="QEDFILE";
 void	(*pending)(void);
 
 void
-rescue(void)
+rescue(int sig)
 {
 	/* Save in qed.hup:[ab]q on hangup */
-	signal(SIGHUP,1);
+	signal(SIGHUP,SIG_IGN);
 	startstring();
 	copystring("qed.hup");
 	setstring(FILEBUF);
@@ -156,16 +150,16 @@ restor(void)
 }
 
 /*
- *	On INTR, generate error '?'
+ *	On INT, generate error '?'
  */
 
 void
-interrupt(void)
+interrupt(int sig)
 {
-	signal(SIGINTR, interrupt);
+	signal(SIGINT, interrupt);
 	if(iflag){
 		unlink(tfname);
-		exit(SIGINTR);
+		exit(SIGINT);
 	}
 	linp=line;
 	putchar('\n');
@@ -178,6 +172,10 @@ char setvflag[] = "ov?";
 char boot1[] = "G/^[";
 char boot2[] = "].+\t./r\n";
 
+void (*onhup)(int);
+void (*onquit)(int);
+void (*onintr)(int);
+
 int
 main(int argc, char **argv)
 {
@@ -189,9 +187,9 @@ main(int argc, char **argv)
 	char *startup=(char *)0;
 
 	argv++;
-	onquit = signal(SIGQUIT, 1);
-	onhup = signal(SIGHUP, 1);
-	onintr = signal(SIGINTR, 1);
+	onquit = signal(SIGQUIT, SIG_IGN);
+	onhup = signal(SIGHUP, SIG_IGN);
+	onintr = signal(SIGINT, SIG_IGN);
 	rvflag = 1;
 	for(i=0;i!=NSTRING;i++){
 		string[i].str = nullstr;
@@ -207,7 +205,7 @@ main(int argc, char **argv)
 			break;
 		case 'q':
 		/* allow debugging quits? */
-			signal(SIGQUIT, 0);
+			signal(SIGQUIT, SIG_DFL);
 			break;
 		case 'i':
 		/* allow interrupt quits? */
@@ -237,10 +235,20 @@ main(int argc, char **argv)
 	fendcore = (int *)sbrk(0);
 	curbuf = &buffer[0];
 	init();
-	if (onhup != 1)
+        /* v6 manpage says if signal label is 0, the 
+         * process is terminated, and this is the default action.
+         * If the label is odd, the signal is ignored.
+         * if even and >0 then it is a signal handler.
+         *
+	 *	if (((long)onhup & 01) == 0)
+	 *		signal(SIGHUP, rescue);
+         *	if (((long)onintr & 01) == 0)
+         *		signal(SIGINT, interrupt);
+         */
+	if(onhup != SIG_IGN)
 		signal(SIGHUP, rescue);
-	if (onintr != 1)
-		signal(SIGINTR, interrupt);
+	if(onintr != SIG_IGN)
+		signal(SIGINT, interrupt);
 	/*
 	 * Build the initialization code in register z~
 	 */
@@ -465,7 +473,7 @@ commands(void)
 		case 'q':
 			c = getchar();
 			if(c=='s' || c =='r')
-				signal(SIGQUIT, c=='r');
+				signal(SIGQUIT, c=='r' ? SIG_IGN : SIG_DFL);
 			else
 				error('x');
 			break;

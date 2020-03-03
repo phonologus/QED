@@ -4,6 +4,8 @@
 
 #include "debug.h" /* REMOVE ME */
 
+#include <signal.h>
+
 #include "vars.h"
 
 /* address.c */
@@ -75,12 +77,12 @@ int exglob(char *, char *);
 
 /* main.c */
 
-void rescue(void);
+void rescue(int);   /* signal handler */
 char *filea(void);
 char *fileb(void);
 void savall(void);
 void restor(void);
-void interrupt(void);
+void interrupt(int);  /* signal handler */
 void commands(void);
 void setreset(int *);
 void delall(void);
