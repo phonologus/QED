@@ -293,7 +293,7 @@ main(int argc, char **argv)
 	}
         uc.i=NBUFS-1;
 	pushinp(STRING, uc, FALSE);
-	setexit();
+	setjmp(savej);
 	lastttyc = '\n';
 	commands();
 	unlink(tfname);

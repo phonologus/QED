@@ -5,6 +5,7 @@
 #include "debug.h" /* REMOVE ME */
 
 #include <signal.h>
+#include <setjmp.h>
 
 #include "vars.h"
 

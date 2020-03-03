@@ -2,11 +2,7 @@
  * QED
  */
 
-/*	Fake setexit & reset from v6 using setjmp and longjmp	*/
-#include <setjmp.h>
-jmp_buf	env;
-#define	setexit()	setjmp(env)
-#define	reset()		longjmp(env, 0)
+jmp_buf	savej;
 
 enum {
   TRUE = 1,

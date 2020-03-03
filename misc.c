@@ -109,7 +109,7 @@ error(int code)
 		signal(SIGINT, savint);
 		savintf = -1;
 	}
-	reset();
+	longjmp(savej,1);
 }
 
 void
