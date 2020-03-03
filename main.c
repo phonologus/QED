@@ -112,7 +112,7 @@ restor(void)
 	int getfile();
 	curbuf = buffer;
 	i = (int)curbuf->zero;
-	if((t = open(filea(), 0)) < 0){
+	if((t = open(filea(), O_RDONLY)) < 0){
 		lastc = '\n';
 		error('o'|FILERR);
 	}
@@ -122,7 +122,7 @@ restor(void)
 	ninbuf = 0;
 	append(getfile, dol);
 	exfile();
-	if((fi = open(fileb(),0)) < 0)
+	if((fi = open(fileb(),O_RDONLY)) < 0)
 		error('o'|FILERR);
 	if(read(fi,(char *)buffer,sizeof buffer) != sizeof buffer
 		|| read(fi, strarea, sizeof strarea) != sizeof strarea
@@ -539,7 +539,7 @@ commands(void)
 	case 'r':
 		newfile(TRUE, SAVEIFFIRST, string[savedfile].str);
 	caseread:
-		if((io = open(string[FILEBUF].str, 0)) < 0){
+		if((io = open(string[FILEBUF].str, O_RDONLY)) < 0){
 			if(initflag){
 				putchar('?');
 				putchar('o');
@@ -598,7 +598,7 @@ commands(void)
 			changed = cflag;
 		else
 			changed = (addr1>(zero+1) || addr2!=dol);
-		if(c=='w' || (io=open(string[FILEBUF].str,1))==-1){
+		if(c=='w' || (io=open(string[FILEBUF].str,O_WRONLY))==-1){
 		  Create:
 			if ((io = creat(string[FILEBUF].str, 0666)) < 0)
 				error('o'|FILERR);

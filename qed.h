@@ -6,6 +6,9 @@
 
 #include <signal.h>
 #include <setjmp.h>
+#include <sys/types.h>  /* for open(), creat() and symbols for flags */
+#include <sys/stat.h>  /* for open(), creat() and symbols for flags */
+#include <fcntl.h>  /* for open(), creat() and symbols for flags */
 
 #include "vars.h"
 

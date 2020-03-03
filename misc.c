@@ -124,10 +124,12 @@ init(void)
 		pid /= 10;
 	}
 	close(creat(tfname, 0600));
-	tfile = open(tfname, 2);
-	tfile2 = open(tfname, 2);
-	ioctl(tfile, FIOCLEX, 0);
-	ioctl(tfile2, FIOCLEX, 0);
+	tfile = open(tfname, O_RDWR);
+	tfile2 = open(tfname, O_RDWR);
+        /* Not needed, as this behaviour is now the default:
+	 * ioctl(tfile, FIOCLEX, 0);
+	 * ioctl(tfile2, FIOCLEX, 0);
+	 */
 	brk(fendcore);
 	bufinit(fendcore);
 	newbuf(0);
