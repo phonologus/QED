@@ -2,8 +2,6 @@
  * QED
  */
 
-#include "debug.h" /* REMOVE ME */
-
 #include <signal.h>
 #include <setjmp.h>
 #include <sys/types.h>  /* for open(), creat() and symbols for flags */

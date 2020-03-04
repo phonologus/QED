@@ -1,7 +1,5 @@
 #include "qed.h"
 
-#include "debug.h"
-
 enum {
   UP = 1,
   DOWN = 0
