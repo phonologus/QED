@@ -3,6 +3,8 @@ CC=gcc
 
 PROG=qed
 
+INSTALLD=$HOME/opt/$PROG
+
 HDRS=\
   vars.h \
   qed.h
@@ -38,5 +40,10 @@ debug:  $OBJS debug.o
 	$CC $prereq
 
 clean:V:
-	rm -f *.o a.out
+	rm -f *.o a.out $PROG
+
+install:V: $PROG $PROG.1
+	mkdir -p "$INSTALLD/bin" "$INSTALLD/man/man1"
+	cp $PROG "$INSTALLD/bin/$PROG"	
+	cp $PROG.1 "$INSTALLD/man/man1/$PROG.1"	
 
