@@ -1,6 +1,9 @@
 CFLAGS=-ansi -I. -O -D_POSIX_SOURCE -fno-builtin
 CC=gcc
 
+TAR=9 tar
+COMPRESS=9 compress
+
 PROG=qed
 
 INSTALLD=$HOME/opt/$PROG
@@ -27,6 +30,18 @@ MODULES=\
   string \
   subs 
 
+DOCS=\
+  doc/qed.1\
+  doc/tutorial
+
+ARCHIVE=\
+  mkfile\
+  NOTES\
+  $DOCS\
+  ${MODULES:%=%.c}\
+  $HDRS\
+  $QDIR
+
 OBJS=${MODULES:%=%.o}
 
 %.o:  %.c
@@ -51,4 +66,10 @@ install:V: all doc $QDIR
 	cp doc/qed.1 $INSTALLD/man/man1/
 	cp $QDIR/* $INSTALLD/lib/
 	cp doc/*.pdf $INSTALLD/doc/
+
+archive:V: $ARCHIVE
+	$TAR c $prereq | $COMPRESS > $PROG.tar.Z
+
+unarchive:V: $PROG.tar.Z
+	$TAR xzvf $prereq
 
