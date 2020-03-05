@@ -7,11 +7,9 @@ Compiles and runs. Still too many fixed memory limits,
 and the sbrk() allocation needs to move to malloc(). Nevertheless,
 it seems to run fine within these limits.
 
-Most of the historical artifacts from Rob Pike's shar-file (lib)
-have been unceremoniously discarded (though they are recoverable
-through git, and the lib file itself).
-
-The original lib file is retained.
+Most of the historical artifacts from Rob Pike's directory 
+have been unceremoniously discarded, though they are recoverable
+through git.
 
 The read.me is retained as a nod to this history.
 It contains some unimplemented ideas which might be worth exploring.
