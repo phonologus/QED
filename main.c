@@ -18,7 +18,7 @@ int	uflag = 's';
 int	dflag = 0;
 int	initflag = 1;
 int	*option[] = {
-	&cflag,	&dflag,	&eflag,	&iflag,	&prflag,&tflag,	&vflag,
+	&cflag,	&dflag,	&eflag,	&iflag,	&prflag, &tflag, &vflag,
 };
 char lchars[] = "pPlL";
 char	opcs[] = "cdeipTv";
@@ -212,10 +212,6 @@ main(int argc, char **argv)
 		case 'e':
 		/* Exit on error? */
 			eflag++;
-			break;
-		case 't':
-		/* Show stack traces? */
-			tflag++;
 			break;
 		case 'x':
 			if(argc == 2)
