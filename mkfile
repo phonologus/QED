@@ -1,6 +1,8 @@
 CFLAGS=-ansi -I. -O -D_POSIX_SOURCE -fno-builtin
 CC=gcc
 
+PROG=qed
+
 HDRS=\
   vars.h \
   qed.h
@@ -27,6 +29,7 @@ OBJS=${MODULES:%=%.o}
   $CC -c $CFLAGS $prereq
 
 all:V: a.out
+	mv a.out $PROG
 
 a.out:	$OBJS 
 	$CC $prereq
