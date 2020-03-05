@@ -36,19 +36,18 @@ OBJS=${MODULES:%=%.o}
 	9 troff -man $stem | tr2post | psfonts | ps2pdf - > $target
 
 all:V: a.out
-	mv a.out $PROG
 
 a.out:	$OBJS 
 	$CC $prereq
 
 clean:V:
-	rm -f *.o a.out $PROG *.pdf doc/*.pdf
+	rm -f *.o a.out *.pdf doc/*.pdf
 
 doc:V:  doc/tutorial.pdf $PROG.1.pdf
 
-install:V: $PROG $QDIR $PROG.1 doc
+install:V: all $QDIR $PROG.1 doc
 	mkdir -p $INSTALLD/bin $INSTALLD/man/man1 $INSTALLD/lib $INSTALLD/doc
-	cp $PROG $INSTALLD/bin/
+	cp a.out $INSTALLD/bin/$PROG
 	cp $PROG.1 $INSTALLD/man/man1/
 	cp $QDIR/* $INSTALLD/lib/
 	cp $PROG.1.pdf doc/tutorial.pdf $INSTALLD/doc/
