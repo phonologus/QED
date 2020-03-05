@@ -1,139 +1,27 @@
 Notes on porting QED -- sj, 27 Feb 2020.
+=======
 
-Turning from K&R to ansi function declarations reasonably
-straightforward.
+5 March 2020.
 
-public vs private functions and globals need to be teased
-apart, and in the first instance at least, put into headers.
+Compiles and runs. Still too many fixed memory limits,
+and the sbrk() allocation needs to move to malloc(). Nevertheless,
+it seems to run fine within these limits.
 
-As in the v10 version of ed.c, there is
-a blkio() function which wraps either write() or read().
-Unfortunately in POSIX systems, write() and read() have
-(slightly) different prototypes, so passing a pointer to
-either in blkio() is impossible to do cleanly. My solution
-in ed.c was simply to split blkio() into blkread() and
-blkwrite(). Type-safe, at the cost of a duplicated function body.
+Most of the historical artifacts from Rob Pike's shar-file (lib)
+have been unceremoniously discarded (though they are recoverable
+through git, and the lib file itself).
 
-There are some hairy pointer <-> int casts, which of course fail
-hard on x86-64.
+The original lib file is retained.
 
-Terminal I/O is still stuck in v6-land with sgtty code. Other
-pre-Standard Library anachronisms (signals, memory allocation)
-need porting to std*, and ultimately, Plan9.
+The read.me is retained as a nod to this history.
+It contains some unimplemented ideas which might be worth exploring.
 
-Character logic should eventually be ported to Runes (use Plan9 libbio).
+One day.
+
+The support/qedbufs.c program has not been ported yet.
 
 =======
-Memory map:
 
-char bname[NBUFS] = "abcde ... XYZ{|}~";  /* NBUFS = 56 */
+Character logic should eventually be ported to Runes.
 
-struct buffer{
-  int *zero;
-  int *dot;
-  int *dol;
-  char cflag;
-  char gmark;
-} buffer[NBUFS];
-
-struct string{
-  int len;
-  char *str;   /* points into strarea[] */
-} string[NBUFS + NBUFS + 4 +1 == NSTRING+1];
-
-Because of the save and restore routines, the string and
-buffer pointers really should be indices, so that the structs
-become position-independent:
-
-struct pic_string{
-  int len;
-  int str;   /* index into strarea[] */
-} string[NBUFS + NBUFS + 4 +1 == NSTRING+1];
-
-This entails that any assignment
-
-  char *cp = foo.str
-
-becomes
-
-  char *cp = &strarea[foo.str]
-
-and
-
-  foo.str = cp
-
-becomes
-
-  foo.str = (cp - &strarea[0]) / sizeof(char*)
-
-and
-
-  *cp++
-
-becomes
-
-  strarea[cp++]
-
-string[0..NBUFS-1] : the registers
-string[NBUFS..2*(NBUFS-1)] : the file names : FILE(i)
-string[(2*NBUFS)..(2*NBUFS)+2]: saved pattern and its RHS : SAVPAT, SAVRHS
-string[(2*NBUFS)+3]: special browsing register : BROWSE
-string[(2*NBUFS)+4]: a file buffer : FILEBUF
-string[NSTRING].str : pointer to next free position (in strarea[])
-
-So, logically:
-
-struct stringstore{
-  struct string register[NBUFS];
-  struct string FILE[NBUFS];
-  struct string SAVPAT;
-  struct string SAVRHS;
-  struct string BROWSE;
-  struct string FILEBUF;
-  struct string free;
-};
-
-Presumably not implemented this way because of the multpile indirections, and
-the need to do synchronized pointer arithmetic accross the fields. Could
-this not be handled with array-notation? Presumably yes, but presumably in
-PDP-11-times it added unacceptable overhead? They could even just be declared
-individually as toplevel globals, right? But that possibly makes Save and Restore
-more of a headache.
-
-COUNT, TRUTH and UNIX are specific indices into string for the contents of the
-named special purpose buffers.
-
-char strarea[NSTRCHARS + 2];    /* NSTRCHARS == 1024 */
-
-strarea[0..1] : the null string
-
-struct stack{
-  ...
-} stack[STACKSIZE == 16];
-
-char line[70];
-char linebuf[LBSIZE];
-char genbuf[LBSIZE];
-char tfname[]="/tmp/...";
-int names[NBUFS];
-
-
-====
-blkio
-
-The tmp file (tfile and tfile2), contains the contents of all the buffers,
-stored as 4095 (== MAXBLOCKS) fixed length blocks of 512 (== BLKSIZE).
-
-When user or file input is read into a buffer (line by line), each line is
-stored in the tmpfile aligned to a block, and also copied into core.
-
-/bin/ksh: indent: not found
-
-====
-manual
-
-to typeset the manual:
-
-  9 troff -man qed.1 | tr2post | psfonts | ps2pdf - > qed.pdf
-  9 troff -man doc/tutorial | tr2post | psfonts | ps2pdf - > doc/tutorial.pdf
-
+=======

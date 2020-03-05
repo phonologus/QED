@@ -41,14 +41,14 @@ a.out:	$OBJS
 	$CC $prereq
 
 clean:V:
-	rm -f *.o a.out *.pdf doc/*.pdf
+	rm -f *.o a.out doc/*.pdf
 
-doc:V:  doc/tutorial.pdf $PROG.1.pdf
+doc:V:  doc/tutorial.pdf doc/qed.1.pdf
 
-install:V: all $QDIR $PROG.1 doc
+install:V: all doc $QDIR
 	mkdir -p $INSTALLD/bin $INSTALLD/man/man1 $INSTALLD/lib $INSTALLD/doc
 	cp a.out $INSTALLD/bin/$PROG
-	cp $PROG.1 $INSTALLD/man/man1/
+	cp doc/qed.1 $INSTALLD/man/man1/
 	cp $QDIR/* $INSTALLD/lib/
-	cp $PROG.1.pdf doc/tutorial.pdf $INSTALLD/doc/
+	cp doc/*.pdf $INSTALLD/doc/
 
