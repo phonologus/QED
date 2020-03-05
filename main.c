@@ -109,7 +109,7 @@ restor(void)
 	int fi;
 	int getfile();
 	curbuf = buffer;
-	i = (int)curbuf->zero;
+	i = (long)curbuf->zero;
 	if((t = open(filea(), O_RDONLY)) < 0){
 		lastc = '\n';
 		error('o'|FILERR);
@@ -133,7 +133,7 @@ restor(void)
 	 * Sorry. There is no good reason why we don't have a shiftbuf():
 	 * feel free to write one (but lock before you call it!).
 	 */
-	t = (int)buffer[0].zero;
+	t = (long)buffer[0].zero;
 	if(i != t){
 		i -= t;
 		i >>= 1;
