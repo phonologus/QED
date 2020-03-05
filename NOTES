@@ -127,4 +127,12 @@ stored as 4095 (== MAXBLOCKS) fixed length blocks of 512 (== BLKSIZE).
 When user or file input is read into a buffer (line by line), each line is
 stored in the tmpfile aligned to a block, and also copied into core.
 
+/bin/ksh: indent: not found
+
+====
+manual
+
+to typeset the manual:
+
+  9 troff -man qed.1 | tr2post | psfonts | ps2pdf > qed.pdf
 
