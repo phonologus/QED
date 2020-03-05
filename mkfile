@@ -5,6 +5,8 @@ PROG=qed
 
 INSTALLD=$HOME/opt/$PROG
 
+QDIR=q
+
 HDRS=\
   vars.h \
   qed.h
@@ -42,8 +44,9 @@ debug:  $OBJS debug.o
 clean:V:
 	rm -f *.o a.out $PROG
 
-install:V: $PROG $PROG.1
-	mkdir -p "$INSTALLD/bin" "$INSTALLD/man/man1"
-	cp $PROG "$INSTALLD/bin/$PROG"	
-	cp $PROG.1 "$INSTALLD/man/man1/$PROG.1"	
+install:V: $PROG $PROG.1 $QDIR
+	mkdir -p $INSTALLD/bin $INSTALLD/man/man1 $INSTALLD/lib
+	cp $PROG $INSTALLD/bin/
+	cp $PROG.1 $INSTALLD/man/man1/
+	cp $QDIR/* $INSTALLD/lib/
 
