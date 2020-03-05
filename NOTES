@@ -134,5 +134,6 @@ manual
 
 to typeset the manual:
 
-  9 troff -man qed.1 | tr2post | psfonts | ps2pdf > qed.pdf
+  9 troff -man qed.1 | tr2post | psfonts | ps2pdf - > qed.pdf
+  9 troff -man doc/tutorial | tr2post | psfonts | ps2pdf - > doc/tutorial.pdf
 
