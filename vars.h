@@ -9,7 +9,7 @@ enum {
   FALSE = 0
 } ;
 
-#define	LBSIZE	512
+#define	LBSIZE	4096
 #define RHSIZE	(LBSIZE/4)	/* ed says /2; but that's unreasonable! */
 #define	NBRA	9
 #define	EOF	(-1)
