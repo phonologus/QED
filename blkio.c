@@ -1,7 +1,8 @@
 #include "qed.h"
 
 enum {
-  BLKSIZE = 512,
+  BLKBITS = 11,
+  BLKSIZE = (1 << (1+BLKBITS)),
   MAXBLOCKS = 4095,
   BLMASK = MAXBLOCKS
 };
@@ -30,7 +31,7 @@ char
 
 	lp = lbuf;
 	nl = -((tl<<1) & 0774);
-	tl = (tl>>8) & BLMASK;
+	tl = (tl>>BLKBITS) & BLMASK;
 	do {
 		if (nl<=0) {
 			if (tl==oblock)
@@ -61,7 +62,7 @@ putline(void)
 
 	modified();
 	lp = linebuf;
-	r = (oblock<<8) + (ooff>>1);	/* ooff may be BLKSIZE! */
+	r = (oblock<<BLKBITS) + (ooff>>1);	/* ooff may be BLKSIZE! */
 	op = obuff + ooff;
 	do {
 		if (op >= obuff+BLKSIZE) {
