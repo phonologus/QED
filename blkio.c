@@ -1,11 +1,22 @@
 #include "qed.h"
 
 enum {
-  BLKBITS = 8,
-  BLKSIZE = (1 << (1+BLKBITS)),
-  MAXBLOCKS = 4095,
+  ALIGN = 2,      /* align strings to (2^ALIGN)-byte boundaries in a block */
+  ALIGNMASK = ((1 << ALIGN) - 1),
+  SHUNT = 1, 
+  BLKBITS = 12,
+  BLKSHIFT = BLKBITS-1,
+  BLKSIZE = (1 << BLKBITS),
+  OFFMASK = BLKSIZE - ALIGNMASK,
+  LOTSOFBITS = 12,
+  MAXBLOCKS = ((1 << LOTSOFBITS)-1),
   BLMASK = MAXBLOCKS
 };
+
+#define getblock(a) (((a)>>BLKSHIFT) & BLMASK)
+#define getoffset(a) (((a)<<SHUNT) & OFFMASK)
+#define cookie(b,o) (((b)<<BLKSHIFT) + ((o)>>SHUNT))
+#define align(a) (((a)+ALIGNMASK)&~ALIGNMASK)
 
 char	ibuff[BLKSIZE];
 int	iblock = -1;
@@ -30,8 +41,8 @@ char
 	extern int read();
 
 	lp = lbuf;
-	nl = -((tl<<1) & 0774);
-	tl = (tl>>BLKBITS) & BLMASK;
+        nl = -getoffset(tl);
+        tl = getblock(tl);
 	do {
 		if (nl<=0) {
 			if (tl==oblock)
@@ -62,7 +73,7 @@ putline(void)
 
 	modified();
 	lp = linebuf;
-	r = (oblock<<BLKBITS) + (ooff>>1);	/* ooff may be BLKSIZE! */
+	r = cookie(oblock,ooff);	/* ooff may be BLKSIZE! */
 	op = obuff + ooff;
 	do {
 		if (op >= obuff+BLKSIZE) {
@@ -77,7 +88,7 @@ putline(void)
 			break;
 		}
 	} while (*op++);
-	ooff = (((op-obuff)+3)&~3);
+	ooff = align(op-obuff);
 	return (r);
 }
 
