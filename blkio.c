@@ -1,7 +1,7 @@
 #include "qed.h"
 
 enum {
-  BLKBITS = 11,
+  BLKBITS = 8,
   BLKSIZE = (1 << (1+BLKBITS)),
   MAXBLOCKS = 4095,
   BLMASK = MAXBLOCKS
