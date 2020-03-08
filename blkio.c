@@ -1,5 +1,19 @@
 #include "qed.h"
 
+/*
+ * The offset into the tempfile is stored as a cookie, containing
+ * the block number, the offset, and a mark bit, in a packed
+ * representation.
+ *
+ * Offsets are multiples of 4, so have two spare low-order bits.
+ * The LSB is used as the mark bit
+ *
+ *                        3 2 1 0
+ *                        4 3 2 M
+ *                        ----|
+ * significant bits of offset | mark bit
+ */
+
 enum {
   ALIGN = 2,      /* align strings to (2^ALIGN)-byte boundaries in a block */
   ALIGNMASK = ((1 << ALIGN) - 1),
