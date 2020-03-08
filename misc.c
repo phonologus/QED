@@ -5,6 +5,14 @@
 char tfname[]="/tmp/qxxxxx";
 
 void
+quit(void)
+{
+
+  unlink(tfname);
+  exit(lasterr);
+}
+
+void
 bufinit(int *n)
 {
 	struct buffer *bufp;
@@ -85,8 +93,10 @@ error(int code)
 		} else
 			putchar('\n');
 	}
-	if(eflag && code)
-		exit(code);
+	if(eflag && code) {
+		lasterr=code;
+		quit();
+	}
 	nestlevel = 0;
 	listf = FALSE;
 	gflag = FALSE;

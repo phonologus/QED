@@ -91,6 +91,7 @@ void delall(void);
 
 /* misc.c */
 
+void quit(void);
 void bufinit(int *);
 void chngbuf(int);
 void newbuf(int);

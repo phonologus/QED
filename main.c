@@ -38,7 +38,8 @@ rescue(int sig)
 	copystring("qed.hup");
 	setstring(FILEBUF);
 	savall();
-	exit(SIGHUP);
+	lasterr=SIGHUP;
+	quit();
 }
 
 char *
@@ -156,8 +157,8 @@ interrupt(int sig)
 {
 	signal(SIGINT, interrupt);
 	if(iflag){
-		unlink(tfname);
-		exit(SIGINT);
+		lasterr=SIGINT;
+		quit();
 	}
 	linp=line;
 	putchar('\n');
@@ -290,8 +291,7 @@ main(int argc, char **argv)
 	setjmp(savej);
 	lastttyc = '\n';
 	commands();
-	unlink(tfname);
-	exit(lasterr);
+	quit();
 }
 
 int	noaddr;
@@ -528,8 +528,7 @@ commands(void)
 					string[FILE(bp-buffer)].str[0]))
 					error('q');
 		}
-		unlink(tfname);
-		exit(lasterr);
+		quit();
 	case 'r':
 		newfile(TRUE, SAVEIFFIRST, string[savedfile].str);
 	caseread:

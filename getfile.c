@@ -192,7 +192,8 @@ Unix(char type)
 		if(type == '|'){
 			if(pipe(pipe2) == -1){
 				puts("?|");
-				exit(1);
+				lasterr=1;
+				quit();
 			}
 			if((pid=fork()) == 0){
 				close(1);
@@ -204,11 +205,13 @@ Unix(char type)
 				 * It's ok if we get SIGPIPE here
 				 */
 				display('p');
-				exit(0);
+				lasterr=0;
+				quit();
 			}
 			if(pid == -1){
 				puts("Can't fork\n?!");
-				exit(1);
+				lasterr=1;
+				quit();
 			}
 			close(0);
 			dup(pipe2[0]);
@@ -219,7 +222,8 @@ Unix(char type)
 			execl("/bin/sh", "sh", "-c", unixbuf, 0);
 		else
 			execl("/bin/sh", "sh", 0);
-		exit(-1);
+		lasterr=-1;
+		quit();
 	}
 	if(pid == -1){
 		puts("Can't fork");
