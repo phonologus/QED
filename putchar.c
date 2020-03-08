@@ -59,7 +59,7 @@ display(int lf)
 		if(nf){
 			putlong((ulong)r++);
 			for(i=0; i<NBUFS; i++)
-				if((*a1|01) == names[i]){
+				if((core[a1]|01) == names[i]){
 					putchar('\'');
 					putchar(bname[i]);
 				}
@@ -68,7 +68,7 @@ display(int lf)
 			col = 8;
 			listf = lf;
 		}
-		for(p = getline(*a1++,linebuf);*p;putchar(*p++));
+		for(p = getline(core[a1++],linebuf);*p;putchar(*p++));
 		putchar('\n');
 	}while (a1 <= addr2);
 	dot = addr2;

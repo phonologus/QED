@@ -107,9 +107,9 @@ putfile(void)
 	fp = genbuf;
 	a1 = addr1;
 	if(a1 == zero)
-		*a1++;
+		a1++;
 	while(a1 <= addr2){
-		lp = getline(*a1++, linebuf);
+		lp = getline(core[a1++], linebuf);
 		for(;;){
 			if (--nib < 0) {
 				if(write(io, genbuf, fp-genbuf) < 0)
@@ -245,7 +245,7 @@ Unix(char type)
 		close(pipe1[0]);
 		a=addr1;
 		do{
-			s=getline(*a++, linebuf);
+			s=getline(core[a++], linebuf);
 			do; while(*s++);
 			*--s='\n';
 			if (write(pipe1[1],linebuf,s-(linebuf-1))<0){

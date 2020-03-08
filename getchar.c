@@ -1,6 +1,6 @@
 #include "qed.h"
 
-char digits[] = "0123456789";	/* getnum() & atoi() work even on non-ASCII systems */
+char digits[] = "0123456789";	/* getnum() & qatoi() work even on non-ASCII systems */
 
 int
 getnum(void)
@@ -28,7 +28,7 @@ getsigned(void)
 }
 
 int
-atoi(char *s)
+qatoi(char *s)
 {
 	int n, i;
 	int sign;
@@ -173,7 +173,7 @@ getc(void)
 				if(bbempty){
 					if(lp>bufp->dol)
 						continue;
-					p = getline(*lp, bufbuf);
+					p = getline(core[lp], bufbuf);
 					bbempty = FALSE;
 					for(i=sp->charno; i-- && *p; p++)
 						;
@@ -230,7 +230,7 @@ getc(void)
 					if(numeric){
 						if(!alldigs(string[c].str))
 							error('#');
-						numset(c, atoi(string[c].str)+delta);
+						numset(c, qatoi(string[c].str)+delta);
 					} else
 						strinc(c, delta);
 				}

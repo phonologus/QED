@@ -201,7 +201,7 @@ undo(void)
 {
 	addr_i l;
 
-	for (l=zero+1; l<=dol && (*l|01)!=new_line; l++)
+	for (l=zero+1; l<=dol && (core[l]|01)!=new_line; l++)
 		;
 	if (l>dol)
 		error('u');
@@ -214,12 +214,12 @@ replace(addr_i line,addr_t ptr)
 {
 	addr_t *p;
 
-	*line |= 01;
+	core[line] |= 01;
 	for (p=names; p<names+NBUFS; p++)
-		if (*p == *line)
+		if (*p == core[line])
 			*p = ptr|01;
-	old_line = *line;
-	*line = ptr;
+	old_line = core[line];
+	core[line] = ptr;
 	new_line = ptr | 01;
 }
 
@@ -238,7 +238,7 @@ join(void)
 	}
 	p = genbuf;
 	for (l=addr1; ;) {
-		q = getline(*l++, linebuf);
+		q = getline(core[l++], linebuf);
 		while (*q) {
 			*p++ = *q++;
 			if (p >= genbuf + sizeof genbuf)
@@ -260,7 +260,7 @@ join(void)
 	q=genbuf;
 	do ; while (*p++ = *q++);
 	getsub();
-	*(l=addr1++)=putline();
+	core[(l=addr1++)]=putline();
 	/* if you want marks preserved for join, change the above line to
 	/* the one commented out here.
 	/* problem: undo then undoes the join, but gets it wrong.  Your choice.
@@ -304,7 +304,7 @@ xform(void)
 	if(getchar() != '\n')
 		error('x');
 	for (line=addr1; line<=addr2; line++) {
-		getline(*line, linebuf);
+		getline(core[line], linebuf);
 		change=FALSE;
 		dot=line;
 		for(;;){

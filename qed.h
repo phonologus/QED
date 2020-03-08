@@ -8,6 +8,8 @@
 #include <sys/stat.h>  /* for open(), creat() and symbols for flags */
 #include <fcntl.h>  /* for open(), creat() and symbols for flags */
 
+#include <stdlib.h>
+
 /* types
  * 
  * addr_t : the address cookie
@@ -15,7 +17,8 @@
  *
  */
 
-typedef int addr_t, *addr_i; 
+typedef int addr_t; 
+typedef int addr_i; 
 
 #include "vars.h"
 
@@ -57,7 +60,7 @@ void clean(int);
 
 int getnum(void);
 int getsigned(void);
-int atoi(char *);
+int qatoi(char *);
 int alldigs(char *);
 int getname(int);
 int getaz(int);
@@ -95,7 +98,7 @@ void savall(void);
 void restor(void);
 void interrupt(int);  /* signal handler */
 void commands(void);
-void setreset(addr_i);
+void setreset(int*);
 void delall(void);
 
 /* misc.c */
@@ -170,7 +173,7 @@ void strcompact(void);
 /* subs.c */
 
 void substitute(int, int);
-int compsub(int, addr_i);
+int compsub(int, int*);
 int getsub(void);
 void dosub(void);
 void place(char *, char *, int);

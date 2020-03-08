@@ -4,7 +4,7 @@
 
 jmp_buf	savej;
 
-addr_i *core;
+addr_t *core;
 
 enum {
 	LDCHUNK=512,

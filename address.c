@@ -35,7 +35,7 @@ address(void)
 				error('k');
 			a = zero;
 			c = posn(c, bname);	/* outside loop for efficiency */
-			do a++; while (a<=dol && names[c]!=(*a|01));
+			do a++; while (a<=dol && names[c]!=(core[a]|01));
 			break;
 		case '?':
 			sign = -sign;

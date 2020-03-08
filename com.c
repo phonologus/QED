@@ -90,7 +90,7 @@ looper(addr_i a1,addr_i a2,char *str,int dir)
 	char *p1;
 	char *p2;
 	while(dir ? a1<=a2 : a1>=a2){
-		p2 = getline(*a1, linebuf);
+		p2 = getline(core[a1], linebuf);
 		while(*p2==' ' || *p2=='\t')
 			p2++;
 		if(*p2++=='"' && *p2!=' ' && *p2!='\t' && *p2!='\0') {
@@ -104,7 +104,7 @@ looper(addr_i a1,addr_i a2,char *str,int dir)
 		else
 			--a1;
 	}
-	return((int *)0);
+	return((addr_i)0);
 }
 
 void
@@ -162,7 +162,7 @@ append(int (*f)(void), addr_i a)
 	dot = a;
 	while ((*f)()==0) {
 		if (lastdol>=endcore) {
-			if (sbrk(LDCHUNK*(sizeof *endcore))==(char *)-1)
+			if ((core=(addr_t *)realloc((void *)core,(endcore+LDCHUNK)*sizeof(addr_t)))==(void *)0)
 				error('c');
 			endcore += LDCHUNK;
 		}
@@ -174,8 +174,8 @@ append(int (*f)(void), addr_i a)
 		a2 = a1+1;
 		rdot = ++dot;
 		while (a1 > rdot)
-			*--a2 = *--a1;
-		*rdot = tl;
+			core[--a2] = core[--a1];
+		core[rdot] = tl;
 		if(oneline)
 			break;
 	}
@@ -244,17 +244,17 @@ delete(void)
 	a2 = addr2;
 	if(a1==zero) {
 		if(a2!=zero)
-			*(a1++);
+			a1++;
 		else
 			return;		/* 0,$d on an empty buffer */
 	}
-	*(a2++);
+	a2++;
 	a3 = lastdol;
 	dol -= a2 - a1;
 	lastdol -= a2 - a1;
 	fixbufs(a1-a2);
 	do
-		*a1++ = *a2++;
+		core[a1++] = core[a2++];
 	while (a2<=a3);
 	a1 = addr1;
 	if (a1 > dol)
@@ -295,7 +295,7 @@ numcom(int z)
 	 */
 	sp = &string[z];
 	numeric = alldigs(sp->str);
-	n = atoi(sp->str);
+	n = qatoi(sp->str);
 	for(;;){
 		switch(c=getchar()){
 		default:
@@ -314,7 +314,7 @@ numcom(int z)
 			goto Not_numeric;
 		case 'n':
 			nonzero();
-			l = getline(*addr2,linebuf);
+			l = getline(core[addr2],linebuf);
 			do; while(*l++);
 			n = l - linebuf - 1;
 			goto Not_numeric;
@@ -444,7 +444,7 @@ strcom(int z)
 	case '.':
 		nonzero();
 		startstring();
-		copystring(getline(*addr2, linebuf));
+		copystring(getline(core[addr2], linebuf));
 		setstring(z);
 		break;
 	case '/':
@@ -639,7 +639,7 @@ ncom(int c)
 		if(globflag){
 			cpstr(f, lp);
 			loc2 = 0;	/* ==> we are about to search for 1st time */
-			bufp->gmark = execute((int *)0);
+			bufp->gmark = execute((addr_i)0);
 		} else {
 			*lp = '\0';
 			lp = linebuf;

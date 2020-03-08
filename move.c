@@ -118,11 +118,11 @@ reverse(addr_i a1,addr_i a2)
 {
 	int t;
 	for (;;) {
-		t = *--a2;
+		t = core[--a2];
 		if (a2 <= a1)
 			return;
-		*a2 = *a1;
-		*a1++ = t;
+		core[a2] = core[a1];
+		core[a1++] = t;
 	}
 }
 
@@ -131,6 +131,6 @@ getcopy(void)
 {
 	if (addr1 > addr2)
 		return(EOF);
-	getline(*addr1++, linebuf);
+	getline(core[addr1++], linebuf);
 	return(0);
 }

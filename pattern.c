@@ -262,7 +262,7 @@ execute(addr_i addr)
 	} else {
 		if (addr==zero)
 			return(FALSE);
-		p1 = getline(*addr, linebuf);
+		p1 = getline(core[addr], linebuf);
 	}
 	p2 = expbuf;
 	if (circfl) {

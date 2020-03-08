@@ -27,7 +27,6 @@ int	tfile = -1;
 struct	sgttyb ttybuf = { 0, 0, '\b', '\b', 0};
 */
 char	QEDFILE[]="QEDFILE";
-void	(*pending)(void);
 
 void
 rescue(int sig)
@@ -227,7 +226,6 @@ main(int argc, char **argv)
 
 	if(startup==0)
 		startup = getenv(QEDFILE);
-	fendcore = (int *)sbrk(0);
 	curbuf = &buffer[0];
 	init();
         /* v6 manpage says if signal label is 0, the 
@@ -432,7 +430,7 @@ commands(void)
 		c = getaz(c);
 		setdot();
 		nonzero();
-		names[c] = *addr2 | 01;
+		names[c] = core[addr2] | 01;
 		continue;
 	case 'm':
 		move(FALSE);

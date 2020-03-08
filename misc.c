@@ -1,13 +1,11 @@
 #include "qed.h"
 
-#include <sys/ioctl.h>  /* for FIOCLEX */
-
 char tfname[]="/tmp/qxxxxx";
 
 void
 quit(void)
 {
-
+  free(core);
   unlink(tfname);
   exit(lasterr);
 }
@@ -127,7 +125,8 @@ init(void)
 {
 	char *p;
 	int pid;
-	close(tfile);
+	if(tfile > 0)
+		close(tfile);
 	pid = getpid();
 	for (p = &tfname[11]; p > &tfname[6];) {
 		*--p = (pid%10) + '0';
@@ -136,15 +135,18 @@ init(void)
 	close(creat(tfname, 0600));
 	tfile = open(tfname, O_RDWR);
 	tfile2 = open(tfname, O_RDWR);
-        /* Not needed, as this behaviour is now the default:
-	 * ioctl(tfile, FIOCLEX, 0);
-	 * ioctl(tfile2, FIOCLEX, 0);
-	 */
-	brk(fendcore);
+
+	if ((core=(addr_t *)malloc(sizeof(addr_t)))==(void *)0)
+		error('c');
+
+	/* addr_i 0 needs to be a NULL */
+
+	fendcore=1;
+	endcore=fendcore-1;
+
 	bufinit(fendcore);
 	newbuf(0);
 	lastdol=dol;
-	endcore = fendcore - 2;
 	stackp=stack;
 	stackp->type=TTY;
 }
@@ -183,21 +185,21 @@ abs(int n)
 void
 settruth(int t)
 {
-	if(atoi(string[TRUTH].str) != t)
+	if(qatoi(string[TRUTH].str) != t)
 		numset(TRUTH, t);
 }
 
 void
 setcount(int c)
 {
-	if(atoi(string[COUNT].str) != c)
+	if(qatoi(string[COUNT].str) != c)
 		numset(COUNT, c);
 }
 
 int
 truth(void)
 {
-	return(atoi(string[TRUTH].str) != FALSE);
+	return(qatoi(string[TRUTH].str) != FALSE);
 }
 
 void
