@@ -250,7 +250,7 @@ getsvc(void)
 }
 
 int
-execute(int *addr)
+execute(addr_i addr)
 {
 	char *p1, *p2;
 

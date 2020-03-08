@@ -8,17 +8,26 @@
 #include <sys/stat.h>  /* for open(), creat() and symbols for flags */
 #include <fcntl.h>  /* for open(), creat() and symbols for flags */
 
+/* types
+ * 
+ * addr_t : the address cookie
+ * addr_i : a pointer/index to an addr_t
+ *
+ */
+
+typedef int addr_t, *addr_i; 
+
 #include "vars.h"
 
 /* address.c */
 
-int *address(void);
+addr_i address(void);
 
 /* blkio.c */
 
 void initio(void);
-char *getline(int tl, char *lbuf);
-int putline(void);
+char *getline(addr_t tl, char *lbuf);
+addr_t putline(void);
 void blkio(int b, char *buf, int (*iofcn)());
 
 /* com.c */
@@ -26,10 +35,10 @@ void blkio(int b, char *buf, int (*iofcn)());
 void jump(void);
 void stacktype(int);
 void getlabel(void);
-int* looper(int *,int *,char *,int);
+addr_i looper(addr_i,addr_i,char *,int);
 void search(int);
 void setapp(void);
-int append(int (*)(), int *);
+int append(int (*)(), addr_i);
 void bcom(void);
 void delete(void);
 void allnums(void);
@@ -86,13 +95,13 @@ void savall(void);
 void restor(void);
 void interrupt(int);  /* signal handler */
 void commands(void);
-void setreset(int *);
+void setreset(addr_i);
 void delall(void);
 
 /* misc.c */
 
 void quit(void);
-void bufinit(int *);
+void bufinit(addr_i);
 void chngbuf(int);
 void newbuf(int);
 void fixbufs(int);
@@ -110,14 +119,14 @@ void modified(void);
 
 void move(int);
 void fixup(int, int, int);
-void reverse(int *,int *);
+void reverse(addr_i,addr_i);
 int getcopy(void);
 
 /* pattern.c */
 
 void compile(char);
 int getsvc(void);
-int execute(int *);
+int execute(addr_i);
 int advance(char *, char *);
 int backref(int, char *);
 int alfmatch(char, int);
@@ -161,12 +170,12 @@ void strcompact(void);
 /* subs.c */
 
 void substitute(int, int);
-int compsub(int, int *);
+int compsub(int, addr_i);
 int getsub(void);
 void dosub(void);
 void place(char *, char *, int);
 void undo(void);
-void replace(int *,int);
+void replace(addr_i,int);
 void join(void);
 int next_col(int,char *,int);
 void xform(void);

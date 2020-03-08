@@ -3,7 +3,7 @@
 void
 move(int copyflag)
 {
-	int *adt, *ad1, *ad2;
+	addr_i adt, ad1, ad2;
 	int fb, tb;
 	int todot;
 	int tonewdot;
@@ -114,7 +114,7 @@ fixup(int from,int to,int tot)
 }
 
 void
-reverse(int *a1,int *a2)
+reverse(addr_i a1,addr_i a2)
 {
 	int t;
 	for (;;) {

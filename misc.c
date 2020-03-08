@@ -13,10 +13,10 @@ quit(void)
 }
 
 void
-bufinit(int *n)
+bufinit(addr_i n)
 {
 	struct buffer *bufp;
-	int *fend;
+	addr_i fend;
 	fend=n;
 	for(bufp=buffer;bufp!=buffer+NBUFS;bufp++){
 		bufp->zero=fend;

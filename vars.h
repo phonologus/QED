@@ -4,10 +4,16 @@
 
 jmp_buf	savej;
 
+addr_i *core;
+
+enum {
+	LDCHUNK=512,
+};
+
 enum {
   TRUE = 1,
   FALSE = 0
-} ;
+};
 
 #define	LBSIZE	4096
 #define RHSIZE	(LBSIZE/4)	/* ed says /2; but that's unreasonable! */
@@ -68,9 +74,9 @@ enum {
  * The buffer structure.  All info associated with each buffer stored here
  */
 struct buffer{
-	int *zero;
-	int *dot;
-	int *dol;
+	addr_i zero;
+	addr_i dot;
+	addr_i dol;
 	char cflag;
 	char gmark;
 }buffer[NBUFS];
@@ -145,14 +151,14 @@ char	line[70];
 char	*linp;
 int	savedfile;
 char	linebuf[LBSIZE];
-int	*zero;
-int	*dot;
-int	*dol;
-int 	*lastdol;
-int	*endcore;
-int	*fendcore;
-int	*addr1;
-int	*addr2;
+addr_i	zero;
+addr_i	dot;
+addr_i	dol;
+addr_i	lastdol;
+addr_i	endcore;
+addr_i	fendcore;
+addr_i	addr1;
+addr_i	addr2;
 char	genbuf[LBSIZE];
 char	*linebp;
 int	ninbuf;
@@ -195,7 +201,7 @@ int	oneline;
 extern char	lchars[]; /*= "pPlL"*/
 int	bbempty;	/* whether getc's internal buffer buffer needs reloading */
 char	*getline();
-int	*address();
+addr_i	address();
 char	*getenv();
 long	lseek();
 char	*sbrk();

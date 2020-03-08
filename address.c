@@ -1,10 +1,11 @@
 #include "qed.h"
 
-int *
+addr_i
 address(void)
 {
-	int sign, *a;
-	int opcnt, nextopand, *b;
+	addr_i a, b;
+	int sign;
+	int opcnt, nextopand;
 	int c;
 
 	nextopand = -1;

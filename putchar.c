@@ -42,7 +42,7 @@ puts(char *sp)
 void
 display(int lf)
 {
-	int *a1;
+	addr_i a1;
 	int r;
 	char *p;
 	int i;

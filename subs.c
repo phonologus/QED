@@ -12,7 +12,7 @@ substitute(int inglob, int reg)
 	int n, m;
 	char *p;
 	char *q;
-	int *a1;
+	addr_i a1;
 	int gsubf;
 	extern int getsub();
 	int t, count, autop=0;
@@ -47,7 +47,7 @@ substitute(int inglob, int reg)
 				/* can't match same location twice */
 				if (loc1==loc2)
 					loc2++;
-			} while (execute((int *)0));
+			} while (execute((addr_t)0));
 			if (m<=0) {
 				inglob |= TRUE;
 				p=next_old;
@@ -199,7 +199,7 @@ place(char *l1, char *l2, int ucase)
 void
 undo(void)
 {
-	int *l;
+	addr_i l;
 
 	for (l=zero+1; l<=dol && (*l|01)!=new_line; l++)
 		;
@@ -210,9 +210,9 @@ undo(void)
 }
 
 void
-replace(int *line,int ptr)
+replace(addr_i line,addr_t ptr)
 {
-	int *p;
+	addr_t *p;
 
 	*line |= 01;
 	for (p=names; p<names+NBUFS; p++)
@@ -226,7 +226,7 @@ replace(int *line,int ptr)
 void
 join(void)
 {
-	int *l;
+	addr_i l;
 	char *p, *q;
 	int rep;
 	int autop=FALSE;
@@ -297,7 +297,8 @@ xform(void)
 {
         union pint_t uc;
 	char *i, *m, *o;
-	int *line, insert, change, ic, mc, c;
+	addr_i line;
+	int insert, change, ic, mc, c;
 	char *tf, *tl;
 
 	if(getchar() != '\n')

@@ -100,7 +100,7 @@ getfile(void)
 void
 putfile(void)
 {
-	int *a1;
+	addr_i a1;
 	char *fp, *lp;
 	int nib;
 	nib = LBSIZE;
@@ -136,14 +136,15 @@ Unix(char type)
         union pint_t uc;
 	int pid, rpid;
 	char *s;
-	int *a, c;
+	int c;
+	addr_i a;
 	int getsvc();
 	void (*onpipe)(int);
 	int retcode;
 	char unixbuf[512];
 	int	pipe1[2];
 	int	pipe2[2];
-	int	*a1, *a2, *ndot;
+	addr_i a1, a2, ndot;
 	startstring();	/* for the \zU register */
 	if(type == '!')
 		setnoaddr();

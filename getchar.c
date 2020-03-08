@@ -113,7 +113,7 @@ getc(void)
 	int c;
 	struct buffer *bufp;
 	struct stack *sp;
-	int *lp;
+	addr_i lp;
 	int numeric;
 	int delta;
 	int literal;

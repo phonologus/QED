@@ -300,7 +300,7 @@ void
 commands(void)
 {
         union pint_t uc;
-	int *a;
+	addr_i a;
 	int c, lastsep;
 	int getfile(), gettty();
 	int r;

@@ -84,8 +84,8 @@ getlabel(void)
 		error('y');
 }
 
-int *
-looper(int *a1,int *a2,char *str,int dir)
+addr_i
+looper(addr_i a1,addr_i a2,char *str,int dir)
 {
 	char *p1;
 	char *p2;
@@ -110,7 +110,7 @@ looper(int *a1,int *a2,char *str,int dir)
 void
 search(int forward)
 {
-	int *a1;
+	addr_i a1;
 	struct buffer *bufp;
 	bufp = stackp->bufptr;
 	if(forward){
@@ -150,15 +150,12 @@ setapp(void)
 		error('x');
 }
 
-enum {
-  LDCHUNK = 512
-};
-
 int
-append(int (*f)(void), int *a)
+append(int (*f)(void), addr_i a)
 {
-	int *a1, *a2, *rdot;
-	int nline, tl;
+	addr_i a1, a2, rdot;
+        addr_t tl;
+	int nline;
 
 	appflag++;
 	nline = 0;
@@ -201,7 +198,7 @@ bcom(void)
 {
 	int dir, n;
 	int psize;
-	int *olddot=addr2;	/* for b. */
+	addr_i olddot=addr2;	/* for b. */
 	dir=1;
 	if((peekc=getchar())!='\n'){	/* really nextchar() */
 		if (peekc=='-' || peekc=='+' || peekc=='.') {
@@ -241,7 +238,7 @@ bcom(void)
 void
 delete(void)
 {
-	int *a1, *a2, *a3;
+	addr_i a1, a2, a3;
 	setdot();
 	a1 = addr1;
 	a2 = addr2;

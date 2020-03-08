@@ -30,7 +30,7 @@ until(int nfl, int n)
 void
 global(int k)
 {
-	int *a1;
+	addr_i a1;
 	char globuf[GBSIZE];
 	struct buffer *startbuf;
 
