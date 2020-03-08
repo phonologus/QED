@@ -104,12 +104,11 @@ savall(void)
 void
 restor(void)
 {
-	int i, t;
+	int t;
 	struct buffer *b;
 	int fi;
 	int getfile();
 	curbuf = buffer;
-	i = (long)curbuf->zero;
 	if((t = open(filea(), O_RDONLY)) < 0){
 		lastc = '\n';
 		error('o'|FILERR);
@@ -128,21 +127,6 @@ restor(void)
 		error('R');
 	close(fi);
 	shiftstring(UP);
-	/*
-	 * This code is incredibly sleazy and machine dependent for the 11.
-	 * Sorry. There is no good reason why we don't have a shiftbuf():
-	 * feel free to write one (but lock before you call it!).
-	 */
-	t = (long)buffer[0].zero;
-	if(i != t){
-		i -= t;
-		i >>= 1;
-		for(b = buffer;b <= &buffer[NBUFS-1];b++){
-			b->zero += i;
-			b->dot += i;
-			b->dol += i;
-		}
-	}
 	newbuf(0);
 	error(0);	/* ==> error, but don't print anything. */
 }
@@ -195,6 +179,8 @@ main(int argc, char **argv)
 	}
 	/* initialize strfree */
 	string[NSTRING].str = strchars;
+	/* initialize core */
+	core=(addr_t*)0;
 	while(argc > 1 && **argv=='-'){
 		switch(argv[0][1]){
 		casedefault:
@@ -228,16 +214,6 @@ main(int argc, char **argv)
 		startup = getenv(QEDFILE);
 	curbuf = &buffer[0];
 	init();
-        /* v6 manpage says if signal label is 0, the 
-         * process is terminated, and this is the default action.
-         * If the label is odd, the signal is ignored.
-         * if even and >0 then it is a signal handler.
-         *
-	 *	if (((long)onhup & 01) == 0)
-	 *		signal(SIGHUP, rescue);
-         *	if (((long)onintr & 01) == 0)
-         *		signal(SIGINT, interrupt);
-         */
 	if(onhup != SIG_IGN)
 		signal(SIGHUP, rescue);
 	if(onintr != SIG_IGN)

@@ -135,15 +135,17 @@ init(void)
 	close(creat(tfname, 0600));
 	tfile = open(tfname, O_RDWR);
 	tfile2 = open(tfname, O_RDWR);
-
-	if ((core=(addr_t *)malloc(sizeof(addr_t)))==(void *)0)
+	/* (re-)initialize core.
+	 * core was initialized to 0 on program entry.
+	 * init() is also called by restore(), possibly with
+	 * a core already allocated, so we need to free it
+	 * before re-initializing.
+	 */
+	free(core);
+	if ((core=(addr_t*)malloc(sizeof(addr_t)))==(addr_t *)0)
 		error('c');
-
-	/* addr_i 0 needs to be a NULL */
-
 	fendcore=1;
 	endcore=fendcore-1;
-
 	bufinit(fendcore);
 	newbuf(0);
 	lastdol=dol;
