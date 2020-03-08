@@ -1,6 +1,8 @@
 #include "qed.h"
 
 /*
+ * addr_t type:
+ *
  * The offset into the tempfile is stored as a cookie, containing
  * the block number, the offset, and a mark bit, in a packed
  * representation.
@@ -46,8 +48,8 @@ initio(void)
 	ooff = 0;
 }
 
-char
-*getline(int tl, char *lbuf)
+char *
+getline(addr_t tl, char *lbuf)
 {
 	char *bp, *lp;
 	int nl;
@@ -78,11 +80,11 @@ char
 	return(lbuf);
 }
 
-int
+addr_t
 putline(void)
 {
 	char *op, *lp;
-	int r;
+	addr_t r;
 	extern int write();
 
 	modified();
