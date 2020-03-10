@@ -66,7 +66,6 @@ getline(addr_t tl, char *lbuf)
 			else {
 				bp = ibuff;
 				if (tl!=iblock) {
-					iblock = -1;	/* signal protection */
 					blkio(tl, bp, read);
 					iblock = tl;
 				}
