@@ -19,9 +19,9 @@
 enum {
   ALIGN = 2,      /* align strings to (2^ALIGN)-byte boundaries in a block */
   ALIGNMASK = ((1 << ALIGN) - 1),
-  SHUNT = 1, 
+  SHUNT = (ALIGN - 1),    /* mark bit requires 1 bit, the rest are redundant */
   BLKBITS = 12,
-  BLKSHIFT = BLKBITS-1,
+  BLKSHIFT = BLKBITS-SHUNT,
   BLKSIZE = (1 << BLKBITS),
   OFFMASK = BLKSIZE - ALIGNMASK,
   LOTSOFBITS = 12,
