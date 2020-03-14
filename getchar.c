@@ -276,10 +276,10 @@ getc(void)
 int
 ttyc(void)
 {
-	char c;
+	unsigned char c;
 	initflag = 0;
 	if(read(0, &c, 1) > 0)
-		lastttyc = c&0177;
+		lastttyc = c;
 	else
 		lastttyc = EOF;
 	return(lastttyc);
