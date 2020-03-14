@@ -93,10 +93,10 @@ savall(void)
 	exfile();
 	if((fi = creat(fileb(), 0644)) < 0)
 		error('o'|FILERR);
-	write(fi, (char *)buffer, sizeof buffer);
-	write(fi, strarea, sizeof strarea);
+	write(fi, (byte *)buffer, sizeof buffer);
+	write(fi, (byte *)strarea, sizeof strarea);
 	shiftstring(DOWN);
-	write(fi, (char *)string, sizeof string);
+	write(fi, (byte *)string, sizeof string);
 	shiftstring(UP);
 	close(fi);
 }
@@ -121,9 +121,9 @@ restor(void)
 	exfile();
 	if((fi = open(fileb(),O_RDONLY)) < 0)
 		error('o'|FILERR);
-	if(read(fi,(char *)buffer,sizeof buffer) != sizeof buffer
-		|| read(fi, strarea, sizeof strarea) != sizeof strarea
-		|| read(fi, (char *)string, sizeof string) != sizeof string)
+	if(read(fi,(byte *)buffer,sizeof buffer) != sizeof buffer
+		|| read(fi, (byte *)strarea, sizeof strarea) != sizeof strarea
+		|| read(fi, (byte *)string, sizeof string) != sizeof string)
 		error('R');
 	close(fi);
 	shiftstring(UP);
