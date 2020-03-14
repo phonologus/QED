@@ -276,13 +276,34 @@ getc(void)
 int
 ttyc(void)
 {
-	unsigned char c;
+	byte b[4];
+	byte *c;
+
+	c=&b[0];
+
 	initflag = 0;
-	if(read(0, &c, 1) > 0)
-		lastttyc = c;
-	else
-		lastttyc = EOF;
-	return(lastttyc);
+
+	if(read(0,c,1)<=0)
+		return lastttyc=EOF;
+
+	if(convnutf(c,&lastttyc,1))
+		return lastttyc;      /* unicode ascii */
+
+	/*
+	 * lastttyc should now hold the number of extra bytes needed,
+         * or 0 if there was a decoding error.
+	 */
+
+	if(0==lastttyc)
+		return lastttyc=EOF;  /* decoding error */
+
+	if(read(0,++c,lastttyc)<=0)   /* read in required extra bytes of utf */
+		return lastttyc=EOF;
+
+	if(convutf(--c,&lastttyc))
+		return lastttyc;
+
+	return lastttyc=EOF;
 }
 
 int
