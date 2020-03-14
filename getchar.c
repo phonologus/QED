@@ -394,7 +394,7 @@ getquote(char *p, int (*f)())
 		if(peekc == 0)
 			nextchar();	/* prime peekc */
 		if(posn(peekc, p) >= 0) {
-			c = peekc | 0200;
+			c = escape(peekc);
 			(*f)();		/* clear peekc */
 		}
 	}

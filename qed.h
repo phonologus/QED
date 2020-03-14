@@ -12,8 +12,22 @@
 
 #include "utf.h"
 
-/* types
- * 
+/*
+ * escaped chars
+ *
+ */
+
+enum {
+  ESC=0200,
+  UNESC=ESC-1
+};
+
+#define escape(c) ((c)|ESC)
+#define escaped(c) ((c)&ESC)
+#define unescape(c) ((c)&UNESC)
+
+/* types 
+ *
  * addr_t : the address cookie
  * addr_i : a pointer/index to an addr_t
  *

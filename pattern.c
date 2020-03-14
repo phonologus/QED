@@ -88,30 +88,30 @@ compile(char eof)
 		penultep = lastep;
 		lastep = ep;
 
-		if(c != (eof|0200)) switch (c) {
-		case '('|0200:
+		if(c != escape(eof)) switch (c) {
+		case escape('('):
 			if (nbra >= NBRA)
 				goto cerror;
 			*bracketp++ = nbra;
 			*ep++ = CBRA;
 			*ep++ = nbra++;
 			continue;
-		case ')'|0200:
+		case escape(')'):
 			if (bracketp <= bracket)
 				goto cerror;
 			*ep++ = CKET;
 			*ep++ = *--bracketp;
 			continue;
-		case '{'|0200:
+		case escape('{'):
 			*ep++ = CBOI;
 			continue;
-		case '}'|0200:
+		case escape('}'):
 			*ep++ = CEOI;
 			continue;
-		case '_'|0200:
+		case escape('_'):
 			*ep++ = CSPACE;
 			continue;
-		case '!'|0200:
+		case escape('!'):
 			*ep++ = CFUNNY;
 			continue;
 		case '<':
@@ -197,7 +197,7 @@ compile(char eof)
 					c=getsvc();
 					if (c == EOF || c == '\n' || c<=ep[-1])
 						goto cerror;
-					ep[-1] |= 0200;
+					ep[-1] |= ESC;
 					*ep++ = c;
 					lastc = getsvc();	/* prime lastc */
 				} else if (dflag&&'a'<=(c|' ')&&(c|' ')<='z')
@@ -220,12 +220,12 @@ compile(char eof)
 		}
 		/* if fell through switch, match literal character */
 		/* Goddamned sign extension! */
-		if ((c&0200) && (c&0177)>='1' && (c&0177)<='9') {
+		if (escaped(c) && unescape(c)>='1' && unescape(c)<='9') {
 			*ep++ = CBACK;
-			*ep++ = c-('1'|0200);
+			*ep++ = c-escape('1');
 			continue;
 		}
-		c &= ~0200;
+		c &= ~ESC;
 		if(dflag && c|' '>='a' && c|' '<='z'){
 			*ep++ = CCL;
 			*ep++ = 3;
@@ -461,8 +461,8 @@ cclass(char *set, int c, int f)
 		return(0);
 	n = *set++;
 	while (--n) {
-		if (*set&0200) {
-			if ((*set++ & 0177) <= c) {
+		if (escaped(*set)) {
+			if (unescape(*set++) <= c) {
 				if (c <= *set++)
 					return(f);
 			} else
