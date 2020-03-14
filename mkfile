@@ -28,7 +28,8 @@ MODULES=\
   putchar \
   setaddr \
   string \
-  subs 
+  subs \
+  utf
 
 DOCS=\
   doc/qed.1\

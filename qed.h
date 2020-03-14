@@ -10,6 +10,8 @@
 
 #include <stdlib.h>
 
+#include "utf.h"
+
 /* types
  * 
  * addr_t : the address cookie
