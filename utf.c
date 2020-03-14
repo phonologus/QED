@@ -5,6 +5,14 @@
 #include "utf.h"
 
 /*
+ * These routines avoid using arithmetic operations, relying
+ * on bit operations and tests for equality for the conversions.
+ *
+ * Arithmetic is used only in the book-keeping for the *n* versions.
+ *
+ */
+
+/*
  * convnutf() returns a pointer to the next byte after a valid utf
  * encoding at p, or (char*)0 if p does not point to a valid utf
  * encoding. It additionally puts the decoded value into
@@ -129,13 +137,13 @@ convnucode(unsigned int c, unsigned char *p, int n)
 {
   *p='\0';
 
-  if(c<(1<<8))
+  if(0==(c>>7))
     goto ascii;  
-  if(c<(1<<12))
+  if(0==(c>>11))
     goto twobytes;
-  if(c<(1<<16))
+  if(0==(c>>16))
     goto threebytes;
-  if(c<(1<<21))
+  if(0==(c>>21))
     goto fourbytes;
 
   /* too big */
