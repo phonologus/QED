@@ -166,7 +166,7 @@ Unix(char type)
 	/*
 	 * Use c not *s as EOF and getchar() are int's
 	 */
-	for(s=unixbuf;(c=getquote("\n", getsvc))!='\n' && c!=EOF;*s++=(c&0177)){
+	for(s=unixbuf;(c=getquote("\n", getsvc))!='\n' && c!=EOF;*s++=unescape(c)){
 		if(s>=unixbuf+512)
 			error('l');
 	}
