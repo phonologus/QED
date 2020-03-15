@@ -13,14 +13,13 @@
  */
 
 /*
- * convnutf() returns a pointer to the next byte after a valid utf
- * encoding at p, or (char*)0 if p does not point to a valid utf
+ * convnutf() returns the number of bytes of valid utf
+ * dencoded at p, or 0 if p does not point to a valid utf
  * encoding. It additionally puts the decoded value into
  * the integer reference z, or 0 if utf is not valid.
  *
  * If the sequence exceeds n bytes, and hasn't yet validated,
- * (char*)0 is returned, and z is set to the number
- * of missing bytes.
+ * 0 is returned, and z is set to the number of missing bytes.
  *
  * convnucode() is the inverse operation, taking a unicode
  * codepoint c, and storing the utf8 representation in (at most)
@@ -32,12 +31,13 @@
  * 
  */
 
-unsigned char *
+int
 convnutf(unsigned char *p, int *z, int n)
 {
-  int c,u,i;
+  int c,u,i,r;
 
   i=1;
+  r=1;
 
   if(0>--n)
     goto prem;
@@ -56,18 +56,21 @@ convnutf(unsigned char *p, int *z, int n)
   u&=~0100;
   c <<= 1; 
   i++;
+  r++;
   if (0==(c & 0200))
     goto two;             /* 110bbbbb : start of two-byte sequence */
 
   u&=~040;
   c <<= 1; 
   i++;
+  r++;
   if (0==(c & 0200))
     goto three;           /* 1110bbbb : start of three-byte sequence */
 
   u&=~020;
   c <<= 1; 
   i++;
+  r++;
   if (0==(c & 0200))
     goto four;            /* 11110bbb : start of four-byte sequence */
 
@@ -101,7 +104,7 @@ three:
   if (0==(c & 0200))
     goto two;             /* 10bbbbbb : aux byte in expected place */
 
-  return 0;               /* 11bbbbbb : start byte in wrong place */
+  goto invalid;               /* 11bbbbbb : start byte in wrong place */
 
 two:
   if(0>--n)
@@ -120,15 +123,15 @@ two:
 
 prem:
   *z=i;
-  return (char*)0;
+  return 0;
 
 invalid:
   *z=0;
-  return (char*)0;
+  return 0;
 
 valid:
   *z=u;
-  return p;
+  return r;
 
 }
 

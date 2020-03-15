@@ -12,7 +12,7 @@ enum {
 #define convutf(p,z) convnutf(p,z,utfbytes)
 #define convucode(p,z) convnucode(p,z,utfbytes)
 
-unsigned char *convnutf(unsigned char *, int *, int);
+int convnutf(unsigned char *, int *, int);
 int convnucode(unsigned int,unsigned char *, int);
 
 #endif
