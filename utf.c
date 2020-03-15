@@ -34,16 +34,14 @@
 int
 convnutf(unsigned char *p, int *z, int n)
 {
-  int c,u,i,r;
+  int c,u,r;
 
-  i=1;
   r=1;
 
-  if(0>--n)
+  if(r>n)
     goto prem;
   c=*p++;
   u=c;
-  --i;
 
   if (0==(c & 0200))
     goto valid;             /* 0bbbbbbb : valid ascii */
@@ -55,21 +53,18 @@ convnutf(unsigned char *p, int *z, int n)
 
   u&=~0100;
   c <<= 1; 
-  i++;
   r++;
   if (0==(c & 0200))
     goto two;             /* 110bbbbb : start of two-byte sequence */
 
   u&=~040;
   c <<= 1; 
-  i++;
   r++;
   if (0==(c & 0200))
     goto three;           /* 1110bbbb : start of three-byte sequence */
 
   u&=~020;
   c <<= 1; 
-  i++;
   r++;
   if (0==(c & 0200))
     goto four;            /* 11110bbb : start of four-byte sequence */
@@ -77,11 +72,10 @@ convnutf(unsigned char *p, int *z, int n)
   goto invalid;        /* 11111bbb : invalid range (unless we want five..) */
 
 four:
-  if(0>--n)
+  if(r>n)
     goto prem;
   u <<= 6;
   c=*p++;
-  --i;
   if (0==(c & 0200))
     goto invalid;      /* 0bbbbbbb : ascii character in wrong place */
   u|=(c&~0200);
@@ -92,11 +86,10 @@ four:
   goto invalid;        /* 11bbbbbb : start byte in wrong place */
 
 three:
-  if(0>--n)
+  if(r>n)
     goto prem;
   u <<= 6;
   c=*p++;
-  --i;
   if (0==(c & 0200))
     goto invalid;      /* 0bbbbbbb : ascii character in wrong place */
   u|=(c&~0200);
@@ -107,11 +100,10 @@ three:
   goto invalid;               /* 11bbbbbb : start byte in wrong place */
 
 two:
-  if(0>--n)
+  if(r>n)
     goto prem;
   u <<= 6;
   c=*p++;
-  --i;
   if (0==(c & 0200))
     goto invalid;      /* 0bbbbbbb : ascii character in wrong place */
   u|=(c&~0200);
@@ -122,7 +114,7 @@ two:
   goto invalid;        /* 11bbbbbb : start byte in wrong place */
 
 prem:
-  *z=i;
+  *z=(r-n);
   return 0;
 
 invalid:
