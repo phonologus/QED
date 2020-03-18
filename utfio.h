@@ -8,7 +8,7 @@
 #include "utf.h"
 
 enum {
-  UBSIZE=128
+  UBSIZE=4096
 };
 
 struct utfio_s {
