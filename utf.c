@@ -32,7 +32,7 @@
  */
 
 int
-convnutf(unsigned char *p, int *z, int n)
+convnutf(byte *p, int *z, int n)
 {
   int c,u,r;
 
@@ -40,33 +40,28 @@ convnutf(unsigned char *p, int *z, int n)
 
   if(r>n)
     goto prem;
-  c=*p++;
-  u=c;
+  u=c=*p++;
 
   if (0==(c & 0200))
     goto valid;             /* 0bbbbbbb : valid ascii */
 
   u&=~0200;
-  c <<= 1; 
-  if (0==(c & 0200))
+  if (0==((c<<=1) & 0200))
     goto invalid;      /* 10bbbbbb : error (aux byte in worng place) */
 
   u&=~0100;
-  c <<= 1; 
   r++;
-  if (0==(c & 0200))
+  if (0==((c<<=1) & 0200))
     goto two;             /* 110bbbbb : start of two-byte sequence */
 
   u&=~040;
-  c <<= 1; 
   r++;
-  if (0==(c & 0200))
+  if (0==((c<<=1) & 0200))
     goto three;           /* 1110bbbb : start of three-byte sequence */
 
   u&=~020;
-  c <<= 1; 
   r++;
-  if (0==(c & 0200))
+  if (0==((c<<=1) & 0200))
     goto four;            /* 11110bbb : start of four-byte sequence */
 
   goto invalid;        /* 11111bbb : invalid range (unless we want five..) */
@@ -74,13 +69,11 @@ convnutf(unsigned char *p, int *z, int n)
 four:
   if(r>n)
     goto prem;
-  u <<= 6;
-  c=*p++;
-  if (0==(c & 0200))
+  if (0==((c=*p++) & 0200))
     goto invalid;      /* 0bbbbbbb : ascii character in wrong place */
+  u <<= 6;
   u|=(c&~0200);
-  c <<= 1; 
-  if (0==(c & 0200))
+  if (0==((c<<=1) & 0200))
     goto three;           /* 10bbbbbb : aux byte in expected place */
 
   goto invalid;        /* 11bbbbbb : start byte in wrong place */
@@ -88,13 +81,11 @@ four:
 three:
   if(r>n)
     goto prem;
-  u <<= 6;
-  c=*p++;
-  if (0==(c & 0200))
+  if (0==((c=*p++) & 0200))
     goto invalid;      /* 0bbbbbbb : ascii character in wrong place */
+  u <<= 6;
   u|=(c&~0200);
-  c <<= 1; 
-  if (0==(c & 0200))
+  if (0==((c<<=1) & 0200))
     goto two;             /* 10bbbbbb : aux byte in expected place */
 
   goto invalid;               /* 11bbbbbb : start byte in wrong place */
@@ -102,13 +93,11 @@ three:
 two:
   if(r>n)
     goto prem;
-  u <<= 6;
-  c=*p++;
-  if (0==(c & 0200))
+  if (0==((c=*p++) & 0200))
     goto invalid;      /* 0bbbbbbb : ascii character in wrong place */
+  u <<= 6;
   u|=(c&~0200);
-  c <<= 1; 
-  if (0==(c & 0200))
+  if (0==((c<<=1) & 0200))
     goto valid;             /* 10bbbbbb : final aux byte */
 
   goto invalid;        /* 11bbbbbb : start byte in wrong place */
@@ -128,7 +117,7 @@ valid:
 }
 
 int
-convnucode(unsigned int c, unsigned char *p, int n)
+convnucode(int c, byte *p, int n)
 {
   *p='\0';
 
@@ -150,7 +139,7 @@ ascii:
     return n-1;
   p+=1;
   *p--='\0';
-  *p=(unsigned char)c;
+  *p=(byte)c;
   return 1;
 
 twobytes:
@@ -158,9 +147,8 @@ twobytes:
     return n-2;
   p+=2;
   *p--='\0';
-  *p--=(unsigned char)((0200)|(c&077));
-  c>>=6;
-  *p=(unsigned char)((0300)|(c&077));
+  *p--=(byte)((0200)|(c&077));
+  *p=(byte)((0300)|((c>>6)&077));
   return 2;
 
 threebytes:
@@ -168,11 +156,9 @@ threebytes:
     return n-3;
   p+=3;
   *p--='\0';
-  *p--=(unsigned char)((0200)|(c&077));
-  c>>=6;
-  *p--=(unsigned char)((0200)|(c&077));
-  c>>=6;
-  *p=(unsigned char)((0340)|(c&077));
+  *p--=(byte)((0200)|(c&077));
+  *p--=(byte)((0200)|((c>>=6)&077));
+  *p=(byte)((0340)|((c>>6)&077));
   return 3;
 
 fourbytes:
@@ -180,13 +166,10 @@ fourbytes:
     return n-4;
   p+=4;
   *p--='\0';
-  *p--=(unsigned char)((0200)|(c&077));
-  c>>=6;
-  *p--=(unsigned char)((0200)|(c&077));
-  c>>=6;
-  *p--=(unsigned char)((0200)|(c&077));
-  c>>=6;
-  *p=(unsigned char)((0360)|(c&077));
+  *p--=(byte)((0200)|(c&077));
+  *p--=(byte)((0200)|((c>>=6)&077));
+  *p--=(byte)((0200)|((c>>=6)&077));
+  *p=(byte)((0360)|((c>>6)&077));
   return 4;
   
 }
