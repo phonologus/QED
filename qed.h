@@ -10,7 +10,7 @@
 
 #include <stdlib.h>
 
-#include "utf.h"
+#include "utfio.h"
 
 /*
  * escaped chars
