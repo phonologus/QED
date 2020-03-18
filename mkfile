@@ -29,7 +29,8 @@ MODULES=\
   setaddr \
   string \
   subs \
-  utf
+  utf\
+  utfio
 
 DOCS=\
   doc/qed.1\
