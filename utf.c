@@ -2,7 +2,7 @@
  * UTF
  */
 
-#include "utf.h"
+#include "qed.h"
 
 /*
  * These routines avoid using arithmetic operations, relying

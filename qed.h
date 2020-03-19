@@ -87,7 +87,8 @@ addr_i address(void);
 void initio(void);
 char *getline(addr_t tl, char *lbuf);
 addr_t putline(void);
-void blkio(int b, char *buf, int);
+void blkio_r(int b, char *buf);
+void blkio_w(int b, char *buf);
 
 /* com.c */
 

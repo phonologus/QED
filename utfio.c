@@ -8,14 +8,7 @@
  *
  */
 
-#include <unistd.h>
-
-/*
-extern int read();
-extern int write();
-*/
-
-#include "utfio.h"
+#include "qed.h"
 
 utfio *
 uioinit(int fd, utfio *io)    /* initialise empty buffer */
