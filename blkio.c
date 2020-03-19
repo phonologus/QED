@@ -107,6 +107,8 @@ putline(void)
 void
 blkio_r(int b, char *buf)
 {
+	if(b>=MAXBLOCKS)
+		error('T');
 	if(lseek(tfile, ((long) b) * ((long) BLKSIZE), 0)<0L)
 		error('T');
 	if(read(tfile, buf, BLKSIZE) != BLKSIZE) 
@@ -116,6 +118,8 @@ blkio_r(int b, char *buf)
 void
 blkio_w(int b, char *buf)
 {
+	if(b>=MAXBLOCKS)
+		error('T');
 	if(lseek(tfile, ((long) b) * ((long) BLKSIZE), 0)<0L)
 		error('T');
 	if(write(tfile, buf, BLKSIZE) != BLKSIZE) 
