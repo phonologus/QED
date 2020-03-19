@@ -17,10 +17,13 @@
 
 enum {
   utfbytes=4,
-  utfeof=-1
+  utfeof=-1,
+  utfbsize=4096
 };
 
 typedef unsigned char byte;
+
+byte utf8buff[utfbsize];   /* general purpose buffer for utf8 sequences */
 
 #define convutf(p,z) convnutf(p,z,utfbytes)
 #define convucode(p,z) convnucode(p,z,utfbytes)
@@ -85,17 +88,17 @@ addr_i address(void);
 /* blkio.c */
 
 void initio(void);
-char *getline(addr_t tl, char *lbuf);
+int *getline(addr_t tl, int *lbuf);
 addr_t putline(void);
-void blkio_r(int b, char *buf);
-void blkio_w(int b, char *buf);
+void blkio_r(int b, int *buf);
+void blkio_w(int b, int *buf);
 
 /* com.c */
 
 void jump(void);
 void stacktype(int);
 void getlabel(void);
-addr_i looper(addr_i,addr_i,char *,int);
+addr_i looper(addr_i,addr_i,int *,int);
 void search(int);
 void setapp(void);
 int append(int (*)(), addr_i);
@@ -108,7 +111,7 @@ void numset(int, int);
 void numbuild(int);
 void strcom(int);
 void strinc(int, int);
-int locn(char *, char *);
+int locn(int *, int *);
 void ncom(int);
 void allstrs(void);
 void clean(int);
@@ -117,34 +120,34 @@ void clean(int);
 
 int getnum(void);
 int getsigned(void);
-int qatoi(char *);
-int alldigs(char *);
+int qatoi(int *);
+int alldigs(int *);
 int getname(int);
 int getaz(int);
 int getnm(int, int (*)());
 int getchar(void);
 int getc(void);
 int ttyc(void);
-int posn(char, char *);
+int posn(int, int *);
 void pushinp(int, union pint_t, int);
 void popinp(void);
 int gettty(void);
-int getquote(char *, int (*)());
+int getquote(int *, int (*)());
 
 /* getfile.c */
-int newfile(int, int, char *);
+int newfile(int, int, int *);
 void exfile(void);
 int getfile(void);
 void putfile(void);
-void Unix(char);
+void Unix(int);
 
 /* glob.c */
 
 void until(int, int);
 void global(int);
 void globuf(int);
-void getglob(char[]);
-int exglob(char *, char *);
+void getglob(int[]);
+int exglob(int *, int *);
 
 /* main.c */
 
@@ -184,13 +187,13 @@ int getcopy(void);
 
 /* pattern.c */
 
-void compile(char);
+void compile(int);
 int getsvc(void);
 int execute(addr_i);
-int advance(char *, char *);
-int backref(int, char *);
-int alfmatch(char, int);
-int cclass(char *, int, int);
+int advance(int *, int *);
+int backref(int, int *);
+int alfmatch(int, int);
+int cclass(int *, int, int);
 
 /* putchar.c */
 
@@ -198,11 +201,11 @@ typedef	unsigned long ulong;
 
 void putdn(int);
 void putlong(ulong);
-void putl(char *);
-void puts(char *);
+void putl(int *);
+void puts(int *);
 void display(int);
 void putct(int);
-void putchar(char);
+void putchar(int);
 void flush(void);
 
 /* setaddr.c */
@@ -214,15 +217,15 @@ void nonzero(void);
 
 /* string.c */
 
-int length(char *);
+int length(int *);
 void startstring(void);
 void addstring(int);
 void dropstring(void);
-void cpstr(char *, char *);
+void cpstr(int *, int *);
 void shiftstring(int);
 void clearstring(int);
-void copystring(char *);
-int eqstr(char *, char *);
+void copystring(int *);
+int eqstr(int *, int *);
 void dupstring(int);
 void setstring(int);
 void strcompact(void);
@@ -233,10 +236,10 @@ void substitute(int, int);
 int compsub(int, int*);
 int getsub(void);
 void dosub(void);
-void place(char *, char *, int);
+void place(int *, int *, int);
 void undo(void);
 void replace(addr_i,int);
 void join(void);
-int next_col(int,char *,int);
+int next_col(int,int *,int);
 void xform(void);
 

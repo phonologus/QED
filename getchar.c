@@ -1,6 +1,8 @@
 #include "qed.h"
 
-char digits[] = "0123456789";	/* getnum() & qatoi() work even on non-ASCII systems */
+/* getnum() & qatoi() work even on non-ASCII systems */
+
+int digits[] = {'0','1','2','3','4','5','6','7','8','9','\0'};
 
 int
 getnum(void)
@@ -28,7 +30,7 @@ getsigned(void)
 }
 
 int
-qatoi(char *s)
+qatoi(int *s)
 {
 	int n, i;
 	int sign;
@@ -49,7 +51,7 @@ qatoi(char *s)
 }
 
 int
-alldigs(char *s)
+alldigs(int *s)
 {
 	if(*s == '-')
 		s++;
@@ -59,7 +61,11 @@ alldigs(char *s)
 	return(TRUE);
 }
 
-char bname[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~";
+int bname[] = {'a','b','c','d','e','f','g','h','i','j','k','l','m',
+               'n','o','p','q','r','s','t','u','v','w','x','y','z',
+               'A','B','C','D','E','F','G','H','I','J','K','L','M',
+               'N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
+               '{','|','}','~','\0'};
 
 int
 getname(int e)
@@ -85,9 +91,12 @@ getnm(int e, int (*f)())
 	return(i);
 }
 
-char	special[] = "xgBbBcfFlprzN\"\\'";
+int	special[] = {'x','g','B','b','B','c', 'f','F',
+                     'l','p','r','z','N','"','\\','\0'};
 int	qcount;
 int	afterq;
+
+int utfstr_EOF[]={'[','*','E','O','F','*',']','\0'};
 
 int
 getchar(void)
@@ -99,12 +108,14 @@ getchar(void)
 	c=getc();
 	if(tflag && !peek && stackp!= &stack[0]){
 		if(c==EOF)
-			puts("[*EOF*]");
+			puts(utfstr_EOF);
 		else
 			putchar(c);
 	}
 	return(c);
 }
+
+int utfstr_bfFlprz[]={'b','f','F','l','p','r','z','!','\0'};
 
 int
 getc(void)
@@ -118,8 +129,8 @@ getc(void)
 	int delta;
 	int literal;
 	int i;
-	char *p;
-	static char bufbuf[LBSIZE];
+	int *p;
+	static int bufbuf[LBSIZE];
 
 	if(c = peekc)	/* assignment = */
 		peekc = 0;
@@ -201,7 +212,7 @@ getc(void)
 			i = posn(c, cspec);
 			switch(i) {
 			case LITERAL:
-				if(posn(peekc=getc(), "bfFlprz!") >= 0)
+				if(posn(peekc=getc(), utfstr_bfFlprz) >= 0)
 					literal = TRUE;
 				goto Getc;	/* business as usual... */
 			case QUOTE:
@@ -307,9 +318,9 @@ ttyc(void)
 }
 
 int
-posn(char c, char *s)
+posn(int c, int *s)
 {
-	char *is;
+	int *is;
 	is = s;
 	while(*s)
 		if(c == *s++)
@@ -385,7 +396,7 @@ int
 gettty(void)
 {
 	int c, gf;
-	char *p;
+	int *p;
 	p = linebuf;
 	gf = stackp->type;
 	while((c=getchar()) != '\n') {
@@ -407,7 +418,7 @@ gettty(void)
 }
 
 int
-getquote(char *p, int (*f)())
+getquote(int *p, int (*f)())
 {
 	int c;
 	c = (*f)();

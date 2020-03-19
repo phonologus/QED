@@ -173,3 +173,21 @@ fourbytes:
   return 4;
   
 }
+
+byte *
+utf8string(int *u, byte *b, unsigned int n)
+{
+  while(n--||*u)
+    b+=convucode(*u++,b);
+  *b='\0';
+  return b;
+}
+
+int *
+ucodestring(byte *b, int *u, unsigned int n)
+{
+  while(n--||*b)
+    b+=convutf(b,u++); 
+  *u='\0';
+  return u;
+}

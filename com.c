@@ -74,7 +74,7 @@ stacktype(int t)
 void
 getlabel(void)
 {
-	char *p, c;
+	int *p, c;
 	p = genbuf;
 	for(c=getchar(); posn(c," \"\t\n")<0; c=getchar()){
 		*p++ = c;
@@ -85,10 +85,10 @@ getlabel(void)
 }
 
 addr_i
-looper(addr_i a1,addr_i a2,char *str,int dir)
+looper(addr_i a1,addr_i a2,int *str,int dir)
 {
-	char *p1;
-	char *p2;
+	int *p1;
+	int *p2;
 	while(dir ? a1<=a2 : a1>=a2){
 		p2 = getline(core[a1], linebuf);
 		while(*p2==' ' || *p2=='\t')
@@ -191,7 +191,7 @@ append(int (*f)(void), addr_i a)
 	return(nline);
 }
 
-char bformat = 'p';
+int bformat = 'p';
 
 void
 bcom(void)
@@ -267,7 +267,7 @@ void
 allnums(void)
 {
 	int i;
-	char *p;
+	int *p;
 	setdot();
 	for(i=0; i<NBUFS; i++){
 		p = string[i].str;
@@ -283,10 +283,10 @@ numcom(int z)
 {
 	int n;
 	struct string *sp;
-	char *l;
-	char c;
+	int *l;
+	int c;
 	int numeric;
-	extern char digits[];		/* defined in getchar.c = "0123456789" */
+	extern int digits[];		/* defined in getchar.c = "0123456789" */
 
 	/*
 	 * Must generate error if attempt is made to do arithmetic on
@@ -404,7 +404,7 @@ numbuild(int n)
 void
 strcom(int z)
 {
-	char *q;
+	int *q;
 	int n;
 	int getchar();
 	struct string *sp;
@@ -569,16 +569,16 @@ strcom(int z)
 void
 strinc(int z, int n)
 {
-	char *q;
+	int *q;
 	q=string[z].str;
 	while(*q)
 		*q++ += n;
 }
 
 int
-locn(char *ap, char *aq)
+locn(int *ap, int *aq)
 {
-	char *p, *q, *lastq;
+	int *p, *q, *lastq;
 	p=ap;
 	q=aq;
 	for(;;){
@@ -602,7 +602,7 @@ ncom(int c)
 {
 	struct buffer *bufp;
 	struct buffer *stop;
-	char *f, *lp;
+	int *f, *lp;
 	int globflag;
 
 	setnoaddr();
@@ -654,7 +654,7 @@ void
 allstrs(void)
 {
 	int i;
-	char *p;
+	int *p;
 	setdot();
 	for(i=0; i<NBUFS; i++){
 		p=string[i].str;
@@ -682,9 +682,9 @@ allstrs(void)
 void
 clean(int z)
 {
-	char *s;
-	char *d;
-	char c;
+	int *s;
+	int *d;
+	int c;
 	d = genbuf;
 	for (s = string[z].str; (c = *s) == ' ' || c == '\t'; s++);
 	while (c = *s++) {

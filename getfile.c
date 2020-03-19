@@ -1,5 +1,5 @@
 #include "qed.h"
-char	*nextip;
+int	*nextip;
 long	count;
 /*
  * newfile: read a new file name (if given) from command line.
@@ -17,10 +17,12 @@ long	count;
  *		zeroes count
  */
 
+int utfstr_whitespace[]={' ','\t','\n','\0'};
+
 int
-newfile(int nullerr, int savspec, char *deffile)
+newfile(int nullerr, int savspec, int *deffile)
 {
-	char c;
+	int c;
 
 	count = 0L;
 	cpstr(deffile, genbuf);	/* in case we strcompact() */
@@ -32,7 +34,7 @@ newfile(int nullerr, int savspec, char *deffile)
 		if(c != ' ')
 			error('f');
 		do  c = getchar();  while(c == ' ');
-		while(posn(c, " \t\n") < 0){
+		while(posn(c, utfstr_whitespace) < 0){
 			if(c<' ' || c=='\177')
 				error('f');
 			addstring(c);
@@ -70,7 +72,7 @@ int
 getfile(void)
 {
 	int c;
-	char *lp, *fp;
+	int *lp, *fp;
 	lp = linebuf;
 	fp = nextip;
 	do {
@@ -101,7 +103,7 @@ void
 putfile(void)
 {
 	addr_i a1;
-	char *fp, *lp;
+	int *fp, *lp;
 	int nib;
 	nib = LBSIZE;
 	fp = genbuf;
@@ -130,18 +132,26 @@ putfile(void)
 void (*savint)(int);	/* awful; this is known in error() */
 int savintf = -1;
 
+utfstr_nl[]={'\n','\0'};
+utfstr_shriek[]={'!','\0'};
+utfstr_querypipe={'?','|','\0'};
+utfstr_queryo={'?','o','\0'};
+utfstr_cantforkqueryshriek[]={'C','a','n','\'','t',' ',
+                              'f','o','r','k','\n','?','!','\0'};
+utfstr_cantfork[]={'C','a','n','\'','t',' ', 'f','o','r','k','\0'};
+
 void
-Unix(char type)
+Unix(int type)
 {
         union pint_t uc;
 	int pid, rpid;
-	char *s;
+	int *s;
 	int c;
 	addr_i a;
 	int getsvc();
 	void (*onpipe)(int);
 	int retcode;
-	char unixbuf[512];
+	int	unixbuf[512];
 	int	pipe1[2];
 	int	pipe2[2];
 	addr_i a1, a2, ndot;
@@ -166,7 +176,7 @@ Unix(char type)
 	/*
 	 * Use c not *s as EOF and getchar() are int's
 	 */
-	for(s=unixbuf;(c=getquote("\n", getsvc))!='\n' && c!=EOF;*s++=unescape(c)){
+	for(s=unixbuf;(c=getquote(utfstr_nl, getsvc))!='\n' && c!=EOF;*s++=unescape(c)){
 		if(s>=unixbuf+512)
 			error('l');
 	}
@@ -192,7 +202,7 @@ Unix(char type)
 		}
 		if(type == '|'){
 			if(pipe(pipe2) == -1){
-				puts("?|");
+				puts(utfstr_querypipe);
 				lasterr=1;
 				quit();
 			}
@@ -210,7 +220,7 @@ Unix(char type)
 				quit();
 			}
 			if(pid == -1){
-				puts("Can't fork\n?!");
+				puts(utfstr_cantforkqueryshriek);
 				lasterr=1;
 				quit();
 			}
@@ -220,14 +230,14 @@ Unix(char type)
 			close(pipe2[1]);
 		}
 		if (*unixbuf)
-			execl("/bin/sh", "sh", "-c", unixbuf, 0);
+			execl("/bin/sh", "sh", "-c", utf8string(unixbuf,utf8buff,utfbsize), 0);
 		else
 			execl("/bin/sh", "sh", 0);
 		lasterr=-1;
 		quit();
 	}
 	if(pid == -1){
-		puts("Can't fork");
+		puts(utfstr_cantfork);
 		error('!');
 	}
 	savint = signal(SIGINT, SIG_IGN);
@@ -249,7 +259,7 @@ Unix(char type)
 			do; while(*s++);
 			*--s='\n';
 			if (write(pipe1[1],linebuf,s-(linebuf-1))<0){
-				puts("?o");
+				puts(utfstr_queryo);
 				break;
 			}
 		}while (a<=addr2);
@@ -270,5 +280,5 @@ Unix(char type)
 			error('0');
 	}
 	if(vflag)
-		puts("!");
+		puts(utfstr_shriek);
 }

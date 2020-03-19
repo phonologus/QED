@@ -33,7 +33,7 @@ enum {
  * Special is never used directly - it is just used in tracing
  *	pushinp()/getchar.c can be called with a negative index for cspec[]
  */
-extern char special[]; /*="xgBbBcfFlprzN\"\\'"*/
+extern int special[]; /*="xgBbBcfFlprzN\"\\'"*/
 #define	cspec	(special + 3)
 
 enum {
@@ -64,7 +64,7 @@ enum {
 #define ungetchar(c)	(peekc = (c))
 #define nextchar()	(peekc = getchar())
 
-extern char	bname[]; /*="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~"*/
+extern int	bname[]; /*="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~"*/
 
 enum {
   NBUFS=56
@@ -111,10 +111,10 @@ struct buffer *curbuf;
 #define	FILEBUF	(BROWSE+1)
 struct string{
 	int len;
-	char *str;
+	int *str;
 }string[NSTRING+1];
 #define NSTRCHARS 1024
-char strarea[NSTRCHARS + 2];
+int strarea[NSTRCHARS + 2];
 #define	nullstr strarea
 #define	strchars (&strarea[2])
 #define STACKSIZE 16
@@ -123,16 +123,16 @@ char strarea[NSTRCHARS + 2];
  */
 
 union pint_t{
-  char *p;
+  int *p;
   int i;
 };
  
 struct stack{
-	char type;
-	char literal;
+	int type;
+	int literal;
 	union{
 		struct buffer *u1bufptr;
-		char *u1globp;
+		int *u1globp;
 	}u1;
 	union{
 		int u2lineno;
@@ -147,10 +147,10 @@ struct stack{
 struct stack *stackp;
 int	peekc;
 int	lastc;
-char	line[70];
-char	*linp;
+int	line[70];
+int	*linp;
 int	savedfile;
-char	linebuf[LBSIZE];
+int	linebuf[LBSIZE];
 addr_i	zero;
 addr_i	dot;
 addr_i	dol;
@@ -159,17 +159,17 @@ addr_i	endcore;
 addr_i	fendcore;
 addr_i	addr1;
 addr_i	addr2;
-char	genbuf[LBSIZE];
-char	*linebp;
+int	genbuf[LBSIZE];
+int	*linebp;
 int	ninbuf;
 int	io;
 void	(*onhup)(int);
 void	(*onquit)(int);
 void	(*onintr)(int);
-char	lasterr;
+int	lasterr;
 #define	PAGESIZE	22
 extern	int pagesize;
-extern char bformat;	/* = 'p' */
+extern int bformat;	/* = 'p' */
 int	appflag;
 int	cflag;
 int	cprflag;
@@ -190,18 +190,15 @@ int	lastttyc;
 int	listf;
 int	tfile;
 int	tfile2;
-extern char	tfname[];
-char	*loc1;
-char	*loc2;
+extern int	tfname[];
+int	*loc1;
+int	*loc2;
 int	names[NBUFS];
-char	*braslist[NBRA];
-char	*braelist[NBRA];
+int	*braslist[NBRA];
+int	*braelist[NBRA];
 int	nbra;
 int	oneline;
-extern char	lchars[]; /*= "pPlL"*/
+extern int	lchars[]; /*= "pPlL"*/
 int	bbempty;	/* whether getc's internal buffer buffer needs reloading */
-char	*getline();
+int	*getline();
 addr_i	address();
-char	*getenv();
-long	lseek();
-char	*sbrk();
