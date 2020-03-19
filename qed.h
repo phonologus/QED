@@ -8,9 +8,47 @@
 #include <sys/stat.h>  /* for open(), creat() and symbols for flags */
 #include <fcntl.h>  /* for open(), creat() and symbols for flags */
 
+#include <unistd.h>
 #include <stdlib.h>
 
-#include "utfio.h"
+/*
+ * utf and utfio
+ */
+
+enum {
+  utfbytes=4,
+  utfeof=-1
+};
+
+typedef unsigned char byte;
+
+#define convutf(p,z) convnutf(p,z,utfbytes)
+#define convucode(p,z) convnucode(p,z,utfbytes)
+
+int convnutf(byte *, int *, int);
+int convnucode(int, byte *, int);
+
+
+enum {
+  UBSIZE=4096
+};
+
+struct utfio_s {
+  int fd;          /* attached file */
+  byte b[UBSIZE];  /* raw byte buffer */
+  int i;           /* index of next unused byte, or UBSIZE if empty */
+  int z;           /* index of EOF, or UBSIZE if EOF not yet in buffer */
+};
+
+typedef struct utfio_s utfio;
+
+utfio *uioinit(int, utfio *);
+int uioinitrd(utfio *);
+int uiofill(utfio *);
+int uioflush(utfio *);
+int uioread(utfio *,int *,int);
+int uiowrite(utfio *,int *,int);
+
 
 /*
  * escaped chars
@@ -49,7 +87,7 @@ addr_i address(void);
 void initio(void);
 char *getline(addr_t tl, char *lbuf);
 addr_t putline(void);
-void blkio(int b, char *buf, int (*iofcn)());
+void blkio(int b, char *buf, int);
 
 /* com.c */
 

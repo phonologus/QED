@@ -29,6 +29,11 @@ enum {
   BLMASK = MAXBLOCKS
 };
 
+enum {
+  RD=0,
+  WR=1
+};
+
 #define getblock(a) (((a)>>BLKSHIFT) & BLMASK)
 #define getoffset(a) (((a)<<SHUNT) & OFFMASK)
 #define cookie(b,o) (((b)<<BLKSHIFT) + ((o)>>SHUNT))
@@ -54,8 +59,6 @@ getline(addr_t tl, char *lbuf)
 	char *bp, *lp;
 	int nl;
 
-	extern int read();
-
 	lp = lbuf;
         nl = -getoffset(tl);
         tl = getblock(tl);
@@ -66,7 +69,7 @@ getline(addr_t tl, char *lbuf)
 			else {
 				bp = ibuff;
 				if (tl!=iblock) {
-					blkio(tl, bp, read);
+					blkio(tl, bp, RD);
 					iblock = tl;
 				}
 			}
@@ -84,7 +87,6 @@ putline(void)
 {
 	char *op, *lp;
 	addr_t r;
-	extern int write();
 
 	modified();
 	lp = linebuf;
@@ -93,7 +95,7 @@ putline(void)
 	do {
 		if (op >= obuff+BLKSIZE) {
 			/* delay updating oblock until after blkio succeeds */
-			blkio(oblock, op=obuff, write);
+			blkio(oblock, op=obuff, WR);
 			oblock++;
 			ooff = 0;
 		}
@@ -108,11 +110,22 @@ putline(void)
 }
 
 void
-blkio(int b, char *buf, int (*iofcn)())
+blkio(int b, char *buf, int rw)
 {
-	if (b>=MAXBLOCKS
-	|| (lseek(tfile, ((long) b) * ((long) BLKSIZE), 0)<0L)
-	|| (*iofcn)(tfile, buf, BLKSIZE) != BLKSIZE) {
+	if (b>=MAXBLOCKS)
 		error('T');
+	if(lseek(tfile, ((long) b) * ((long) BLKSIZE), 0)<0L)
+		error('T');
+	switch(rw) {
+		case RD:
+			if(read(tfile, buf, BLKSIZE) != BLKSIZE) 
+				error('T');
+			break;
+		case WR:
+			if(write(tfile, buf, BLKSIZE) != BLKSIZE) 
+				error('T');
+			break;
+		default:
+			error('T');
 	}
 }
