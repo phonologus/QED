@@ -174,20 +174,47 @@ fourbytes:
   
 }
 
+/* dangerous! ...
+
 byte *
-utf8string(int *u, byte *b, unsigned int n)
+utf8string(int *u, byte *b)
 {
-  while(n--||*u)
+  while(*u)
     b+=convucode(*u++,b);
-  *b='\0';
+  *b++='\0';
   return b;
 }
 
 int *
-ucodestring(byte *b, int *u, unsigned int n)
+ucodestring(byte *b, int *u)
 {
-  while(n--||*b)
+  while(*b)
     b+=convutf(b,u++); 
-  *u='\0';
+  *u++='\0';
   return u;
 }
+
+... */
+
+int
+utf8nstring(int *u, byte *b, unsigned int n)
+{
+  int r;
+  r=0;
+  while(r++&&n--&&*u)
+    b+=convucode(*u++,b);
+  *b='\0';
+  return r;
+}
+
+int
+ucodenstring(byte *b, int *u, unsigned int n)
+{
+  int r;
+  r=0;
+  while(r++&&n--&&*b)
+    b+=convutf(b,u++); 
+  *u='\0';
+  return r;
+}
+
