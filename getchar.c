@@ -96,8 +96,6 @@ int	special[] = {'x','g','B','b','B','c', 'f','F',
 int	qcount;
 int	afterq;
 
-int utfstr_EOF[]={'[','*','E','O','F','*',']','\0'};
-
 int
 getchar(void)
 {
@@ -108,14 +106,12 @@ getchar(void)
 	c=getc();
 	if(tflag && !peek && stackp!= &stack[0]){
 		if(c==EOF)
-			puts(utfstr_EOF);
+			puts(utfstr_starEOFstar);
 		else
 			putchar(c);
 	}
 	return(c);
 }
-
-int utfstr_bfFlprz[]={'b','f','F','l','p','r','z','!','\0'};
 
 int
 getc(void)

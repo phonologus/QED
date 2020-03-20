@@ -6,7 +6,7 @@ enum {
   FORWARD = 12
 };
 
-char	jumpcs[] = "0123456789o`'";
+int	jumpcs[] = {'0','1','2','3','4','5','6','7','8','9','o','`','\'','\0'};
 
 void
 jump(void)	/* this should be pronounced with a Swedish accent */
@@ -50,7 +50,7 @@ jump(void)	/* this should be pronounced with a Swedish accent */
 				error('y');
 			if(stackp->type==GLOB){
 				--nestlevel;
-				stackp->globp = "";
+				stackp->globp = utfstr_nul;
 			}else
 				popinp();
 		}
@@ -76,7 +76,7 @@ getlabel(void)
 {
 	int *p, c;
 	p = genbuf;
-	for(c=getchar(); posn(c," \"\t\n")<0; c=getchar()){
+	for(c=getchar(); posn(c,utfstr_whitespacequotes)<0; c=getchar()){
 		*p++ = c;
 		*p = '\0';
 	}
@@ -221,7 +221,7 @@ bcom(void)
 			addr1=zero+1;
 		if(dir==0){
 			display(bformat);
-			puts("^^^^^");
+			puts(utfstr_sharkteeth);
 			addr2++;
 		}
 	}
@@ -345,7 +345,7 @@ numcom(int z)
 			n %= getsigned();
 			goto Numeric;
 		case '!':
-			if(posn(c=getchar(), "=><")<0)
+			if(posn(c=getchar(), utfstr_eqgtlt)<0)
 				error('#');
 			settruth(condition(n, getsigned(), c, 1));
 			goto Numeric;
@@ -429,7 +429,7 @@ strcom(int z)
 	case ':':
 		startstring();
 		for(;;){
-			c = getquote("\n", getchar);
+			c = getquote(utfstr_nl, getchar);
 			if(c=='\n'){
 				setstring(z);
 				return;
@@ -524,7 +524,7 @@ strcom(int z)
 		setstring(z);
 		break;
 	case '!':
-		if(posn(cond=getchar(), "=><")<0)
+		if(posn(cond=getchar(), utfstr_eqgtlt)<0)
 			error('x');
 		negate=TRUE;
 	case '=':
@@ -551,10 +551,10 @@ strcom(int z)
 		}
 	case '{':
 		q = genbuf;
-		while(posn(c=getchar(), "} \t\n")<0 && c!=EOF)
+		while(posn(c=getchar(), utfstr_rbracewhitespace)<0 && c!=EOF)
 			*q++ = c;
 		*q = '\0';
-		if((q=getenv(genbuf)) == 0)
+		if((q=ucode(getenv(utf8(genbuf)))) == 0)
 			clearstring(z);
 		else{
 			startstring();

@@ -9,10 +9,10 @@ void
 until(int nfl, int n)
 {
 	int c, type;
-	char ubuf[GBSIZE];
+	int ubuf[GBSIZE];
 
 	c = getchar();
-	type=posn(c, "ft ");
+	type=posn(c, utfstr_ft_);
 	if(type < 0){
 		if(nfl==0)
 			error('x');
@@ -31,7 +31,7 @@ void
 global(int k)
 {
 	addr_i a1;
-	char globuf[GBSIZE];
+	int globuf[GBSIZE];
 	struct buffer *startbuf;
 
 	if(gflag++)
@@ -51,7 +51,7 @@ global(int k)
 		if (core[a1] & 01) {
 			core[a1] &= ~01;
 			dot = a1;
-			if (!exglob(globuf, "p"))
+			if (!exglob(globuf, utfstr_p))
 				break;
 			chngbuf(startbuf-buffer);
 			a1 = zero;
@@ -65,7 +65,7 @@ void
 globuf(int k)
 {
 	struct buffer *bp;
-	char globbuf[GBSIZE];
+	int globbuf[GBSIZE];
 
 	if (biggflag++)
 		error('G');
@@ -79,20 +79,20 @@ globuf(int k)
 	for (bp=buffer; bp < &buffer[NBUFS]; bp++)
 		if (bp->gmark == k) {
 			chngbuf(bp-buffer);
-			if (!exglob(globbuf, "f\n"))
+			if (!exglob(globbuf, utfstr_fnl))
 				break;
 		}
 	biggflag = FALSE;
 }
 
 void
-getglob(char globuf[])
+getglob(int globuf[])
 {
-	char *gp;
+	int *gp;
 	int c;
 	int getchar();
 	gp = globuf;
-	while ((c = getquote("\n", getchar)) != '\n') {
+	while ((c = getquote(utfstr_nl, getchar)) != '\n') {
 		if (c==EOF)
 			error('x');
 		*gp++ = c & 0177;
@@ -104,12 +104,12 @@ getglob(char globuf[])
 }
 
 int
-exglob(char *cmd, char *dflt)
+exglob(int *cmd, int *dflt)
 {
         union pint_t uc;
 	int nesting;
 
-	uc.p=eqstr(cmd,"\n")? dflt : cmd;
+	uc.p=eqstr(cmd,utfstr_nl)? dflt : cmd;
 	pushinp(GLOB, uc, FALSE);
 	nesting = ++nestlevel;
 	commands();

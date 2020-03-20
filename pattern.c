@@ -4,7 +4,7 @@ enum {
   ESIZE = 128    /* ESIZE-1 must fit in a signed byte */
 };
 
-char	expbuf[ESIZE+4];
+int	expbuf[ESIZE+4];
 int	expgood	/*0*/;		/* flag indicating if compiled exp is good */
 
 enum {
@@ -28,21 +28,22 @@ enum {
 #define STARABLE CBACK
 
 int	circfl;
-char	pmagic[] = "/.$^*+\\()<|>{}[!_123456789";
+int	pmagic[] = {'/','.','$','^','*','+','\\','(',')','<','|','>','{','}',
+                    '[','!','_','1','2','3','4','5','6','7','8','9','\0'};
 
 void
-compile(char eof)
+compile(int eof)
 {
 	int c;
-	char *ep, *penultep;
-	char *lastep, *bracketp, bracket[NBRA];
+	int *ep, *penultep;
+	int *lastep, *bracketp, bracket[NBRA];
 	int getsvc();
 	int getchar();
 	struct{
-		char	*althd;		/* start of code for < ... > */
-		char	*altlast;	/* start of code for last < or | */
-		char	*bpstart;	/* bracketp at start of < and | */
-		char	*bpend;		/* bracketp at end of > or | */
+		int	*althd;		/* start of code for < ... > */
+		int	*altlast;	/* start of code for last < or | */
+		int	*bpstart;	/* bracketp at start of < and | */
+		int	*bpend;		/* bracketp at end of > or | */
 		int	nbstart;	/* nbra at start of < and | */
 		int	nbend;		/* nbra at end of > or | */
 		int	firstalt;	/* is this the first alternative? */
@@ -252,7 +253,7 @@ getsvc(void)
 int
 execute(addr_i addr)
 {
-	char *p1, *p2;
+	int *p1, *p2;
 
 	if (addr==0) {
 		if((p1=loc2) == 0)	/* G command */
@@ -281,10 +282,10 @@ execute(addr_i addr)
 }
 
 int
-advance(char *lp, char *ep)
+advance(int *lp, int *ep)
 {
-	char *curlp;
-	char *althd, *altend;
+	int *curlp;
+	int *althd, *altend;
 
 	for (;;) {
 		curlp = lp;
@@ -433,9 +434,9 @@ advance(char *lp, char *ep)
 }
 
 int
-backref(int i, char *lp)
+backref(int i, int *lp)
 {
-	char *bp;
+	int *bp;
 
 	bp = braslist[i];
 	while (*bp++ == *lp++)
@@ -445,7 +446,7 @@ backref(int i, char *lp)
 }
 
 int
-alfmatch(char c,int tail)
+alfmatch(int c,int tail)
 {
 	return (('a' <= c && c <= 'z')  ||
 		('A' <= c && c <= 'Z')  ||
@@ -454,7 +455,7 @@ alfmatch(char c,int tail)
 }
 
 int
-cclass(char *set, int c, int f)
+cclass(int *set, int c, int f)
 {
 	int n;
 	if (c == 0)

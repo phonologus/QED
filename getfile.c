@@ -17,8 +17,6 @@ long	count;
  *		zeroes count
  */
 
-int utfstr_whitespace[]={' ','\t','\n','\0'};
-
 int
 newfile(int nullerr, int savspec, int *deffile)
 {
@@ -132,14 +130,6 @@ putfile(void)
 void (*savint)(int);	/* awful; this is known in error() */
 int savintf = -1;
 
-utfstr_nl[]={'\n','\0'};
-utfstr_shriek[]={'!','\0'};
-utfstr_querypipe={'?','|','\0'};
-utfstr_queryo={'?','o','\0'};
-utfstr_cantforkqueryshriek[]={'C','a','n','\'','t',' ',
-                              'f','o','r','k','\n','?','!','\0'};
-utfstr_cantfork[]={'C','a','n','\'','t',' ', 'f','o','r','k','\0'};
-
 void
 Unix(int type)
 {
@@ -230,7 +220,7 @@ Unix(int type)
 			close(pipe2[1]);
 		}
 		if (*unixbuf)
-			execl("/bin/sh", "sh", "-c", utf8string(unixbuf,utf8buff,utfbsize), 0);
+			execl("/bin/sh", "sh", "-c", utf8(unixbuf), 0);
 		else
 			execl("/bin/sh", "sh", 0);
 		lasterr=-1;

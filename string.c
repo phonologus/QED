@@ -1,12 +1,12 @@
 #include "qed.h"
 
 #define	strfree string[NSTRING].str
-char *strstart;
+int *strstart;
 
 int
-length(char *s)
+length(int *s)
 {
-	char *t;
+	int *t;
 	if((t=s)==0)
 		return(0);
 	do;while(*t++);
@@ -34,7 +34,7 @@ dropstring(void)
 }
 
 void
-cpstr(char *a, char *b)
+cpstr(int *a, int *b)
 {
 	do;while (*b++ = *a++);
 }
@@ -58,14 +58,14 @@ clearstring(int z)
 }
 
 void
-copystring(char *s)
+copystring(int *s)
 {
 	while(*s)
 		addstring(*s++);
 }
 
 int
-eqstr(char *a, char *b)
+eqstr(int *a, int *b)
 {
 	while(*a)
 		if(*a++ != *b++)
@@ -101,7 +101,7 @@ strcompact(void)
 {
 	struct string *cursor;
 	struct string *thisstr;
-	char *s, *t;
+	int *s, *t;
 	s=strchars;
 	for(;;){
 		t=strchars+NSTRCHARS;

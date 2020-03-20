@@ -1,17 +1,17 @@
 #include "qed.h"
 
-char *next_new;
-char *next_old;
+int *next_new;
+int *next_old;
 int new_line;
 int old_line;
-char rhsbuf[RHSIZE];
+int rhsbuf[RHSIZE];
 
 void
 substitute(int inglob, int reg)
 {
 	int n, m;
-	char *p;
-	char *q;
+	int *p;
+	int *q;
 	addr_i a1;
 	int gsubf;
 	extern int getsub();
@@ -86,18 +86,18 @@ int
 compsub(int subbing, int *autop)
 {
 	int seof, c;
-	char *rhsmagic;
-	char *p;
+	int *rhsmagic;
+	int *p;
 	int getsvc();
 
 	*autop=FALSE;
 	seof = getchar();
 	if(subbing) {
 		compile(seof);
-		rhsmagic = "/&^\n\\123456789";
+		rhsmagic = utfstr_rhsa;
 	}
 	else
-		rhsmagic = "/\\\n";
+		rhsmagic = utfstr_rhsb;
 	rhsmagic[0] = seof;
 	p = rhsbuf;
 	startstring();
@@ -127,7 +127,7 @@ compsub(int subbing, int *autop)
 int
 getsub(void)
 {
-	char *p1, *p2;
+	int *p1, *p2;
 
 	p1 = linebuf;
 	if ((p2 = linebp) == 0)
@@ -141,7 +141,7 @@ void
 dosub(void)
 {
 	int c;
-	char *p;
+	int *p;
 
 	place(next_old,loc1,0);
 	next_old=loc2;
@@ -161,9 +161,9 @@ dosub(void)
 }
 
 void
-place(char *l1, char *l2, int ucase)
+place(int *l1, int *l2, int ucase)
 {
-	char *sp;
+	int *sp;
 	int c;
 
 	sp = next_new;
@@ -228,7 +228,7 @@ void
 join(void)
 {
 	addr_i l;
-	char *p, *q;
+	int *p, *q;
 	int rep;
 	int autop=FALSE;
 
@@ -277,7 +277,7 @@ join(void)
 }
 
 int
-next_col(int col,char *cp,int input)
+next_col(int col,int *cp,int input)
 {
 	int c;
 
@@ -297,10 +297,10 @@ void
 xform(void)
 {
         union pint_t uc;
-	char *i, *m, *o;
+	int *i, *m, *o;
 	addr_i line;
 	int insert, change, ic, mc, c;
-	char *tf, *tl;
+	int *tf, *tl;
 
 	if(getchar() != '\n')
 		error('x');
@@ -373,7 +373,7 @@ xform(void)
 						insert++;
 						break;
 					case '$':
-						i="";
+						i=utfstr_nul;
 						break;
 					case '#':
 						ic=next_col(ic,i++,FALSE);

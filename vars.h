@@ -190,7 +190,7 @@ int	lastttyc;
 int	listf;
 int	tfile;
 int	tfile2;
-extern int	tfname[];
+extern char	tfname[];
 int	*loc1;
 int	*loc2;
 int	names[NBUFS];

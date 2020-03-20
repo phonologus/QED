@@ -30,7 +30,8 @@ MODULES=\
   string \
   subs \
   utf\
-  utfio
+  utfio\
+  utfstr
 
 DOCS=\
   doc/qed.1\

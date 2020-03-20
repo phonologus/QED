@@ -23,7 +23,7 @@ putlong(ulong i)
 }
 
 void
-putl(char *sp)
+putl(int *sp)
 {
 	listf++;
 	puts(sp);
@@ -31,7 +31,7 @@ putl(char *sp)
 }
 
 void
-puts(char *sp)
+puts(int *sp)
 {
 	col = 0;
 	while (*sp)
@@ -44,7 +44,7 @@ display(int lf)
 {
 	addr_i a1;
 	int r;
-	char *p;
+	int *p;
 	int i;
 	int nf;
 	listf = (lf == 'l' || lf == 'L');
@@ -83,9 +83,9 @@ putct(int c)
 }
 
 void
-putchar(char c)
+putchar(int c)
 {
-	char *lp;
+	int *lp;
 
 	lp = linp;
 	if (listf) {

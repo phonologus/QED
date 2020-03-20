@@ -25,7 +25,7 @@ enum {
 typedef unsigned char byte;
 
 byte utf8buff[utfbsize];   /* general purpose buffer for utf8 sequences */
-byte ucbuff[ucbsize];   /* general purpose buffer for unicode sequences */
+int ucbuff[ucbsize];   /* general purpose buffer for unicode sequences */
 
 int convnutf(byte *, int *, int);
 int convnucode(int, byte *, int);
@@ -57,6 +57,39 @@ int uiofill(utfio *);
 int uioflush(utfio *);
 int uioread(utfio *,int *,int);
 int uiowrite(utfio *,int *,int);
+
+/*
+ * unicode string literals
+ */
+
+extern int utfstr_nl[];
+extern int utfstr_nul[];
+
+extern int utfstr_whitespacequotes[];
+extern int utfstr_sharkteeth[];
+extern int utfstr_eqgtlt[];
+extern int utfstr_rbracewhitespace[];
+extern int utfstr_starEOFstar[];
+extern int utfstr_bfFlprz[];
+extern int utfstr_whitespace[];
+extern int utfstr_shriek[];
+extern int utfstr_querypipe[];
+extern int utfstr_queryo[];
+extern int utfstr_cantforkqueryshriek[];
+extern int utfstr_cantfork[];
+extern int utfstr_ft_[];
+extern int utfstr_p[];
+extern int utfstr_fnl[];
+extern int utfstr_colonaq[];
+extern int utfstr_qedhup[];
+extern int utfstr_br[];
+extern int utfstr_queryi[];
+extern int utfstr_suffix[];
+extern int utfstr_bignl[];
+extern int utfstr_slu[];
+extern int utfstr_q[];
+extern int utfstr_rhsa[];
+extern int utfstr_rhsb[];
 
 /*
  * escaped chars
@@ -157,8 +190,8 @@ int exglob(int *, int *);
 /* main.c */
 
 void rescue(int);   /* signal handler */
-char *filea(void);
-char *fileb(void);
+int *filea(void);
+int *fileb(void);
 void savall(void);
 void restor(void);
 void interrupt(int);  /* signal handler */
