@@ -199,22 +199,22 @@ ucodestring(byte *b, int *u)
 int
 utf8nstring(int *u, byte *b, unsigned int n)
 {
-  int r;
-  r=0;
-  while(r++&&n--&&*u)
+  byte *a;
+  a=b;
+  while(n--&&*u)
     b+=convucode(*u++,b);
   *b='\0';
-  return r;
+  return b-a;
 }
 
 int
 ucodenstring(byte *b, int *u, unsigned int n)
 {
-  int r;
-  r=0;
-  while(r++&&n--&&*b)
+  int* v;
+  v=u;
+  while(n--&&*b)
     b+=convutf(b,u++); 
   *u='\0';
-  return r;
+  return u-v;
 }
 

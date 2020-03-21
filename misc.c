@@ -153,6 +153,7 @@ init(void)
 	lastdol=dol;
 	stackp=stack;
 	stackp->type=TTY;
+	uio=&_uio;
 }
 
 void

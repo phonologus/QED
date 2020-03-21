@@ -75,7 +75,7 @@ getfile(void)
 	fp = nextip;
 	do {
 		if (--ninbuf < 0) {
-			if ((ninbuf = read(io, genbuf, LBSIZE)-1) < 0) {
+			if ((ninbuf = uioread(uio, genbuf, LBSIZE)-1) < 0) {
 				if(ninbuf < -1)
 					error('r');
 				if(lp != linebuf)
@@ -112,7 +112,7 @@ putfile(void)
 		lp = getline(core[a1++], linebuf);
 		for(;;){
 			if (--nib < 0) {
-				if(write(io, genbuf, fp-genbuf) < 0)
+				if(uiowrite(uio, genbuf, fp-genbuf) < 0)
 					error('w');
 				nib = LBSIZE-1;
 				fp = genbuf;
@@ -124,7 +124,8 @@ putfile(void)
 			}
 		}
 	}
-	write(io, genbuf, fp-genbuf);
+	uiowrite(uio, genbuf, fp-genbuf);
+	uioflush(uio);    /* Don't forget to flush */
 }
 
 void (*savint)(int);	/* awful; this is known in error() */

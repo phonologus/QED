@@ -164,6 +164,7 @@ main(int argc, char **argv)
 	int buf;
 	int rvflag;
 	int *startup=(int *)0;
+	byte *b;  /* for getenv result */
 
 	argv++;
 	onquit = signal(SIGQUIT, SIG_IGN);
@@ -207,8 +208,9 @@ main(int argc, char **argv)
 		--argc;
 	}
 
-	if(startup==0)
-		startup = ucode(getenv(utf8(QEDFILE)));
+	if((startup==0)&&(b=getenv(utf8(QEDFILE))))
+	 	startup = ucode(b);
+
 	curbuf = &buffer[0];
 	init();
 	if(onhup != SIG_IGN)
@@ -516,6 +518,11 @@ commands(void)
 		}
 		setall();
 		changed = (zero!=dol);
+		uioinit(io,uio);
+		if(uioinitrd(uio)<0) {
+			lastc = '\n';
+			error('o'|FILERR);
+		}
 		ninbuf = 0;
 		append(getfile, addr2);
 		if(eqstr(string[savedfile].str, string[FILEBUF].str))
@@ -572,6 +579,7 @@ commands(void)
 			if(locn != 0L)	/* W on non-empty file */
 				changed = TRUE;	/* PHEW! figured it out */
 		}
+		uioinit(io,uio);
 		putfile();
 		if(cflag = changed)	/* Assignment = */
 			modified();

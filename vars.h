@@ -2,6 +2,12 @@
  * QED
  */
 
+/*
+ * utf
+ */
+
+utfio _uio, *uio;
+
 jmp_buf	savej;
 
 addr_t *core;

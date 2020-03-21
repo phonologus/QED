@@ -127,8 +127,10 @@ putchar(int c)
 void
 flush(void)
 {
+	int n;
 	if(linp != line){
-		write(1, line, linp-line);
+		n=utf8nstring(line,utf8buff,linp-line);
+		write(1, utf8buff, n); 
 		linp = line;
 	}
 }

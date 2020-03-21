@@ -26,7 +26,8 @@ enum {
   OFFMASK = BLKSIZE - ALIGNMASK,
   LOTSOFBITS = 12,
   MAXBLOCKS = ((1 << LOTSOFBITS)-1),
-  BLMASK = MAXBLOCKS
+  BLMASK = MAXBLOCKS,
+  BLKBSIZE = (BLKSIZE << 2)    /* # of bytes in a block */
 };
 
 #define getblock(a) (((a)>>BLKSHIFT) & BLMASK)
@@ -108,8 +109,8 @@ void
 blkio_r(int b, int *buf)
 {
 	if((b>=MAXBLOCKS)||
-           (lseek(tfile, ((long) b) * ((long) BLKSIZE), 0)<0L)||
-	   (read(tfile, buf, BLKSIZE) != BLKSIZE))
+           (lseek(tfile, ((long) b) * ((long) BLKBSIZE), 0)<0L)||
+	   (read(tfile, buf, BLKBSIZE) != BLKBSIZE))
 		error('T');
 }
 
@@ -117,7 +118,7 @@ void
 blkio_w(int b, int *buf)
 {
 	if((b>=MAXBLOCKS)||
-           (lseek(tfile, ((long) b) * ((long) BLKSIZE), 0)<0L)||
-	   (write(tfile, buf, BLKSIZE) != BLKSIZE))
+           (lseek(tfile, ((long) b) * ((long) BLKBSIZE), 0)<0L)||
+	   (write(tfile, buf, BLKBSIZE) != BLKBSIZE))
 		error('T');
 }
