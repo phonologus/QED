@@ -132,7 +132,7 @@ getsub(void)
 	p1 = linebuf;
 	if ((p2 = linebp) == 0)
 		return(EOF);
-	do ; while (*p1++ = ((*p2++) & 0177));
+	do ; while (*p1++ = *p2++);
 	linebp = 0;
 	return(0);
 }
@@ -168,13 +168,13 @@ place(int *l1, int *l2, int ucase)
 
 	sp = next_new;
 	while (l1 < l2) {
-		*sp++ = (*l1++ & 0177);
+		*sp++ = *l1++;
 		if (sp >= &genbuf[LBSIZE])
 			error('l');
 	}
 	if(ucase){
 		for(l1 = next_new;l1 < sp;){
-			c = (*l1 & 0177);
+			c = *l1;
 			if((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')){
 				switch(uflag){
 				case 's':

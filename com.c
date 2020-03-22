@@ -434,7 +434,7 @@ strcom(int z)
 				setstring(z);
 				return;
 			}
-			addstring(c&0177);
+			addstring(unescape(c));
 		}
 	case '\'':
 		startstring();

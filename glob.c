@@ -95,7 +95,7 @@ getglob(int globuf[])
 	while ((c = getquote(utfstr_nl, getchar)) != '\n') {
 		if (c==EOF)
 			error('x');
-		*gp++ = c & 0177;
+		*gp++ = unescape(c);
 		if (gp >= &globuf[GBSIZE-2])
 			error('l');
 	}
