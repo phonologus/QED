@@ -208,3 +208,4 @@ extern int	lchars[]; /*= "pPlL"*/
 int	bbempty;	/* whether getc's internal buffer buffer needs reloading */
 int	*getline();
 addr_i	address();
+

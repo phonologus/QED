@@ -52,7 +52,7 @@ struct utfio_s {
 typedef struct utfio_s utfio;
 
 utfio *uioinit(int, utfio *);
-int uioinitrd(utfio *);
+utfio *uioinitrd(int, utfio *);
 int uiofill(utfio *);
 int uioflush(utfio *);
 int uioread(utfio *,int *,int);

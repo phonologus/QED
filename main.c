@@ -518,12 +518,8 @@ commands(void)
 		}
 		setall();
 		changed = (zero!=dol);
-		uioinit(io,uio);
-		if(uioinitrd(uio)<0) {
-			lastc = '\n';
-			error('o'|FILERR);
-		}
-		ninbuf = 0;
+		uioinitrd(io,uio);
+  		ninbuf = 0;
 		append(getfile, addr2);
 		if(eqstr(string[savedfile].str, string[FILEBUF].str))
 			if(cflag = changed)	/* Assignment = */

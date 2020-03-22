@@ -78,7 +78,7 @@ getfile(void)
 			if ((ninbuf = uioread(uio, genbuf, LBSIZE)-1) < 0) {
 				if(ninbuf < -1)
 					error('r');
-				if(lp != linebuf)
+				if(lp != linebuf) 
 					error('N');
 				return(EOF);
 			}

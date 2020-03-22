@@ -19,11 +19,15 @@ uioinit(int fd, utfio *io)    /* initialise empty buffer */
   return io;
 }
 
-int
-uioinitrd(utfio *io)         /* prime a buffer for reading */
+utfio *
+uioinitrd(int fd, utfio *io)    /* initialise empty read buffer */
 {
-  return read(io->fd,&io->b[0],io->z);
+  io->fd=fd;
+  io->i=UBSIZE;
+  io->z=UBSIZE;
+  return io;
 }
+
 
 /* reading */
 
