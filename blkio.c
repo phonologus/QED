@@ -109,7 +109,7 @@ void
 blkio_r(int b, int *buf)
 {
 	if((b>=MAXBLOCKS)||
-           (lseek(tfile, ((long) b) * ((long) BLKBSIZE), 0)<0L)||
+           (lseek(tfile, ((long) b) * ((long) BLKBSIZE), SEEK_SET)<0L)||
 	   (read(tfile, buf, BLKBSIZE) != BLKBSIZE))
 		error('T');
 }
@@ -118,7 +118,7 @@ void
 blkio_w(int b, int *buf)
 {
 	if((b>=MAXBLOCKS)||
-           (lseek(tfile, ((long) b) * ((long) BLKBSIZE), 0)<0L)||
+           (lseek(tfile, ((long) b) * ((long) BLKBSIZE), SEEK_SET)<0L)||
 	   (write(tfile, buf, BLKBSIZE) != BLKBSIZE))
 		error('T');
 }

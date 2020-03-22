@@ -570,7 +570,7 @@ commands(void)
 			if ((io = creat(utf8(string[FILEBUF].str), 0666)) < 0)
 				error('o'|FILERR);
 		}else{
-			if((locn=lseek(io, 0L, 2)) == -1L)
+			if((locn=lseek(io, 0L, SEEK_END)) == -1L)
 				goto Create;
 			if(locn != 0L)	/* W on non-empty file */
 				changed = TRUE;	/* PHEW! figured it out */

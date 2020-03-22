@@ -106,7 +106,7 @@ error(int code)
 			getchar();
 		}
 	}
-	lseek(0, 0L, 2);
+	lseek(0, 0L, SEEK_END);
 	if (io > 0) {
 		close(io);
 		io = -1;
