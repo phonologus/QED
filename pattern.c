@@ -226,7 +226,7 @@ compile(int eof)
 			*ep++ = c-escape('1');
 			continue;
 		}
-		c &= ~ESC;
+		c = unescape(c);
 		if(dflag && c|' '>='a' && c|' '<='z'){
 			*ep++ = CCL;
 			*ep++ = 3;
