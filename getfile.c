@@ -220,9 +220,10 @@ Unix(int type)
 			close(pipe2[0]);
 			close(pipe2[1]);
 		}
-		if (*unixbuf)
-			execl("/bin/sh", "sh", "-c", utf8(unixbuf), 0);
-		else
+		if (*unixbuf) {
+			utf8(unixbuf);
+			execl("/bin/sh", "sh", "-c", utf8buff, 0);
+		} else
 			execl("/bin/sh", "sh", 0);
 		lasterr=-1;
 		quit();
@@ -236,6 +237,7 @@ Unix(int type)
 	if(type=='<' || type=='|') {
 		close(pipe1[1]);
 		io = pipe1[0];
+		uioinitrd(io,uio);
 		ninbuf = 0;
 		append(getfile,addr2);
 		close(io);
