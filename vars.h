@@ -13,7 +13,11 @@ jmp_buf	savej;
 addr_t *core;
 
 enum {
-	LDCHUNK=4096,
+	LINELEN=70
+};
+
+enum {
+	LDCHUNK=4096
 };
 
 enum {
@@ -153,7 +157,7 @@ struct stack{
 struct stack *stackp;
 int	peekc;
 int	lastc;
-int	line[70];
+int	line[LINELEN];
 int	*linp;
 int	savedfile;
 int	linebuf[LBSIZE];
