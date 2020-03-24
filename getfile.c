@@ -220,10 +220,9 @@ Unix(int type)
 			close(pipe2[0]);
 			close(pipe2[1]);
 		}
-		if (*unixbuf) {
-			utf8(unixbuf);
-			execl("/bin/sh", "sh", "-c", utf8buff, 0);
-		} else
+		if (*unixbuf)
+			execl("/bin/sh", "sh", "-c", utf8(unixbuf), 0);
+		else
 			execl("/bin/sh", "sh", 0);
 		lasterr=-1;
 		quit();
