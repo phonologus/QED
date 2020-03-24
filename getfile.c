@@ -134,6 +134,7 @@ int savintf = -1;
 void
 Unix(int type)
 {
+	int n;
         union pint_t uc;
 	int pid, rpid;
 	int *s;
@@ -245,12 +246,14 @@ Unix(int type)
 	} else if(type == '>') {
 		onpipe = signal(SIGPIPE, SIG_IGN);
 		close(pipe1[0]);
+		uioinit(pipe1[1],uio);
 		a=addr1;
 		do{
 			s=getline(core[a++], linebuf);
 			do; while(*s++);
 			*--s='\n';
-			if (write(pipe1[1],linebuf,s-(linebuf-1))<0){
+			n=utf8nstring(linebuf,utf8buff,s-(linebuf-1));
+			if (write(pipe1[1],utf8buff,n)<0){
 				puts(utfstr_queryo);
 				break;
 			}
