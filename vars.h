@@ -74,6 +74,8 @@ enum {
 #define ungetchar(c)	(peekc = (c))
 #define nextchar()	(peekc = getchar())
 
+extern int hex[];
+
 extern int	bname[]; /*="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~"*/
 
 enum {

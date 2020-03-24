@@ -95,7 +95,7 @@ putchar(int c)
 				*lp++ = 'n';
 			}
 		} else {
-			if (col >= (LINELEN-4-2)) {
+			if (col >= (LINELEN-8)) {
 				*lp++ = '\\';
 				*lp++ = '\n';
 				*lp++ = '\t';
@@ -106,17 +106,25 @@ putchar(int c)
 				*lp++ = '\\';
 				c = c=='\b'? 'b' : c=='\t'? 't' : '\\';
 				col++;
-			} else if (escaped(c) || c<' ' || c=='\177') {
+			} else if (escaped(c)) {
 				*lp++ = '\\';
-				*lp++ = ((c>>6)&03)+'0';
-				*lp++ = ((c>>3)&07)+'0';
-				c     = ( c    &07)+'0';
-				col += 3;
+				c=unescape(c);
+				col++;
+			} else if (c<' ' || c>='\177') {
+				*lp++ = '\\';
+				*lp++ = 'U';
+				*lp++ = hex[(c>>20)&0xF];
+				*lp++ = hex[(c>>16)&0xF];
+				*lp++ = hex[(c>>12)&0xF];
+				*lp++ = hex[(c>>8)&0xF];
+				*lp++ = hex[(c>>4)&0xF];
+				c     = hex[c&0xF];
+				col += 7;
 			}
 		}
 	}
 	*lp++ = c;
-	if(c == '\n' || lp >= &line[LINELEN-2-4]) {
+	if(c == '\n' || lp >= &line[LINELEN]) {
 		linp = lp;
 		flush();
 		lp = linp;

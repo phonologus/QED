@@ -25,6 +25,9 @@ int	opcs[] = {'c','d','e','i','p','T','v','\0'};
 int	tfile = -1;
 int	QEDFILE[]={'Q','E','D','F','I','L','E','\0'};
 
+int	hex[]={'0','1','2','3','4','5','6','7',
+               '8','9','A','B','C','D','E','F','\0'};
+
 void
 rescue(int sig)
 {
@@ -609,7 +612,7 @@ commands(void)
 		continue;
 	case '=':
 		setall();
-		putdn((addr2-zero)&077777);
+		putdn(addr2-zero);
 		continue;
 	case '>':
 	case '<':
