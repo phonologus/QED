@@ -86,6 +86,7 @@ savall(void)
 	}
 	if((io = creat(utf8(filea()), 0644)) < 0)
 		error('o'|FILERR);
+	uioinit(io,uio);
 	putfile();
 	exfile();
 	if((fi = creat(utf8(fileb()), 0644)) < 0)
@@ -113,6 +114,7 @@ restor(void)
 	initio();
 	init();
 	io = t;
+	uioinit(io,uio);
 	ninbuf = 0;
 	append(getfile, dol);
 	exfile();
