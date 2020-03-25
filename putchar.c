@@ -110,7 +110,21 @@ putchar(int c)
 				*lp++ = '\\';
 				c=unescape(c);
 				col++;
-			} else if (c<' ' || c>='\177') {
+			} else if (c<' ' || c=='\177') {
+				*lp++ = '\\';
+				*lp++ = 'x';
+				*lp++ = hex[(c>>4)&0xF];
+				c     = hex[c&0xF];
+				col += 3;
+			} else if (c>'\177' && c<=0xFFFF) {
+				*lp++ = '\\';
+				*lp++ = 'u';
+				*lp++ = hex[(c>>12)&0xF];
+				*lp++ = hex[(c>>8)&0xF];
+				*lp++ = hex[(c>>4)&0xF];
+				c     = hex[c&0xF];
+				col += 5;
+			} else if (c>0xFFFF) {
 				*lp++ = '\\';
 				*lp++ = 'U';
 				*lp++ = hex[(c>>20)&0xF];
