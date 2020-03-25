@@ -410,7 +410,7 @@ commands(void)
 		c = getaz(c);
 		setdot();
 		nonzero();
-		names[c] = core[addr2] | 01;
+		names[c] = mark(core[addr2]);
 		continue;
 	case 'm':
 		move(FALSE);

@@ -202,7 +202,7 @@ undo(void)
 {
 	addr_i l;
 
-	for (l=zero+1; l<=dol && (core[l]|01)!=new_line; l++)
+	for (l=zero+1; l<=dol && mark(core[l])!=new_line; l++)
 		;
 	if (l>dol)
 		error('u');
@@ -215,13 +215,13 @@ replace(addr_i line,addr_t ptr)
 {
 	addr_t *p;
 
-	core[line] |= 01;
+	core[line] = mark(core[line]);
 	for (p=names; p<names+NBUFS; p++)
 		if (*p == core[line])
-			*p = ptr|01;
+			*p = mark(ptr);
 	old_line = core[line];
 	core[line] = ptr;
-	new_line = ptr | 01;
+	new_line = mark(ptr);
 }
 
 void

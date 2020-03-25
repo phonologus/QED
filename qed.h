@@ -98,12 +98,18 @@ extern int utfstr_rhsb[];
 
 enum {
   ESC=(1 << ((8*utfbytes)-1)),    /* 0x80000000 */
-  UNESC=~ESC
+  UNESC=~ESC,
+  MARK=1,
+  UNMARK=~MARK
 };
 
 #define escape(c) ((c)|ESC)
 #define escaped(c) ((c)&ESC)
 #define unescape(c) ((c)&UNESC)
+
+#define mark(c) ((c)|MARK)
+#define marked(c) ((c)&MARK)
+#define unmark(c) ((c)&UNMARK)
 
 /* types 
  *

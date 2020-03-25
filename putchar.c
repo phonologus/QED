@@ -59,7 +59,7 @@ display(int lf)
 		if(nf){
 			putlong((ulong)r++);
 			for(i=0; i<NBUFS; i++)
-				if((core[a1]|01) == names[i]){
+				if(mark(core[a1]) == names[i]){
 					putchar('\'');
 					putchar(bname[i]);
 				}

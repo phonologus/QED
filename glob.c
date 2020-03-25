@@ -42,14 +42,14 @@ global(int k)
 	compile(getchar());
 	getglob(globuf);
 	for (a1=zero; ++a1<=dol;) {
-		core[a1] &= ~01;
+		core[a1] = unmark(core[a1]);
 		if (a1>=addr1 && a1<=addr2 && execute(a1)==k)
-			core[a1] |= 01;
+			core[a1] = mark(core[a1]);
 	}
 	startbuf = curbuf;
 	for (a1=zero; ++a1<=dol; ) {
-		if (core[a1] & 01) {
-			core[a1] &= ~01;
+		if (marked(core[a1])) {
+			core[a1] = unmark(core[a1]);
 			dot = a1;
 			if (!exglob(globuf, utfstr_p))
 				break;
