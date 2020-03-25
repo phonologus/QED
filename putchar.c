@@ -53,7 +53,7 @@ display(int lf)
 	setdot();
 	nonzero();
 	a1 = addr1;
-	r = (a1 - zero) & 077777;
+	r = a1 - zero;
 	do{
 		col = 0;
 		if(nf){
