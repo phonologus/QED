@@ -13,7 +13,7 @@ jmp_buf	savej;
 addr_t *core;
 
 enum {
-	LINELEN=70
+	LINELEN=80
 };
 
 enum {
