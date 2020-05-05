@@ -20,13 +20,11 @@ enum {
   ALIGN = 2,      /* align strings to (2^ALIGN)-byte boundaries in a block */
   ALIGNMASK = ((1 << ALIGN) - 1),
   SHUNT = (ALIGN - 1),    /* mark bit requires 1 bit, the rest are redundant */
-  BLKBITS = 12,
+  BLKBITS = 16,
   BLKSHIFT = BLKBITS-SHUNT,
   BLKSIZE = (1 << BLKBITS),
   OFFMASK = BLKSIZE - ALIGNMASK,
-  LOTSOFBITS = 12,
-  MAXBLOCKS = ((1 << LOTSOFBITS)-1),
-  BLMASK = MAXBLOCKS,
+  BLMASK=-1,
   BLKBSIZE = (BLKSIZE << 2)    /* # of bytes in a block */
 };
 
@@ -108,17 +106,15 @@ putline(void)
 void
 blkio_r(int b, int *buf)
 {
-	if((b>=MAXBLOCKS)||
-           (lseek(tfile, ((long) b) * ((long) BLKBSIZE), SEEK_SET)<0L)||
-	   (read(tfile, buf, BLKBSIZE) != BLKBSIZE))
+        if((lseek(tfile, ((long) b) * ((long) BLKBSIZE), SEEK_SET)<0L)||
+	  (read(tfile, buf, BLKBSIZE) != BLKBSIZE))
 		error('T');
 }
 
 void
 blkio_w(int b, int *buf)
 {
-	if((b>=MAXBLOCKS)||
-           (lseek(tfile, ((long) b) * ((long) BLKBSIZE), SEEK_SET)<0L)||
+         if((lseek(tfile, ((long) b) * ((long) BLKBSIZE), SEEK_SET)<0L)||
 	   (write(tfile, buf, BLKBSIZE) != BLKBSIZE))
 		error('T');
 }
