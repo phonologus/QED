@@ -1,8 +1,4 @@
-# FIXME: the -fcommon is a hack to get around the stricter
-# rules for header files in gcc 10.
-#
-
-CFLAGS=-ansi -I. -O -D_POSIX_SOURCE -fno-builtin -fcommon
+CFLAGS=-ansi -I. -O -D_POSIX_SOURCE -fno-builtin
 CC=gcc
 
 TAR=9 tar

@@ -5,7 +5,77 @@ enum {
   DOWN = 0
 };
 
+utfio _uio, *uio;
+
+jmp_buf savej;
+
+addr_t *core;
+
+/*
+ * storage allocation (was in vars.h)
+ */
+
+struct buffer buffer[NBUFS];
 struct buffer *curbuf = buffer;
+
+byte utf8buff[utfbsize];
+int ucbuff[ucbsize];
+
+struct string string[NSTRING+1];
+int strarea[NSTRCHARS + 2];
+
+struct stack stack[STACKSIZE];
+struct stack *stackp;
+
+int	peekc;
+int	lastc;
+int	line[LINELEN];
+int	*linp;
+int	savedfile;
+int	linebuf[LBSIZE];
+addr_i	zero;
+addr_i	dot;
+addr_i	dol;
+addr_i	lastdol;
+addr_i	endcore;
+addr_i	fendcore;
+addr_i	addr1;
+addr_i	addr2;
+int	genbuf[LBSIZE];
+int	*linebp;
+int	ninbuf;
+int	io;
+int	lasterr;
+
+int	appflag;
+int	cflag;
+int	cprflag;
+int	dflag;
+int	eflag;
+int	gflag;
+int	biggflag;
+int	iflag;
+int	prflag;
+int	tflag;
+int	uflag;
+int	vflag;
+int	qok;
+int	eok;
+int	initflag;
+int	nestlevel;
+int	lastttyc;
+int	listf;
+int	tfile;
+int	tfile2;
+int	*loc1;
+int	*loc2;
+int	names[NBUFS];
+int	*braslist[NBRA];
+int	*braelist[NBRA];
+int	nbra;
+int	oneline;
+int	bbempty;	/* whether getc's internal buffer buffer needs reloading */
+
 int	*linp = line;
 int	appflag = 0;
 int	pagesize = PAGESIZE;
@@ -216,7 +286,7 @@ main(int argc, char **argv)
 	if((startup==0)&&(b=getenv(utf8(QEDFILE))))
 	 	startup = ucode(b);
 
-	curbuf = &buffer[0];
+	curbuf = buffer;
 	init();
 	if(onhup != SIG_IGN)
 		signal(SIGHUP, rescue);

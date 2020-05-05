@@ -6,11 +6,12 @@
  * utf
  */
 
-utfio _uio, *uio;
+extern utfio _uio;
+extern utfio *uio;
 
-jmp_buf	savej;
+extern jmp_buf	savej;
 
-addr_t *core;
+extern addr_t *core;
 
 enum {
 	LINELEN=80
@@ -91,8 +92,11 @@ struct buffer{
 	addr_i dol;
 	char cflag;
 	char gmark;
-}buffer[NBUFS];
-struct buffer *curbuf;
+};
+
+extern struct buffer buffer[NBUFS];
+extern struct buffer *curbuf;
+
 /*
  * The string structure
  * The first NBUFS strings are the registers
@@ -121,12 +125,17 @@ struct buffer *curbuf;
 #define	SAVRHS	(SAVPAT+1)
 #define	BROWSE	(SAVRHS+1)
 #define	FILEBUF	(BROWSE+1)
+
 struct string{
 	int len;
 	int *str;
-}string[NSTRING+1];
+};
+
 #define NSTRCHARS 1024
-int strarea[NSTRCHARS + 2];
+
+extern struct string string[NSTRING+1];
+extern int strarea[NSTRCHARS + 2];
+
 #define	nullstr strarea
 #define	strchars (&strarea[2])
 #define STACKSIZE 16
@@ -151,67 +160,72 @@ struct stack{
 		int u2strname;
 	}u2;
 	int charno;
-}stack[STACKSIZE];
+};
+
+extern struct stack stack[STACKSIZE];
+extern struct stack *stackp;
+
 #define	bufptr	u1.u1bufptr
 #define	globp	u1.u1globp
 #define	lineno	u2.u2lineno
 #define	strname	u2.u2strname
-struct stack *stackp;
-int	peekc;
-int	lastc;
-int	line[LINELEN];
-int	*linp;
-int	savedfile;
-int	linebuf[LBSIZE];
-addr_i	zero;
-addr_i	dot;
-addr_i	dol;
-addr_i	lastdol;
-addr_i	endcore;
-addr_i	fendcore;
-addr_i	addr1;
-addr_i	addr2;
-int	genbuf[LBSIZE];
-int	*linebp;
-int	ninbuf;
-int	io;
-void	(*onhup)(int);
-void	(*onquit)(int);
-void	(*onintr)(int);
-int	lasterr;
+
+
+extern int	peekc;
+extern int	lastc;
+extern int	line[LINELEN];
+extern int	*linp;
+extern int	savedfile;
+extern int	linebuf[LBSIZE];
+extern addr_i	zero;
+extern addr_i	dot;
+extern addr_i	dol;
+extern addr_i	lastdol;
+extern addr_i	endcore;
+extern addr_i	fendcore;
+extern addr_i	addr1;
+extern addr_i	addr2;
+extern int	genbuf[LBSIZE];
+extern int	*linebp;
+extern int	ninbuf;
+extern int	io;
+extern void	(*onhup)(int);
+extern void	(*onquit)(int);
+extern void	(*onintr)(int);
+extern int	lasterr;
 #define	PAGESIZE	22
 extern	int pagesize;
 extern int bformat;	/* = 'p' */
-int	appflag;
-int	cflag;
-int	cprflag;
-int	dflag;
-int	eflag;
-int	gflag;
-int	biggflag;
-int	iflag;
-int	prflag;
-int	tflag;
-int	uflag;
-int	vflag;
-int	qok;
-int	eok;
-int	initflag;
-int	nestlevel;
-int	lastttyc;
-int	listf;
-int	tfile;
-int	tfile2;
+extern int	appflag;
+extern int	cflag;
+extern int	cprflag;
+extern int	dflag;
+extern int	eflag;
+extern int	gflag;
+extern int	biggflag;
+extern int	iflag;
+extern int	prflag;
+extern int	tflag;
+extern int	uflag;
+extern int	vflag;
+extern int	qok;
+extern int	eok;
+extern int	initflag;
+extern int	nestlevel;
+extern int	lastttyc;
+extern int	listf;
+extern int	tfile;
+extern int	tfile2;
 extern char	tfname[];
-int	*loc1;
-int	*loc2;
-int	names[NBUFS];
-int	*braslist[NBRA];
-int	*braelist[NBRA];
-int	nbra;
-int	oneline;
+extern int	*loc1;
+extern int	*loc2;
+extern int	names[NBUFS];
+extern int	*braslist[NBRA];
+extern int	*braelist[NBRA];
+extern int	nbra;
+extern int	oneline;
 extern int	lchars[]; /*= "pPlL"*/
-int	bbempty;	/* whether getc's internal buffer buffer needs reloading */
+extern int	bbempty;	/* whether getc's internal buffer buffer needs reloading */
 int	*getline();
 addr_i	address();
 

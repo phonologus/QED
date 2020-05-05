@@ -24,8 +24,8 @@ enum {
 
 typedef unsigned char byte;
 
-byte utf8buff[utfbsize];   /* general purpose buffer for utf8 sequences */
-int ucbuff[ucbsize];   /* general purpose buffer for unicode sequences */
+extern byte utf8buff[utfbsize];   /* general purpose buffer for utf8 sequences */
+extern int ucbuff[ucbsize];   /* general purpose buffer for unicode sequences */
 
 int convnutf(byte *, int *, int);
 int convnucode(int, byte *, int);
