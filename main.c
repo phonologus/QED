@@ -1,14 +1,82 @@
-/*% cc -c -O %
+#include "qed.h"
+
+enum {
+  UP = 1,
+  DOWN = 0
+};
+
+utfio _uio, *uio;
+
+jmp_buf savej;
+
+addr_t *core;
+
+/*
+ * storage allocation (was in vars.h)
  */
-#include "vars.h"
-#define SIGHUP	1
-#define SIGINTR	2
-#define SIGQUIT	3
-#define	UP	1
-#define DOWN	0
-char lchars[]="pPlL";
+
+struct buffer buffer[NBUFS];
 struct buffer *curbuf = buffer;
-char	*linp = line;
+
+byte utf8buff[utfbsize];
+int ucbuff[ucbsize];
+
+struct string string[NSTRING+1];
+int strarea[NSTRCHARS + 2];
+
+struct stack stack[STACKSIZE];
+struct stack *stackp;
+
+int	peekc;
+int	lastc;
+int	line[LINELEN];
+int	*linp;
+int	savedfile;
+int	linebuf[LBSIZE];
+addr_i	zero;
+addr_i	dot;
+addr_i	dol;
+addr_i	lastdol;
+addr_i	endcore;
+addr_i	fendcore;
+addr_i	addr1;
+addr_i	addr2;
+int	genbuf[LBSIZE];
+int	*linebp;
+int	ninbuf;
+int	io;
+int	lasterr;
+
+int	appflag;
+int	cflag;
+int	cprflag;
+int	dflag;
+int	eflag;
+int	gflag;
+int	biggflag;
+int	iflag;
+int	prflag;
+int	tflag;
+int	uflag;
+int	vflag;
+int	qok;
+int	eok;
+int	initflag;
+int	nestlevel;
+int	lastttyc;
+int	listf;
+int	tfile;
+int	tfile2;
+int	*loc1;
+int	*loc2;
+int	names[NBUFS];
+int	*braslist[NBRA];
+int	*braelist[NBRA];
+int	nbra;
+int	oneline;
+int	bbempty;	/* whether getc's internal buffer buffer needs reloading */
+
+int	*linp = line;
 int	appflag = 0;
 int	pagesize = PAGESIZE;
 int	prflag = 0;	/* prflag==1 ==> much code to get it right. use the startup buffer */
@@ -20,33 +88,35 @@ int	uflag = 's';
 int	dflag = 0;
 int	initflag = 1;
 int	*option[] = {
-	&cflag,	&dflag,	&eflag,	&iflag,	&prflag,&tflag,	&vflag,
+	&cflag,	&dflag,	&eflag,	&iflag,	&prflag, &tflag, &vflag,
 };
-char	opcs[] = "cdeipTv";
+int lchars[] = {'p','P','l','L','\0'};
+int	opcs[] = {'c','d','e','i','p','T','v','\0'};
 int	tfile = -1;
-struct	sgttyb ttybuf = { 0, 0, '\b', '\b', /*0*/};
-char	QEDFILE[]="QEDFILE";
-int	(*pending)();
+int	QEDFILE[]={'Q','E','D','F','I','L','E','\0'};
 
-rescue()
+int	hex[]={'0','1','2','3','4','5','6','7',
+               '8','9','a','b','c','d','e','f','\0'};
+
+void
+rescue(int sig)
 {
 	/* Save in qed.hup:[ab]q on hangup */
-	signal(SIGHUP,1);
-	if (lock) {
-		pending = rescue;
-		return;
-	}
+	signal(SIGHUP,SIG_IGN);
 	startstring();
-	copystring("qed.hup");
+	copystring(utfstr_qedhup);
 	setstring(FILEBUF);
 	savall();
-	exit(SIGHUP);
+	lasterr=SIGHUP;
+	quit();
 }
-char *filea()
+
+int *
+filea(void)
 {
-	register struct string *sp;
-	register int i, d;
-	char c;
+	struct string *sp;
+	int i, d;
+	int c;
 
 	sp = &string[FILEBUF];
 	startstring();
@@ -60,22 +130,25 @@ char *filea()
 	}
 	if((i-d) > 12)		/* file name is >= 13 characters long */
 		string[NSTRING].str -= (i-(d+12));	/* truncate string */
-	copystring(":aq");
+	copystring(utfstr_colonaq);
 	setstring(FILEBUF);
 	return(sp->str);
 }
 
-char *fileb()
+int *
+fileb(void)
 {
-	register struct string *sp;
+	struct string *sp;
 
 	sp = &string[FILEBUF];
 	sp->str[sp->len-2] = 'b';
 	return(sp->str);
 }
-savall()
+
+void
+savall(void)
 {
-	register fi;
+	int fi;
 
 	syncbuf();
 	addr1 = buffer[0].zero + 1;
@@ -84,81 +157,63 @@ savall()
 		error('$');
 		return;
 	}
-	if((io = creat(filea(), 0644)) < 0)
+	if((io = creat(utf8(filea()), 0644)) < 0)
 		error('o'|FILERR);
+	uioinit(io,uio);
 	putfile();
 	exfile();
-	if((fi = creat(fileb(), 0644)) < 0)
+	if((fi = creat(utf8(fileb()), 0644)) < 0)
 		error('o'|FILERR);
-	write(fi, (char *)buffer, sizeof buffer);
-	write(fi, strarea, sizeof strarea);
-	lock++;
+	write(fi, (byte *)buffer, sizeof buffer);
+	write(fi, (byte *)strarea, sizeof strarea);
 	shiftstring(DOWN);
-	write(fi, (char *)string, sizeof string);
+	write(fi, (byte *)string, sizeof string);
 	shiftstring(UP);
-	unlock();
 	close(fi);
 }
-restor()
+
+void
+restor(void)
 {
-	register i, t;
-	register struct buffer *b;
+	int t;
+	struct buffer *b;
 	int fi;
 	int getfile();
 	curbuf = buffer;
-	i = (int)curbuf->zero;
-	if((t = open(filea(), 0)) < 0){
+	if((t = open(utf8(filea()), O_RDONLY)) < 0){
 		lastc = '\n';
 		error('o'|FILERR);
 	}
 	initio();
 	init();
 	io = t;
+	uioinit(io,uio);
 	ninbuf = 0;
 	append(getfile, dol);
 	exfile();
-	if((fi = open(fileb(),0)) < 0)
+	if((fi = open(utf8(fileb()),O_RDONLY)) < 0)
 		error('o'|FILERR);
-	lock++;
-	if(read(fi,(char *)buffer,sizeof buffer) != sizeof buffer
-		|| read(fi, strarea, sizeof strarea) != sizeof strarea
-		|| read(fi, (char *)string, sizeof string) != sizeof string)
+	if(read(fi,(byte *)buffer,sizeof buffer) != sizeof buffer
+		|| read(fi, (byte *)strarea, sizeof strarea) != sizeof strarea
+		|| read(fi, (byte *)string, sizeof string) != sizeof string)
 		error('R');
 	close(fi);
 	shiftstring(UP);
-	/*
-	 * This code is incredibly sleazy and machine dependent for the 11.
-	 * Sorry. There is no good reason why we don't have a shiftbuf():
-	 * feel free to write one (but lock before you call it!).
-	 */
-	t = (int)buffer[0].zero;
-	if(i != t){
-		i -= t;
-		i >>= 1;
-		for(b = buffer;b <= &buffer[NBUFS-1];b++){
-			b->zero += i;
-			b->dot += i;
-			b->dol += i;
-		}
-	}
 	newbuf(0);
-	error(0);	/* ==> error, but don't print anything. calls unlock() */
+	error(0);	/* ==> error, but don't print anything. */
 }
 
 /*
- *	On INTR, generate error '?'
+ *	On INT, generate error '?'
  */
 
-interrupt()
+void
+interrupt(int sig)
 {
-	signal(SIGINTR, interrupt);
-	if (lock) {
-		pending = interrupt;
-		return;
-	}
+	signal(SIGINT, interrupt);
 	if(iflag){
-		unlink(tfname);
-		exit(SIGINTR);
+		lasterr=SIGINT;
+		quit();
 	}
 	linp=line;
 	putchar('\n');
@@ -166,39 +221,30 @@ interrupt()
 	error('?');
 }
 
-/*
- * Unlock: exit a critical section, invoking any pending signal routines.
- */
+int cleanup[] = {'b','a',' ','z','~',':','\n','\0'};
+int setvflag[] = {'o','v','?','\0'};
+int boot1[] = {'G','/','^','[','\0'};
+int boot2[] = {']','.','+','\t','.','/','r','\n','\0'};
 
-unlock()
+void (*onhup)(int);
+void (*onquit)(int);
+void (*onintr)(int);
+
+int
+main(int argc, char **argv)
 {
-	register (*p)();
-
-	p = pending;
-	pending = 0;
-	lock = 0;
-	if (p)
-		(*p)();
-}
-
-char cleanup[] = "ba z~:\n";
-char setvflag[] = "ov?";
-char boot1[] = "G/^[";
-char boot2[] = "].+\t./r\n";
-
-main(argc, argv)
-char **argv;
-{
-	register char *p1;
-	register i;
-	char buf;
+        union pint_t uc;
+	int *p1;
+	int i;
+	int buf;
 	int rvflag;
-	char *startup=(char *)0;
+	int *startup=(int *)0;
+	byte *b;  /* for getenv result */
 
 	argv++;
-	onquit = signal(SIGQUIT, 1);
-	onhup = signal(SIGHUP, 1);
-	onintr = signal(SIGINTR, 1);
+	onquit = signal(SIGQUIT, SIG_IGN);
+	onhup = signal(SIGHUP, SIG_IGN);
+	onintr = signal(SIGINT, SIG_IGN);
 	rvflag = 1;
 	for(i=0;i!=NSTRING;i++){
 		string[i].str = nullstr;
@@ -206,6 +252,8 @@ char **argv;
 	}
 	/* initialize strfree */
 	string[NSTRING].str = strchars;
+	/* initialize core */
+	core=(addr_t*)0;
 	while(argc > 1 && **argv=='-'){
 		switch(argv[0][1]){
 		casedefault:
@@ -214,7 +262,7 @@ char **argv;
 			break;
 		case 'q':
 		/* allow debugging quits? */
-			signal(SIGQUIT, 0);
+			signal(SIGQUIT, SIG_DFL);
 			break;
 		case 'i':
 		/* allow interrupt quits? */
@@ -227,23 +275,23 @@ char **argv;
 		case 'x':
 			if(argc == 2)
 				goto casedefault;
-			startup = argv[1];
+			startup = ucode(argv[1]);
 			argv++;
 			--argc;
 		}
 		argv++;
 		--argc;
 	}
-	gtty(0,&ttybuf);
-	if(startup==0)
-		startup = getenv(QEDFILE);
-	fendcore = (int *)sbrk(0);
-	curbuf = &buffer[0];
+
+	if((startup==0)&&(b=getenv(utf8(QEDFILE))))
+	 	startup = ucode(b);
+
+	curbuf = buffer;
 	init();
-	if (onhup != 1)
+	if(onhup != SIG_IGN)
 		signal(SIGHUP, rescue);
-	if (onintr != 1)
-		signal(SIGINTR, interrupt);
+	if(onintr != SIG_IGN)
+		signal(SIGINT, interrupt);
 	/*
 	 * Build the initialization code in register z~
 	 */
@@ -251,9 +299,9 @@ char **argv;
 		startstring();
 		copystring(startup);
 		setstring(FILE(NBUFS-1));
-		p1 = "b~ r\n\\b~\n";
+		p1 = utfstr_br;
 	} else
-		p1 = "";
+		p1 = utfstr_nul;
 	startstring();
 	copystring(p1);
 	setvflag[2] = "rs"[rvflag];
@@ -264,7 +312,7 @@ char **argv;
 	 */
 	if(--argc > 0) {
 		if(argc >= 53)	/* buffer names a-zA-Z */
-			puts("?i");
+			puts(utfstr_queryi);
 		else {
 			copystring(boot1);
 			for(i=0; i<argc; i++)	/* argument files only */
@@ -275,7 +323,7 @@ char **argv;
 			buf = 0;
 			while(argc > 0) {
 				startstring();
-				copystring(*argv);
+				copystring(ucode(*argv));
 				setstring(FILE(buf++));
 				--argc;
 				argv++;
@@ -286,19 +334,22 @@ char **argv;
 		copystring(cleanup);
 		setstring(NBUFS-1);
 	}
-	pushinp(STRING, NBUFS-1, FALSE);
-	setexit();
+        uc.i=NBUFS-1;
+	pushinp(STRING, uc, FALSE);
+	setjmp(savej);
 	lastttyc = '\n';
 	commands();
-	unlink(tfname);
-	exit(lasterr);
+	quit();
 }
 
 int	noaddr;
-commands()
+
+void
+commands(void)
 {
-	register int *a;
-	register c, lastsep;
+        union pint_t uc;
+	addr_i a;
+	int c, lastsep;
 	int getfile(), gettty();
 	int r;
 	int changed;
@@ -365,7 +416,7 @@ commands()
 		dot = a;
 		continue;
 	case 'd':
-		if(posn(nextchar(),"\377\npPlL \t") < 0)
+		if(posn(nextchar(),utfstr_suffix) < 0)
 			error('x');
 		delete();
 		continue;
@@ -376,7 +427,7 @@ commands()
 			eok=TRUE;
 			error('e');
 		}
-		newfile(TRUE, SAVEALWAYS, "");
+		newfile(TRUE, SAVEALWAYS, utfstr_nul);
 		delall();
 		addr1 = zero;
 		addr2 = zero;
@@ -429,7 +480,7 @@ commands()
 		c = getaz(c);
 		setdot();
 		nonzero();
-		names[c] = *addr2 | 01;
+		names[c] = mark(core[addr2]);
 		continue;
 	case 'm':
 		move(FALSE);
@@ -452,7 +503,7 @@ commands()
 				startstring();
 				while((c=getchar()) != '\n')
 					addstring(c);
-				copystring("\\N");
+				copystring(utfstr_bignl);
 				setstring(BROWSE);
 			}
 			break;
@@ -464,7 +515,7 @@ commands()
 		case 'q':
 			c = getchar();
 			if(c=='s' || c =='r')
-				signal(SIGQUIT, c=='r');
+				signal(SIGQUIT, c=='r' ? SIG_IGN : SIG_DFL);
 			else
 				error('x');
 			break;
@@ -472,7 +523,7 @@ commands()
 			c = getchar();
 			if(c == 'r')
 				uflag = 0;
-			else if(posn(c, "slu") >= 0)
+			else if(posn(c, utfstr_slu) >= 0)
 				uflag = c;
 			else
 				error('x');
@@ -492,7 +543,8 @@ commands()
 			if(stackp != &stack[0] || !startline)
 				continue;
 			if(*string[BROWSE].str){
-				pushinp(BRWS, 0, FALSE);
+                                uc.i=0;
+				pushinp(BRWS, uc, FALSE);
 				continue;
 			}
 			a = dot+1;
@@ -516,7 +568,7 @@ commands()
 		if(c!=EOF && (!startline || getchar()!='\n'))
 			error('x');
 		if(c!='Q' && !qok){
-			register struct buffer *bp;
+			struct buffer *bp;
 			syncbuf();
 			qok=TRUE;
 			for(bp=buffer; bp<&buffer[NBUFS]; bp++)
@@ -524,12 +576,11 @@ commands()
 					string[FILE(bp-buffer)].str[0]))
 					error('q');
 		}
-		unlink(tfname);
-		exit(lasterr);
+		quit();
 	case 'r':
 		newfile(TRUE, SAVEIFFIRST, string[savedfile].str);
 	caseread:
-		if((io = open(string[FILEBUF].str, 0)) < 0){
+		if((io = open(utf8(string[FILEBUF].str), O_RDONLY)) < 0){
 			if(initflag){
 				putchar('?');
 				putchar('o');
@@ -542,7 +593,8 @@ commands()
 		}
 		setall();
 		changed = (zero!=dol);
-		ninbuf = 0;
+		uioinitrd(io,uio);
+  		ninbuf = 0;
 		append(getfile, addr2);
 		if(eqstr(string[savedfile].str, string[FILEBUF].str))
 			if(cflag = changed)	/* Assignment = */
@@ -552,7 +604,7 @@ commands()
 		continue;
 	case 'R':
 		setnoaddr();
-		newfile(TRUE, SAVENEVER, "q");
+		newfile(TRUE, SAVENEVER, utfstr_q);
 		restor();
 		continue;
 	case 's':
@@ -562,7 +614,7 @@ commands()
 		continue;
 	case 'S':
 		setnoaddr();
-		newfile(TRUE, SAVENEVER, "q");
+		newfile(TRUE, SAVENEVER, utfstr_q);
 		savall();
 		continue;
 	case 't':
@@ -588,16 +640,17 @@ commands()
 			changed = cflag;
 		else
 			changed = (addr1>(zero+1) || addr2!=dol);
-		if(c=='w' || (io=open(string[FILEBUF].str,1))==-1){
+		if(c=='w' || (io=open(utf8(string[FILEBUF].str),O_WRONLY))==-1){
 		  Create:
-			if ((io = creat(string[FILEBUF].str, 0666)) < 0)
+			if ((io = creat(utf8(string[FILEBUF].str), 0666)) < 0)
 				error('o'|FILERR);
 		}else{
-			if((locn=lseek(io, 0L, 2)) == -1L)
+			if((locn=lseek(io, 0L, SEEK_END)) == -1L)
 				goto Create;
 			if(locn != 0L)	/* W on non-empty file */
 				changed = TRUE;	/* PHEW! figured it out */
 		}
+		uioinit(io,uio);
 		putfile();
 		if(cflag = changed)	/* Assignment = */
 			modified();
@@ -629,7 +682,7 @@ commands()
 		continue;
 	case '=':
 		setall();
-		putdn((addr2-zero)&077777);
+		putdn(addr2-zero);
 		continue;
 	case '>':
 	case '<':
@@ -650,17 +703,21 @@ commands()
 	error('x');
 	}
 }
-setreset(opt)
-	register int *opt;
+
+void
+setreset(int *opt)
 {
-	register c;
+	int c;
 
 	c = getchar();
 	if(c!='s' && c!= 'r')
 		error('x');
 	*opt = (c=='s');
 }
-delall(){
+
+void
+delall(void)
+{
 	if(dol!=zero){
 		addr1=zero+1;
 		addr2=dol;

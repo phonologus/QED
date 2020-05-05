@@ -1,4 +1,6 @@
 *.o
 *.out
-
-
+*.pdf
+*.Z
+*:[ab]q
+UTF*.txt

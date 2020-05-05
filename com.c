@@ -1,15 +1,19 @@
-/*% cc -c -O %
- */
-#include "vars.h"
-#define	OUT	10
-#define	BACKWARD 11
-#define FORWARD 12
-char	jumpcs[] = "0123456789o`'";
-jump()	/* this should be pronounced with a Swedish accent */
+#include "qed.h"
+
+enum {
+  OUT = 10,
+  BACKWARD = 11,
+  FORWARD = 12
+};
+
+int	jumpcs[] = {'0','1','2','3','4','5','6','7','8','9','o','`','\'','\0'};
+
+void
+jump(void)	/* this should be pronounced with a Swedish accent */
 {
-	register int i;
-	register cond;
-	register c;
+	int i;
+	int cond;
+	int c;
 
 	if(stackp->type==TTY)
 		error('y');
@@ -46,7 +50,7 @@ jump()	/* this should be pronounced with a Swedish accent */
 				error('y');
 			if(stackp->type==GLOB){
 				--nestlevel;
-				stackp->globp = "";
+				stackp->globp = utfstr_nul;
 			}else
 				popinp();
 		}
@@ -59,29 +63,34 @@ jump()	/* this should be pronounced with a Swedish accent */
 			search(i==FORWARD);
 	}
 }
-stacktype(t)
+
+void
+stacktype(int t)
 {
 	if(stackp->type != t)
 		error('y');
 }
-getlabel(){
-	register char *p, c;
+
+void
+getlabel(void)
+{
+	int *p, c;
 	p = genbuf;
-	for(c=getchar(); posn(c," \"\t\n")<0; c=getchar()){
+	for(c=getchar(); posn(c,utfstr_whitespacequotes)<0; c=getchar()){
 		*p++ = c;
 		*p = '\0';
 	}
 	if(p==genbuf)
 		error('y');
 }
-int *looper(a1,a2,str,dir)
-	register int *a1, *a2;
-	register char *str;
+
+addr_i
+looper(addr_i a1,addr_i a2,int *str,int dir)
 {
-	register char *p1;
-	register char *p2;
+	int *p1;
+	int *p2;
 	while(dir ? a1<=a2 : a1>=a2){
-		p2 = getline(*a1, linebuf);
+		p2 = getline(core[a1], linebuf);
 		while(*p2==' ' || *p2=='\t')
 			p2++;
 		if(*p2++=='"' && *p2!=' ' && *p2!='\t' && *p2!='\0') {
@@ -95,11 +104,13 @@ int *looper(a1,a2,str,dir)
 		else
 			--a1;
 	}
-	return((int *)0);
+	return((addr_i)0);
 }
-search(forward)
+
+void
+search(int forward)
 {
-	register int *a1;
+	addr_i a1;
 	struct buffer *bufp;
 	bufp = stackp->bufptr;
 	if(forward){
@@ -118,10 +129,13 @@ search(forward)
 		stackp->charno = 0;
 	}
 }
+
 int pchar;
-setapp()
+
+void
+setapp(void)
 {
-	register c;
+	int c;
 	c=getchar();
 	if(posn(c, lchars)>=0) {
 		pchar = c;
@@ -135,35 +149,33 @@ setapp()
 	else if(c!='\n')
 		error('x');
 }
-#define	LDCHUNK	512
-append(f, a)
-int (*f)();
-int *a;
+
+int
+append(int (*f)(void), addr_i a)
 {
-	register *a1, *a2, *rdot;
-	int nline, tl;
-	struct integer { int iint; };
+	addr_i a1, a2, rdot;
+        addr_t tl;
+	int nline;
+
 	appflag++;
 	nline = 0;
 	dot = a;
 	while ((*f)()==0) {
 		if (lastdol>=endcore) {
-			if (sbrk(LDCHUNK*(sizeof *endcore))==(char *)-1)
+			if ((core=(addr_t *)realloc((void *)core,(endcore+LDCHUNK)*sizeof(addr_t)))==(void *)0)
 				error('c');
 			endcore += LDCHUNK;
 		}
 		tl = putline();
 		nline++;
-		lock++;
 		++dol;
 		a1 = ++lastdol;
 		fixbufs(1);
 		a2 = a1+1;
 		rdot = ++dot;
 		while (a1 > rdot)
-			*--a2 = *--a1;
-		*rdot = tl;
-		unlock();
+			core[--a2] = core[--a1];
+		core[rdot] = tl;
 		if(oneline)
 			break;
 	}
@@ -178,12 +190,15 @@ int *a;
 	}
 	return(nline);
 }
-char bformat = 'p';
-bcom()
+
+int bformat = 'p';
+
+void
+bcom(void)
 {
-	register dir, n;
-	register psize;
-	register *olddot=addr2;	/* for b. */
+	int dir, n;
+	int psize;
+	addr_i olddot=addr2;	/* for b. */
 	dir=1;
 	if((peekc=getchar())!='\n'){	/* really nextchar() */
 		if (peekc=='-' || peekc=='+' || peekc=='.') {
@@ -206,7 +221,7 @@ bcom()
 			addr1=zero+1;
 		if(dir==0){
 			display(bformat);
-			puts("^^^^^");
+			puts(utfstr_sharkteeth);
 			addr2++;
 		}
 	}
@@ -219,38 +234,40 @@ bcom()
 	if(dir==0)
 		dot=olddot;
 }
-delete()
+
+void
+delete(void)
 {
-	register *a1, *a2, *a3;
+	addr_i a1, a2, a3;
 	setdot();
 	a1 = addr1;
 	a2 = addr2;
 	if(a1==zero) {
 		if(a2!=zero)
-			*(a1++);
+			a1++;
 		else
 			return;		/* 0,$d on an empty buffer */
 	}
-	*(a2++);
+	a2++;
 	a3 = lastdol;
-	lock++;
 	dol -= a2 - a1;
 	lastdol -= a2 - a1;
 	fixbufs(a1-a2);
 	do
-		*a1++ = *a2++;
+		core[a1++] = core[a2++];
 	while (a2<=a3);
 	a1 = addr1;
 	if (a1 > dol)
 		a1 = dol;
 	dot = a1;
-	unlock();
 	modified();
 }
-allnums()
+
+void
+allnums(void)
 {
-	register int i;
-	register char *p;
+	int i;
+	int *p;
 	setdot();
 	for(i=0; i<NBUFS; i++){
 		p = string[i].str;
@@ -260,14 +277,16 @@ allnums()
 		}
 	}
 }
-numcom(z)
+
+void
+numcom(int z)
 {
-	register n;
-	register struct string *sp;
-	register char *l;
-	char c;
+	int n;
+	struct string *sp;
+	int *l;
+	int c;
 	int numeric;
-	extern char digits[];		/* defined in getchar.c = "0123456789" */
+	extern int digits[];		/* defined in getchar.c = "0123456789" */
 
 	/*
 	 * Must generate error if attempt is made to do arithmetic on
@@ -276,7 +295,7 @@ numcom(z)
 	 */
 	sp = &string[z];
 	numeric = alldigs(sp->str);
-	n = atoi(sp->str);
+	n = qatoi(sp->str);
 	for(;;){
 		switch(c=getchar()){
 		default:
@@ -295,7 +314,7 @@ numcom(z)
 			goto Not_numeric;
 		case 'n':
 			nonzero();
-			l = getline(*addr2,linebuf);
+			l = getline(core[addr2],linebuf);
 			do; while(*l++);
 			n = l - linebuf - 1;
 			goto Not_numeric;
@@ -326,7 +345,7 @@ numcom(z)
 			n %= getsigned();
 			goto Numeric;
 		case '!':
-			if(posn(c=getchar(), "=><")<0)
+			if(posn(c=getchar(), utfstr_eqgtlt)<0)
 				error('#');
 			settruth(condition(n, getsigned(), c, 1));
 			goto Numeric;
@@ -344,8 +363,9 @@ numcom(z)
 	ungetchar(c);
 	numset(z, n);
 }
-condition(n, m, cond, negate)
-	register n, m, cond, negate;
+
+int
+condition(int n, int m, int cond, int negate)
 {
 	int retval;
 	if(cond=='=')
@@ -355,21 +375,22 @@ condition(n, m, cond, negate)
 	else if(cond=='>')
 		retval = (n>m);
 	else
-		error("!");
+		error('!');
 	return(negate^retval);
 }
-numset(z, n)
-	register z;
-	register n;
+
+void
+numset(int z, int n)
 {
 	startstring();
 	numbuild(n);
 	setstring(z);
 }
-numbuild(n)
-	register n;
+
+void
+numbuild(int n)
 {
-	register i;
+	int i;
 	if(n<0){
 		addstring('-');
 		n = -n;
@@ -379,12 +400,14 @@ numbuild(n)
 		numbuild(i);
 	addstring(n%10+'0');
 }
-strcom(z)
+
+void
+strcom(int z)
 {
-	register char *q;
-	register n;
+	int *q;
+	int n;
 	int getchar();
-	register struct string *sp;
+	struct string *sp;
 	int cond, c, negate;
 	setdot();
 	sp = &string[z];
@@ -406,12 +429,12 @@ strcom(z)
 	case ':':
 		startstring();
 		for(;;){
-			c = getquote("\n", getchar);
+			c = getquote(utfstr_nl, getchar);
 			if(c=='\n'){
 				setstring(z);
 				return;
 			}
-			addstring(c&0177);
+			addstring(unescape(c));
 		}
 	case '\'':
 		startstring();
@@ -421,7 +444,7 @@ strcom(z)
 	case '.':
 		nonzero();
 		startstring();
-		copystring(getline(*addr2, linebuf));
+		copystring(getline(core[addr2], linebuf));
 		setstring(z);
 		break;
 	case '/':
@@ -501,7 +524,7 @@ strcom(z)
 		setstring(z);
 		break;
 	case '!':
-		if(posn(cond=getchar(), "=><")<0)
+		if(posn(cond=getchar(), utfstr_eqgtlt)<0)
 			error('x');
 		negate=TRUE;
 	case '=':
@@ -528,10 +551,10 @@ strcom(z)
 		}
 	case '{':
 		q = genbuf;
-		while(posn(c=getchar(), "} \t\n")<0 && c!=EOF)
+		while(posn(c=getchar(), utfstr_rbracewhitespace)<0 && c!=EOF)
 			*q++ = c;
 		*q = '\0';
-		if((q=getenv(genbuf)) == 0)
+		if((q=ucode(getenv(utf8(genbuf)))) == 0)
 			clearstring(z);
 		else{
 			startstring();
@@ -542,17 +565,20 @@ strcom(z)
 	/* end of switch */
 	}
 }
-strinc(z, n)
+
+void
+strinc(int z, int n)
 {
-	register char *q;
+	int *q;
 	q=string[z].str;
 	while(*q)
 		*q++ += n;
 }
-locn(ap, aq)
-	char *ap, *aq;
+
+int
+locn(int *ap, int *aq)
 {
-	register char *p, *q, *lastq;
+	int *p, *q, *lastq;
 	p=ap;
 	q=aq;
 	for(;;){
@@ -568,12 +594,15 @@ locn(ap, aq)
 		q=lastq+1;
 	}
 }
+
 #define	EMPTY	(TRUE+1)	/* ==> ignore this buf in G/V */
-ncom(c)
+
+void
+ncom(int c)
 {
-	register struct buffer *bufp;
+	struct buffer *bufp;
 	struct buffer *stop;
-	register char *f, *lp;
+	int *f, *lp;
 	int globflag;
 
 	setnoaddr();
@@ -610,7 +639,7 @@ ncom(c)
 		if(globflag){
 			cpstr(f, lp);
 			loc2 = 0;	/* ==> we are about to search for 1st time */
-			bufp->gmark = execute((int *)0);
+			bufp->gmark = execute((addr_i)0);
 		} else {
 			*lp = '\0';
 			lp = linebuf;
@@ -620,10 +649,12 @@ ncom(c)
 		}
 	}while(bufp++!=stop);
 }
-allstrs()
+
+void
+allstrs(void)
 {
-	register int i;
-	char *p;
+	int i;
+	int *p;
 	setdot();
 	for(i=0; i<NBUFS; i++){
 		p=string[i].str;
@@ -641,15 +672,19 @@ allstrs()
 		putl(string[BROWSE].str);
 	}
 }
+
 /*
  *	clean (string) to support zaC
  *	strips leading and trailing white space from a string
  *	and replaces interior white space by single blanks
  */
-clean(z) {
-	register char *s;
-	register char *d;
-	register char c;
+
+void
+clean(int z)
+{
+	int *s;
+	int *d;
+	int c;
 	d = genbuf;
 	for (s = string[z].str; (c = *s) == ' ' || c == '\t'; s++);
 	while (c = *s++) {

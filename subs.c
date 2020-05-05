@@ -1,18 +1,18 @@
-/*% cc -c -O %
- */
-#include "vars.h"
-char *next_new;
-char *next_old;
+#include "qed.h"
+
+int *next_new;
+int *next_old;
 int new_line;
 int old_line;
-char rhsbuf[RHSIZE];
+int rhsbuf[RHSIZE];
 
-substitute(inglob, reg)
+void
+substitute(int inglob, int reg)
 {
-	register int n, m;
-	register char *p;
-	char *q;
-	int *a1;
+	int n, m;
+	int *p;
+	int *q;
+	addr_i a1;
 	int gsubf;
 	extern int getsub();
 	int t, count, autop=0;
@@ -47,7 +47,7 @@ substitute(inglob, reg)
 				/* can't match same location twice */
 				if (loc1==loc2)
 					loc2++;
-			} while (execute((int *)0));
+			} while (execute((addr_t)0));
 			if (m<=0) {
 				inglob |= TRUE;
 				p=next_old;
@@ -82,23 +82,22 @@ substitute(inglob, reg)
 		}
 }
 
-compsub(subbing, autop)
-	int subbing;
-	int *autop;
+int
+compsub(int subbing, int *autop)
 {
-	register int seof, c;
-	char *rhsmagic;
-	register char *p;
+	int seof, c;
+	int *rhsmagic;
+	int *p;
 	int getsvc();
 
 	*autop=FALSE;
 	seof = getchar();
 	if(subbing) {
 		compile(seof);
-		rhsmagic = "/&^\n\\123456789";
+		rhsmagic = utfstr_rhsa;
 	}
 	else
-		rhsmagic = "/\\\n";
+		rhsmagic = utfstr_rhsb;
 	rhsmagic[0] = seof;
 	p = rhsbuf;
 	startstring();
@@ -124,22 +123,25 @@ compsub(subbing, autop)
 	}
 	return(0);
 }
-int getsub()
+
+int
+getsub(void)
 {
-	register char *p1, *p2;
+	int *p1, *p2;
 
 	p1 = linebuf;
 	if ((p2 = linebp) == 0)
 		return(EOF);
-	do ; while (*p1++ = (*p2++ & 0177));
+	do ; while (*p1++ = *p2++);
 	linebp = 0;
 	return(0);
 }
 
-dosub()
+void
+dosub(void)
 {
-	register int c;
-	register char *p;
+	int c;
+	int *p;
 
 	place(next_old,loc1,0);
 	next_old=loc2;
@@ -147,9 +149,10 @@ dosub()
 	while (c = *p++) {
 		if (c=='&' || (c == '^' && uflag))
 			place(loc1,loc2,c=='^');
-		else if ((c&0200) && (c &= 0177)>='1' && c<'1'+nbra)
+		else if (escaped(c) && unescape(c)>='1' && unescape(c)<'1'+nbra) {
+			c=unescape(c);
 			place(braslist[c-'1'],braelist[c-'1'], 0);
-		else {
+		} else {
 			*next_new++ = c;
 			if (next_new >= genbuf+LBSIZE)
 				error('l');
@@ -157,22 +160,21 @@ dosub()
 	}
 }
 
-place(l1, l2, ucase)
-	register char *l1;
-	char *l2;
+void
+place(int *l1, int *l2, int ucase)
 {
-	register char *sp;
-	register c;
+	int *sp;
+	int c;
 
 	sp = next_new;
 	while (l1 < l2) {
-		*sp++ = (*l1++ & 0177);
+		*sp++ = *l1++;
 		if (sp >= &genbuf[LBSIZE])
 			error('l');
 	}
 	if(ucase){
 		for(l1 = next_new;l1 < sp;){
-			c = (*l1 & 0177);
+			c = *l1;
 			if((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')){
 				switch(uflag){
 				case 's':
@@ -195,35 +197,38 @@ place(l1, l2, ucase)
 	next_new = sp;
 }
 
-undo()
+void
+undo(void)
 {
-	register int *l;
+	addr_i l;
 
-	for (l=zero+1; l<=dol && (*l|01)!=new_line; l++)
+	for (l=zero+1; l<=dol && mark(core[l])!=new_line; l++)
 		;
 	if (l>dol)
 		error('u');
 	replace(l,old_line);
 	dot=l;
 }
-replace(line,ptr)
-	register int *line;
-	register int ptr;
-{
-	register int *p;
 
-	*line |= 01;
-	for (p=names; p<names+NBUFS; p++)
-		if (*p == *line)
-			*p = ptr|01;
-	old_line = *line;
-	*line = ptr;
-	new_line = ptr | 01;
-}
-join()
+void
+replace(addr_i line,addr_t ptr)
 {
-	register int *l;
-	register char *p, *q;
+	addr_t *p;
+
+	core[line] = mark(core[line]);
+	for (p=names; p<names+NBUFS; p++)
+		if (*p == core[line])
+			*p = mark(ptr);
+	old_line = core[line];
+	core[line] = ptr;
+	new_line = mark(ptr);
+}
+
+void
+join(void)
+{
+	addr_i l;
+	int *p, *q;
 	int rep;
 	int autop=FALSE;
 
@@ -234,7 +239,7 @@ join()
 	}
 	p = genbuf;
 	for (l=addr1; ;) {
-		q = getline(*l++, linebuf);
+		q = getline(core[l++], linebuf);
 		while (*q) {
 			*p++ = *q++;
 			if (p >= genbuf + sizeof genbuf)
@@ -256,7 +261,7 @@ join()
 	q=genbuf;
 	do ; while (*p++ = *q++);
 	getsub();
-	*(l=addr1++)=putline();
+	core[(l=addr1++)]=putline();
 	/* if you want marks preserved for join, change the above line to
 	/* the one commented out here.
 	/* problem: undo then undoes the join, but gets it wrong.  Your choice.
@@ -271,39 +276,42 @@ join()
 	}
 }
 
-int next_col(col,cp,input)
-	register int col;
-	register char *cp;
-	int input;
+int
+next_col(int col,int *cp,int input)
 {
-	register c;
+	int c;
 
 	c = *cp;
 	if (c=='\t')
 		col |= 07;
 	else if (c<' ' || c=='\177')
 		error('t'); /* invalid character in x data */
+/*
 	else
 		if (input && (c==ttybuf.sg_erase || c==ttybuf.sg_kill))
 			col++;	/* One column for the backslash */
 	return (++col);
 }
 
-xform()
+void
+xform(void)
 {
-	register char *i, *m, *o;
-	int *line, insert, change, ic, mc, c;
-	char *tf, *tl;
+        union pint_t uc;
+	int *i, *m, *o;
+	addr_i line;
+	int insert, change, ic, mc, c;
+	int *tf, *tl;
 
 	if(getchar() != '\n')
 		error('x');
 	for (line=addr1; line<=addr2; line++) {
-		getline(*line, linebuf);
+		getline(core[line], linebuf);
 		change=FALSE;
 		dot=line;
 		for(;;){
 			puts(linebuf);
-			pushinp(XTTY, 0, FALSE);
+                        uc.i=0;
+			pushinp(XTTY, uc, FALSE);
 			m=rhsbuf;
 			while ((c = getchar())!='\n') {
 				if (c == EOF)
@@ -365,7 +373,7 @@ xform()
 						insert++;
 						break;
 					case '$':
-						i="";
+						i=utfstr_nul;
 						break;
 					case '#':
 						ic=next_col(ic,i++,FALSE);

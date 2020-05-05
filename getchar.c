@@ -1,10 +1,13 @@
-/*% cc -c -O %
- */
-#include "vars.h"
-char digits[] = "0123456789";	/* getnum() & atoi() work even on non-ASCII systems */
-getnum()
+#include "qed.h"
+
+/* getnum() & qatoi() work even on non-ASCII systems */
+
+int digits[] = {'0','1','2','3','4','5','6','7','8','9','\0'};
+
+int
+getnum(void)
 {
-	register n, i;
+	int n, i;
 	n=0;
 	while((i=posn(nextchar(), digits)) >= 0){
 		getchar();
@@ -13,8 +16,10 @@ getnum()
 	return(n);
 }
 
-getsigned(){
-	register sign;
+int
+getsigned(void)
+{
+	int sign;
 	if(nextchar()=='-'){
 		getchar();
 		sign = -1;
@@ -24,10 +29,10 @@ getsigned(){
 	return(getnum()*sign);
 }
 
-atoi(s)
-	register char *s;
+int
+qatoi(int *s)
 {
-	register n, i;
+	int n, i;
 	int sign;
 
 	n = 0;
@@ -45,8 +50,8 @@ atoi(s)
 	return(sign*n);
 }
 
-alldigs(s)
-	register char *s;
+int
+alldigs(int *s)
 {
 	if(*s == '-')
 		s++;
@@ -56,56 +61,72 @@ alldigs(s)
 	return(TRUE);
 }
 
-char bname[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~";
-getname(e)
+int bname[] = {'a','b','c','d','e','f','g','h','i','j','k','l','m',
+               'n','o','p','q','r','s','t','u','v','w','x','y','z',
+               'A','B','C','D','E','F','G','H','I','J','K','L','M',
+               'N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
+               '{','|','}','~','\0'};
+
+int
+getname(int e)
 {
 	int getc();
 	return(getnm(e, getc));
 }
-getaz(e)
+
+int
+getaz(int e)
 {
 	int getchar();
 	return(getnm(e, getchar));
 }
-getnm(e, f)
-	int (*f)();
+
+int
+getnm(int e, int (*f)())
 {
-	register i;
+	int i;
 	i = posn((*f)(), bname);
 	if(i < 0)
 		error(e);
 	return(i);
 }
-char	special[] = "xgBbBcfFlprzN\"\\'";
+
+int	special[] = {'x','g','B','b','B','c', 'f','F',
+                     'l','p','r','z','N','"','\\','\0'};
 int	qcount;
 int	afterq;
-getchar()
+
+int
+getchar(void)
 {
-	register c;
-	register peek;
+	int c;
+	int peek;
 
 	peek=peekc;
 	c=getc();
 	if(tflag && !peek && stackp!= &stack[0]){
 		if(c==EOF)
-			puts("[*EOF*]");
+			puts(utfstr_starEOFstar);
 		else
 			putchar(c);
 	}
 	return(c);
 }
-getc()
+
+int
+getc(void)
 {
-	register c;
-	register struct buffer *bufp;
-	register struct stack *sp;
-	int *lp;
+        union pint_t uc; 
+	int c;
+	struct buffer *bufp;
+	struct stack *sp;
+	addr_i lp;
 	int numeric;
 	int delta;
 	int literal;
 	int i;
-	char *p;
-	static char bufbuf[LBSIZE];
+	int *p;
+	static int bufbuf[LBSIZE];
 
 	if(c = peekc)	/* assignment = */
 		peekc = 0;
@@ -159,7 +180,7 @@ getc()
 				if(bbempty){
 					if(lp>bufp->dol)
 						continue;
-					p = getline(*lp, bufbuf);
+					p = getline(core[lp], bufbuf);
 					bbempty = FALSE;
 					for(i=sp->charno; i-- && *p; p++)
 						;
@@ -187,7 +208,7 @@ getc()
 			i = posn(c, cspec);
 			switch(i) {
 			case LITERAL:
-				if(posn(peekc=getc(), "bfFlprz!") >= 0)
+				if(posn(peekc=getc(), utfstr_bfFlprz) >= 0)
 					literal = TRUE;
 				goto Getc;	/* business as usual... */
 			case QUOTE:
@@ -216,11 +237,12 @@ getc()
 					if(numeric){
 						if(!alldigs(string[c].str))
 							error('#');
-						numset(c, atoi(string[c].str)+delta);
+						numset(c, qatoi(string[c].str)+delta);
 					} else
 						strinc(c, delta);
 				}
-				pushinp(i, c, literal);
+                                uc.i=c;
+				pushinp(i, uc, literal);
 				literal = FALSE;
 				c=getc();
 				break;
@@ -234,7 +256,8 @@ getc()
 			case FILEN:
 			case PAT:
 			case RHS:
-				pushinp(i, c, literal);
+                                uc.i=c;
+				pushinp(i, uc, literal);
 				literal = FALSE;
 				/* fall through */
 			case NOTHING:
@@ -256,31 +279,55 @@ getc()
 	lastc = c;
 	return(c);
 }
-ttyc()
+
+int
+ttyc(void)
 {
-	char c;
+	byte b[4];
+	byte *c;
+
+	c=&b[0];
+
 	initflag = 0;
-	if(read(0, &c, 1) > 0)
-		lastttyc = c&0177;
-	else
-		lastttyc = EOF;
-	return(lastttyc);
+
+	if(read(0,c,1)<=0)
+		return lastttyc=EOF;
+
+	if(convnutf(c,&lastttyc,1))
+		return lastttyc;      /* unicode ascii */
+
+	/*
+	 * lastttyc should now hold the number of extra bytes needed,
+         * or 0 if there was a decoding error.
+	 */
+
+	if(0==lastttyc)
+		return lastttyc=EOF;  /* decoding error */
+
+	if(read(0,++c,lastttyc)<=0)   /* read in required extra bytes of utf */
+		return lastttyc=EOF;
+
+	if(convutf(--c,&lastttyc))
+		return lastttyc;
+
+	return lastttyc=EOF;
 }
-posn(c, s)
-	register char c;
-	register char *s;
+
+int
+posn(int c, int *s)
 {
-	register char *is;
+	int *is;
 	is = s;
 	while(*s)
 		if(c == *s++)
 			return(s - is - 1);
 	return(-1);
 }
-pushinp(type, arg, literal)
-	register arg;
+
+void
+pushinp(int type, union pint_t arg, int literal)
 {
-	register struct stack *s;
+	struct stack *s;
 
 	s = ++stackp;
 	if(s == stack+STACKSIZE)
@@ -296,10 +343,10 @@ pushinp(type, arg, literal)
 	s->charno = 0;
 	switch(type){
 	case BFILEN:
-		s->strname = FILE(arg);
+		s->strname = FILE(arg.i);
 		break;
 	case STRING:
-		s->strname = arg;
+		s->strname = arg.i;
 		break;
 	case FILEN:
 		s->strname = savedfile;
@@ -314,21 +361,24 @@ pushinp(type, arg, literal)
 		s->strname = BROWSE;
 		break;
 	case BUF:
-		if((s->bufptr=buffer+arg) == curbuf && appflag)
+		if((s->bufptr=buffer+arg.i) == curbuf && appflag)
 			error('\\');
 		s->lineno=1;
 		break;
 	case GLOB:
-		s->globp = (char *)arg;
+		s->globp = arg.p;
 		break;
 	}
 	if(tflag){
 		if(type==BFILEN || type==STRING || type==BUF)
-			putchar(bname[arg]);
+			putchar(bname[arg.i]);
 		putchar('=');
 	}
 }
-popinp(){
+
+void
+popinp(void)
+{
 	if(stackp->type == BUF)
 		bbempty = TRUE;
 	if(tflag){
@@ -337,10 +387,12 @@ popinp(){
 	}
 	--stackp;
 }
-gettty()
+
+int
+gettty(void)
 {
-	register c, gf;
-	register char *p;
+	int c, gf;
+	int *p;
 	p = linebuf;
 	gf = stackp->type;
 	while((c=getchar()) != '\n') {
@@ -360,17 +412,17 @@ gettty()
 		return(EOF);
 	return(0);
 }
-getquote(p, f)
-	register char *p;
-	int (*f)();
+
+int
+getquote(int *p, int (*f)())
 {
-	register c;
+	int c;
 	c = (*f)();
 	if(c == '\\') {
 		if(peekc == 0)
 			nextchar();	/* prime peekc */
 		if(posn(peekc, p) >= 0) {
-			c = peekc | 0200;
+			c = escape(peekc);
 			(*f)();		/* clear peekc */
 		}
 	}

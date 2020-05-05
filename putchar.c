@@ -1,77 +1,51 @@
-/*% cc -c -O %
- */
-#include "vars.h"
-#ifdef	PDP11
-typedef	long ulong;
-#else
+#include "qed.h"
+
 typedef	unsigned long ulong;
-#endif
+
 int	col;
-putdn(i)
+
+void
+putdn(int i)
 {
 	putlong((ulong)i);
 	putchar('\n');
 }
-#ifdef	PDP11
-/*
- *	In version 6, ldiv() is in the library. In version 7, it is separate:
-	.globl	_ldiv, _ldivr
-	_ldiv:
-		mov	2(sp), r0
-		mov	4(sp), r1
-		div	6(sp), r0
-		mov	r1,_ldivr
-		rts	pc
-	.bss
-	_ldivr:	.=.+2
- */
-putlong(i)
-	long i;
-{
-	register char r;
-	extern int ldiv(), ldivr;
 
-	/* the following pornography saves bundles of memory */
-	i = ldiv(i,10);
-	r = ldivr + '0';
-	if (i)
-		putlong(i);
-	putchar(r);
-}
-#endif
-#ifndef	PDP11
-putlong(i)
-	ulong i;
+void
+putlong(ulong i)
 {
-	register r;
+	int r;
 	r = i%10;
 	i /= 10;
 	if(i)
 		putlong(i);
 	putchar('0'+r);
 }
-#endif
-putl(sp)
-	register char *sp;
+
+void
+putl(int *sp)
 {
 	listf++;
 	puts(sp);
 	listf = FALSE;
 }
-puts(sp)
-	register char *sp;
+
+void
+puts(int *sp)
 {
 	col = 0;
 	while (*sp)
 		putchar(*sp++);
 	putchar('\n');
 }
-display(lf)
+
+void
+display(int lf)
 {
-	register int *a1;
-	register int r;
-	register char *p;
-	register i;
+	addr_i a1;
+	int r;
+	int *p;
+	int i;
 	int nf;
 	listf = (lf == 'l' || lf == 'L');
 	nf = (lf == 'P' || lf == 'L');
@@ -79,13 +53,13 @@ display(lf)
 	setdot();
 	nonzero();
 	a1 = addr1;
-	r = (a1 - zero) & 077777;
+	r = a1 - zero;
 	do{
 		col = 0;
 		if(nf){
 			putlong((ulong)r++);
 			for(i=0; i<NBUFS; i++)
-				if((*a1|01) == names[i]){
+				if(mark(core[a1]) == names[i]){
 					putchar('\'');
 					putchar(bname[i]);
 				}
@@ -94,20 +68,24 @@ display(lf)
 			col = 8;
 			listf = lf;
 		}
-		for(p = getline(*a1++,linebuf);*p;putchar(*p++));
+		for(p = getline(core[a1++],linebuf);*p;putchar(*p++));
 		putchar('\n');
 	}while (a1 <= addr2);
 	dot = addr2;
 	listf = FALSE;
 }
-putct(c){
+
+void
+putct(int c)
+{
 	putchar(c);
 	putchar('\t');
 }
-putchar(c)
-register char c;
+
+void
+putchar(int c)
 {
-	register char *lp;
+	int *lp;
 
 	lp = linp;
 	if (listf) {
@@ -117,7 +95,7 @@ register char c;
 				*lp++ = 'n';
 			}
 		} else {
-			if (col >= (72-4-2)) {
+			if (col >= (LINELEN-8)) {
 				*lp++ = '\\';
 				*lp++ = '\n';
 				*lp++ = '\t';
@@ -128,27 +106,53 @@ register char c;
 				*lp++ = '\\';
 				c = c=='\b'? 'b' : c=='\t'? 't' : '\\';
 				col++;
-			} else if ((c&0200) || c<' ' || c=='\177') {
+			} else if (escaped(c)) {
 				*lp++ = '\\';
-				*lp++ = ((c>>6)&03)+'0';
-				*lp++ = ((c>>3)&07)+'0';
-				c     = ( c    &07)+'0';
+				c=unescape(c);
+				col++;
+			} else if (c<' ' || c=='\177') {
+				*lp++ = '\\';
+				*lp++ = 'x';
+				*lp++ = hex[(c>>4)&0xF];
+				c     = hex[c&0xF];
 				col += 3;
+			} else if (c>'\177' && c<=0xFFFF) {
+				*lp++ = '\\';
+				*lp++ = 'u';
+				*lp++ = hex[(c>>12)&0xF];
+				*lp++ = hex[(c>>8)&0xF];
+				*lp++ = hex[(c>>4)&0xF];
+				c     = hex[c&0xF];
+				col += 5;
+			} else if (c>0xFFFF) {
+				*lp++ = '\\';
+				*lp++ = 'U';
+				*lp++ = hex[(c>>20)&0xF];
+				*lp++ = hex[(c>>16)&0xF];
+				*lp++ = hex[(c>>12)&0xF];
+				*lp++ = hex[(c>>8)&0xF];
+				*lp++ = hex[(c>>4)&0xF];
+				c     = hex[c&0xF];
+				col += 7;
 			}
 		}
 	}
 	*lp++ = c;
-	if(c == '\n' || lp >= &line[(sizeof line)-2-4]) {
+	if(c == '\n' || lp >= &line[LINELEN]) {
 		linp = lp;
 		flush();
 		lp = linp;
 	}
 	linp = lp;
 }
-flush()
+
+void
+flush(void)
 {
+	int n;
 	if(linp != line){
-		write(1, line, linp-line);
+		n=utf8nstring(line,utf8buff,linp-line);
+		write(1, utf8buff, n); 
 		linp = line;
 	}
 }

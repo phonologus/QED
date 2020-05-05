@@ -1,66 +1,102 @@
 /*
  * QED
  */
-#define	VAX	VAX
-#ifdef	VAX
-#define	BIGTMP	LOTSOFBITS
-#endif
-/*	Fake setexit & reset from v6 using setjmp and longjmp	*/
-#include <setjmp.h>
-jmp_buf	env;
-#define	setexit()	setjmp(env)
-#define	reset()		longjmp(env, 0)
-#define TRUE	1
-#define FALSE	0
-#define	LBSIZE	512
+
+/*
+ * utf
+ */
+
+extern utfio _uio;
+extern utfio *uio;
+
+extern jmp_buf	savej;
+
+extern addr_t *core;
+
+enum {
+	LINELEN=80
+};
+
+enum {
+	LDCHUNK=4096
+};
+
+enum {
+  TRUE = 1,
+  FALSE = 0
+};
+
+#define	LBSIZE	4096
 #define RHSIZE	(LBSIZE/4)	/* ed says /2; but that's unreasonable! */
 #define	NBRA	9
 #define	EOF	(-1)
 #define	FILERR	0200
-#define	SAVENEVER	0
-#define	SAVEIFFIRST	1
-#define	SAVEALWAYS	2
+
+enum {
+  SAVENEVER = 0,
+  SAVEIFFIRST = 1,
+  SAVEALWAYS = 2
+} ; 
+
 /*
  * Stack types.  Must appear in the order as in cspec[]/getchar.
  * XTTY, GLOB and BRWS are special types with no corresponding special character.
  * Special is never used directly - it is just used in tracing
  *	pushinp()/getchar.c can be called with a negative index for cspec[]
  */
-char	special[]; /* "xgBbBcfFlprzN\"\\'" */
+extern int special[]; /*="xgBbBcfFlprzN\"\\'"*/
 #define	cspec	(special + 3)
-#define	XTTY		0175
-#define	GLOB		0176
-#define	BRWS		0177
-#define	BUF		0
-#define	CURBN		1
-#define	QUOTE		2
-#define	FILEN		3
-#define	BFILEN		4
-#define	TTY		5
-#define	PAT		6
-#define	RHS		7
-#define	STRING		8
-#define	NEWL		9
-#define	NOTHING		10
-#define	BACKSLASH	11
-#define	LITERAL		12
+
+enum {
+  XTTY = 0175,
+  GLOB = 0176,
+  BRWS = 0177
+} ;
+
+enum {
+  BUF=0,
+  CURBN=1,
+  QUOTE=2,
+  FILEN=3,
+  BFILEN=4,
+  TTY=5,
+  PAT=6,
+  RHS=7,
+  STRING=8,
+  NEWL=9,
+  NOTHING=10,
+  BACKSLASH=11,
+  LITERAL=12
+};
+
 /*
  * Getchar-linked macros
  */
 #define ungetchar(c)	(peekc = (c))
 #define nextchar()	(peekc = getchar())
-#define NBUFS 56
+
+extern int hex[];
+
+extern int	bname[]; /*="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~"*/
+
+enum {
+  NBUFS=56
+};
+
 /*
  * The buffer structure.  All info associated with each buffer stored here
  */
 struct buffer{
-	int *zero;
-	int *dot;
-	int *dol;
+	addr_i zero;
+	addr_i dot;
+	addr_i dol;
 	char cflag;
 	char gmark;
-}buffer[NBUFS];
-struct buffer *curbuf;
+};
+
+extern struct buffer buffer[NBUFS];
+extern struct buffer *curbuf;
+
 /*
  * The string structure
  * The first NBUFS strings are the registers
@@ -89,97 +125,107 @@ struct buffer *curbuf;
 #define	SAVRHS	(SAVPAT+1)
 #define	BROWSE	(SAVRHS+1)
 #define	FILEBUF	(BROWSE+1)
+
 struct string{
 	int len;
-	char *str;
-}string[NSTRING+1];
+	int *str;
+};
+
 #define NSTRCHARS 1024
-char strarea[NSTRCHARS + 2];
+
+extern struct string string[NSTRING+1];
+extern int strarea[NSTRCHARS + 2];
+
 #define	nullstr strarea
 #define	strchars (&strarea[2])
 #define STACKSIZE 16
 /*
  * The getchar stack.
  */
+
+union pint_t{
+  int *p;
+  int i;
+};
+ 
 struct stack{
-	char type;
-	char literal;
+	int type;
+	int literal;
 	union{
 		struct buffer *u1bufptr;
-		char *u1globp;
+		int *u1globp;
 	}u1;
 	union{
 		int u2lineno;
 		int u2strname;
 	}u2;
 	int charno;
-}stack[STACKSIZE];
+};
+
+extern struct stack stack[STACKSIZE];
+extern struct stack *stackp;
+
 #define	bufptr	u1.u1bufptr
 #define	globp	u1.u1globp
 #define	lineno	u2.u2lineno
 #define	strname	u2.u2strname
-struct stack *stackp;
-int	peekc;
-int	lastc;
-char	line[70];
-char	*linp;
-int	savedfile;
-char	linebuf[LBSIZE];
-int	*zero;
-int	*dot;
-int	*dol;
-int 	*lastdol;
-int	*endcore;
-int	*fendcore;
-int	*addr1;
-int	*addr2;
-char	genbuf[LBSIZE];
-char	*linebp;
-#include	"sgtty.h"
-struct	sgttyb ttybuf;
-int	ninbuf;
-int	io;
-int	onhup;
-int	onquit;
-int	onintr;
-char	lasterr;
+
+
+extern int	peekc;
+extern int	lastc;
+extern int	line[LINELEN];
+extern int	*linp;
+extern int	savedfile;
+extern int	linebuf[LBSIZE];
+extern addr_i	zero;
+extern addr_i	dot;
+extern addr_i	dol;
+extern addr_i	lastdol;
+extern addr_i	endcore;
+extern addr_i	fendcore;
+extern addr_i	addr1;
+extern addr_i	addr2;
+extern int	genbuf[LBSIZE];
+extern int	*linebp;
+extern int	ninbuf;
+extern int	io;
+extern void	(*onhup)(int);
+extern void	(*onquit)(int);
+extern void	(*onintr)(int);
+extern int	lasterr;
 #define	PAGESIZE	22
-extern	pagesize;
-extern char bformat;	/* = 'p' */
-int	appflag;
-int	cflag;
-int	cprflag;
-int	dflag;
-int	eflag;
-int	gflag;
-int	biggflag;
-int	iflag;
-int	prflag;
-int	tflag;
-int	uflag;
-int	vflag;
-int	qok;
-int	eok;
-int	initflag;
-int	nestlevel;
-int	lastttyc;
-int	listf;
-int	tfile;
-int	tfile2;
-char	*tfname;
-char	*loc1;
-char	*loc2;
-int	names[NBUFS];
-char	*braslist[NBRA];
-char	*braelist[NBRA];
-int	nbra;
-int	oneline;
-int	lock;
-char	bname[]; /* ="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~" */
-char	lchars[];	/* = "pPlL" */
-int	bbempty;	/* whether getc's internal buffer buffer needs reloading */
-char	*getline();
-int	*address();
-char	*getenv();
-long	lseek();
-char	*sbrk();
+extern	int pagesize;
+extern int bformat;	/* = 'p' */
+extern int	appflag;
+extern int	cflag;
+extern int	cprflag;
+extern int	dflag;
+extern int	eflag;
+extern int	gflag;
+extern int	biggflag;
+extern int	iflag;
+extern int	prflag;
+extern int	tflag;
+extern int	uflag;
+extern int	vflag;
+extern int	qok;
+extern int	eok;
+extern int	initflag;
+extern int	nestlevel;
+extern int	lastttyc;
+extern int	listf;
+extern int	tfile;
+extern int	tfile2;
+extern char	tfname[];
+extern int	*loc1;
+extern int	*loc2;
+extern int	names[NBUFS];
+extern int	*braslist[NBRA];
+extern int	*braelist[NBRA];
+extern int	nbra;
+extern int	oneline;
+extern int	lchars[]; /*= "pPlL"*/
+extern int	bbempty;	/* whether getc's internal buffer buffer needs reloading */
+int	*getline();
+addr_i	address();
+

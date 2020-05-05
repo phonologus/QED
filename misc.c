@@ -1,12 +1,20 @@
-/*% cc -c -O %
- */
-#include "vars.h"
-#define SIGINT	2
-bufinit(n)
-	int *n;
+#include "qed.h"
+
+char tfname[]="/tmp/qxxxxx";
+
+void
+quit(void)
+{
+  free(core);
+  unlink(tfname);
+  exit(lasterr);
+}
+
+void
+bufinit(addr_i n)
 {
 	struct buffer *bufp;
-	register *fend;
+	addr_i fend;
 	fend=n;
 	for(bufp=buffer;bufp!=buffer+NBUFS;bufp++){
 		bufp->zero=fend;
@@ -15,43 +23,50 @@ bufinit(n)
 		bufp->cflag = FALSE;
 	}
 }
-chngbuf(bb)
-	int bb;
+
+void
+chngbuf(int bb)
 {
 	syncbuf();
 	newbuf(bb);
 	savedfile = FILE(curbuf-buffer);
 }
-newbuf(bb){
+
+void
+newbuf(int bb)
+{
 	curbuf = buffer+bb;
 	zero=curbuf->zero;
 	dot=curbuf->dot;
 	dol=curbuf->dol;
 	cflag = curbuf->cflag;
 }
-fixbufs(n)
-	register n;
+
+void
+fixbufs(int n)
 {
-	register struct buffer *bufp;
-	lock++;
+	struct buffer *bufp;
 	for(bufp=curbuf+1;bufp!=buffer+NBUFS;bufp++){
 		bufp->zero+=n;
 		bufp->dot+=n;
 		bufp->dol+=n;
 	}
-	unlock();
 }
-syncbuf()
+
+void
+syncbuf(void)
 {
 	/* curbuf->zero = zero;	/* we never assign to it, so needn't save */
 	curbuf->dot=dot;
 	curbuf->dol=dol;
 	curbuf->cflag = cflag!=FALSE;	/* Normalize to fit in a char */
 }
-error(code)
+
+void
+error(int code)
 {
-	extern savint;	/* error during a ! > < | ?? */
-	unlock();
+	extern void (*savint)(int);	/* error during a ! > < | ?? */
+        extern int savintf;
 	if(code){
 		for(;stackp != stack ;--stackp)
 			if(stackp->type == BUF || stackp->type == STRING){
@@ -76,8 +91,10 @@ error(code)
 		} else
 			putchar('\n');
 	}
-	if(eflag && code)
-		exit(code);
+	if(eflag && code) {
+		lasterr=code;
+		quit();
+	}
 	nestlevel = 0;
 	listf = FALSE;
 	gflag = FALSE;
@@ -89,48 +106,60 @@ error(code)
 			getchar();
 		}
 	}
-	lseek(0, 0L, 2);
+	lseek(0, 0L, SEEK_END);
 	if (io > 0) {
 		close(io);
 		io = -1;
 		cflag = TRUE;	/* well, maybe not, but better be safe */
 	}
 	appflag=0;
-	if(savint>=0){
+	if(savintf>=0){
 		signal(SIGINT, savint);
-		savint= -1;
+		savintf = -1;
 	}
-	reset();
+	longjmp(savej,1);
 }
-init()
+
+void
+init(void)
 {
-	register char *p;
-	register pid;
-	lock++;
-	close(tfile);
-	tfname = "/tmp/qxxxxx";
+	char *p;
+	int pid;
+	if(tfile > 0)
+		close(tfile);
 	pid = getpid();
 	for (p = &tfname[11]; p > &tfname[6];) {
 		*--p = (pid%10) + '0';
 		pid /= 10;
 	}
 	close(creat(tfname, 0600));
-	tfile = open(tfname, 2);
-	tfile2 = open(tfname, 2);
-	ioctl(tfile, FIOCLEX, 0);
-	ioctl(tfile2, FIOCLEX, 0);
-	brk(fendcore);
+	tfile = open(tfname, O_RDWR);
+	tfile2 = open(tfname, O_RDWR);
+	/* (re-)initialize core.
+	 * core was initialized to 0 on program entry.
+	 * init() is also called by restore(), possibly with
+	 * a core already allocated, so we need to free it
+	 * before re-initializing.
+	 */
+	free(core);
+	if ((core=(addr_t*)malloc(sizeof(addr_t)))==(addr_t *)0) {
+		lasterr=-1;
+		quit();
+	}
+	fendcore=1;
+	endcore=fendcore-1;
 	bufinit(fendcore);
 	newbuf(0);
 	lastdol=dol;
-	endcore = fendcore - 2;
 	stackp=stack;
 	stackp->type=TTY;
-	unlock();
+	uio=&_uio;
 }
-comment()
+
+void
+comment(void)
 {
-	register c, mesg;
+	int c, mesg;
 
 	c = getchar();
 	mesg = 0;
@@ -149,30 +178,38 @@ comment()
 		flush();
 	}
 }
-abs(n)
-register n;
+
+int
+abs(int n)
 {
 	return(n<0?-n:n);
 }
 /*
  * Slow, but avoids garbage collection
  */
-settruth(t)
-	register t;
+void
+settruth(int t)
 {
-	if(atoi(string[TRUTH].str) != t)
+	if(qatoi(string[TRUTH].str) != t)
 		numset(TRUTH, t);
 }
-setcount(c)
-	register c;
+
+void
+setcount(int c)
 {
-	if(atoi(string[COUNT].str) != c)
+	if(qatoi(string[COUNT].str) != c)
 		numset(COUNT, c);
 }
-truth(){
-	return(atoi(string[TRUTH].str) != FALSE);
+
+int
+truth(void)
+{
+	return(qatoi(string[TRUTH].str) != FALSE);
 }
-modified(){
+
+void
+modified(void)
+{
 	cflag=TRUE;
 	eok=FALSE;
 	qok=FALSE;

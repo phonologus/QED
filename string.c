@@ -1,54 +1,71 @@
-/*% cc -c -O %
- */
-#include "vars.h"
-#define	strfree string[NSTRING].str
-char *strstart;
+#include "qed.h"
 
-length(s)
-	register char *s;
+#define	strfree string[NSTRING].str
+int *strstart;
+
+int
+length(int *s)
 {
-	register char *t;
+	int *t;
 	if((t=s)==0)
 		return(0);
 	do;while(*t++);
 	return(t-s-1);
 }
-startstring(){
+
+void
+startstring(void)
+{
 	strstart=strfree;
 }
-addstring(c){
+
+void
+addstring(int c)
+{
 	if(strfree==strchars+NSTRCHARS)
 		strcompact();
 	*strfree++ = c;
 }
-dropstring(){
+
+void
+dropstring(void)
+{
 	--strfree;
 }
-cpstr(a, b)
-	register char *a, *b;
+
+void
+cpstr(int *a, int *b)
 {
 	do;while (*b++ = *a++);
 }
-shiftstring(up){	/* A highly machine-dependent routine */
-	register struct string *sp;
+
+void
+shiftstring(int up)
+{	/* A highly machine-dependent routine */
+	struct string *sp;
 	for(sp=string; sp<=string+NSTRING; sp++)
 		if(up)
-			sp->str += (int)strarea;
+			sp->str += (long)strarea;
 		else
-			sp->str -= (int)strarea;
+			sp->str -= (long)strarea;
 }
-clearstring(z){
+
+void
+clearstring(int z)
+{
 	string[z].len = 0;
 	string[z].str = nullstr;
 }
-copystring(s)
-	register char *s;
+
+void
+copystring(int *s)
 {
 	while(*s)
 		addstring(*s++);
 }
-eqstr(a, b)
-	register char *a, *b;
+
+int
+eqstr(int *a, int *b)
 {
 	while(*a)
 		if(*a++ != *b++)
@@ -59,13 +76,17 @@ eqstr(a, b)
  * dupstring duplicates a string.
  * Because we may strcompact(), we do it first if necessary.
  */
-dupstring(z)
+void
+dupstring(int z)
 {
 	if(strfree+string[z].len > strchars+NSTRCHARS)
 		strcompact();	/* if insufficient, will get error when we copystring() */
 	copystring(string[z].str);
 }
-setstring(n){
+
+void
+setstring(int n)
+{
 	addstring('\0');
 	if((string[n].len = length(strstart)) == 0)
 		string[n].str = nullstr;
@@ -74,11 +95,13 @@ setstring(n){
 	if(strfree >= strchars + NSTRCHARS)
 		strcompact();
 }
-strcompact(){
-	register struct string *cursor;
+
+void
+strcompact(void)
+{
+	struct string *cursor;
 	struct string *thisstr;
-	register char *s, *t;
-	lock++;
+	int *s, *t;
 	s=strchars;
 	for(;;){
 		t=strchars+NSTRCHARS;
@@ -101,5 +124,4 @@ strcompact(){
 		strfree=strstart;
 		error('Z');
 	}
-	unlock();
 }

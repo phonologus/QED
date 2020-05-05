@@ -1,37 +1,61 @@
-/*% cc -c -O %
+#include "qed.h"
+
+/*
+ * addr_t type:
+ *
+ * The offset into the tempfile is stored as a cookie, containing
+ * the block number, the offset, and a mark bit, in a packed
+ * representation.
+ *
+ * Offsets are multiples of 4, so have two spare low-order bits.
+ * The LSB is used as the mark bit
+ *
+ *                        3 2 1 0
+ *                        4 3 2 M
+ *                        ----|
+ * significant bits of offset | mark bit
  */
-#include "vars.h"
-#define BLKSIZE	512
-#ifdef	BIGTMP
-#define	MAXBLOCKS	4095
-#else
-#define	MAXBLOCKS	255
-#endif
-#define	BLMASK		MAXBLOCKS
-char	ibuff[512];
+
+enum {
+  ALIGN = 2,      /* align strings to (2^ALIGN)-byte boundaries in a block */
+  ALIGNMASK = ((1 << ALIGN) - 1),
+  SHUNT = (ALIGN - 1),    /* mark bit requires 1 bit, the rest are redundant */
+  BLKBITS = 16,
+  BLKSHIFT = BLKBITS-SHUNT,
+  BLKSIZE = (1 << BLKBITS),
+  OFFMASK = BLKSIZE - ALIGNMASK,
+  BLMASK=-1,
+  BLKBSIZE = (BLKSIZE << 2)    /* # of bytes in a block */
+};
+
+#define getblock(a) (((a)>>BLKSHIFT) & BLMASK)
+#define getoffset(a) (((a)<<SHUNT) & OFFMASK)
+#define cookie(b,o) (((b)<<BLKSHIFT) + ((o)>>SHUNT))
+#define align(a) (((a)+ALIGNMASK)&~ALIGNMASK)
+
+int	ibuff[BLKSIZE];
 int	iblock = -1;
 int	oblock = 0;
-char	obuff[512];
+int	obuff[BLKSIZE];
 int	ooff;		/* offset of next byte in obuff */
-initio()
+
+void
+initio(void)
 {
-	lock++;
 	iblock = -1;
 	oblock = 0;
 	ooff = 0;
-	unlock();
 }
-char *getline(tl, lbuf)
-	int tl;
-	char *lbuf;
+
+int *
+getline(addr_t tl, int *lbuf)
 {
-	register char *bp, *lp;
-	register int nl;
-	extern int read();
+	int *bp, *lp;
+	int nl;
 
 	lp = lbuf;
-	nl = -((tl<<1) & 0774);
-	tl = (tl>>8) & BLMASK;
+        nl = -getoffset(tl);
+        tl = getblock(tl);
 	do {
 		if (nl<=0) {
 			if (tl==oblock)
@@ -39,8 +63,7 @@ char *getline(tl, lbuf)
 			else {
 				bp = ibuff;
 				if (tl!=iblock) {
-					iblock = -1;	/* signal protection */
-					blkio(tl, bp, read);
+					blkio_r(tl, bp);
 					iblock = tl;
 				}
 			}
@@ -52,21 +75,21 @@ char *getline(tl, lbuf)
 	} while (*lp++ = *bp++);
 	return(lbuf);
 }
-int putline()
+
+addr_t
+putline(void)
 {
-	register char *op, *lp;
-	register int r;
-	extern int write();
+	int *op, *lp;
+	addr_t r;
 
 	modified();
 	lp = linebuf;
-	r = (oblock<<8) + (ooff>>1);	/* ooff may be 512! */
+	r = cookie(oblock,ooff);	/* ooff may be BLKSIZE! */
 	op = obuff + ooff;
-	lock++;
 	do {
 		if (op >= obuff+BLKSIZE) {
 			/* delay updating oblock until after blkio succeeds */
-			blkio(oblock, op=obuff, write);
+			blkio_w(oblock, op=obuff);
 			oblock++;
 			ooff = 0;
 		}
@@ -76,17 +99,22 @@ int putline()
 			break;
 		}
 	} while (*op++);
-	ooff = (((op-obuff)+3)&~3);
-	unlock();
+	ooff = align(op-obuff);
 	return (r);
 }
-blkio(b, buf, iofcn)
-	char *buf;
-	int (*iofcn)();
+
+void
+blkio_r(int b, int *buf)
 {
-	if (b>=MAXBLOCKS
-	|| (lseek(tfile, ((long) b) * 512L, 0)<0L)
-	|| (*iofcn)(tfile, buf, 512) != 512) {
+        if((lseek(tfile, ((long) b) * ((long) BLKBSIZE), SEEK_SET)<0L)||
+	  (read(tfile, buf, BLKBSIZE) != BLKBSIZE))
 		error('T');
-	}
+}
+
+void
+blkio_w(int b, int *buf)
+{
+         if((lseek(tfile, ((long) b) * ((long) BLKBSIZE), SEEK_SET)<0L)||
+	   (write(tfile, buf, BLKBSIZE) != BLKBSIZE))
+		error('T');
 }

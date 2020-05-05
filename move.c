@@ -1,9 +1,9 @@
-/*% cc -c -O %
- */
-#include "vars.h"
-move(copyflag)
+#include "qed.h"
+
+void
+move(int copyflag)
 {
-	register int *adt, *ad1, *ad2;
+	addr_i adt, ad1, ad2;
 	int fb, tb;
 	int todot;
 	int tonewdot;
@@ -31,7 +31,6 @@ move(copyflag)
 	ad1 = addr1;
 	ad2 = addr2;
 	totmved = ad2 - ad1 + 1;
-	lock++;
 	if (copyflag) {
 		tonewdot = addr2 - buffer[fb].zero;
 		/*
@@ -84,13 +83,14 @@ move(copyflag)
 	dot = buffer[tb].dot = buffer[tb].zero + todot + totmved;
 	zero = buffer[tb].zero;
 	dol = buffer[tb].dol;
-	unlock();
 }
-fixup(from,to,tot) int from, to, tot;
+
+void
+fixup(int from,int to,int tot)
 {
-	register int b;
-	register int n;
-	register int lo;
+	int b;
+	int n;
+	int lo;
 	int hi;
 	if(to == from){
 		return;
@@ -112,22 +112,25 @@ fixup(from,to,tot) int from, to, tot;
 	}
 	buffer[hi].zero += n;
 }
-reverse(a1, a2)
-	register int *a1, *a2;
+
+void
+reverse(addr_i a1,addr_i a2)
 {
-	register t;
+	int t;
 	for (;;) {
-		t = *--a2;
+		t = core[--a2];
 		if (a2 <= a1)
 			return;
-		*a2 = *a1;
-		*a1++ = t;
+		core[a2] = core[a1];
+		core[a1++] = t;
 	}
 }
-getcopy()
+
+int
+getcopy(void)
 {
 	if (addr1 > addr2)
 		return(EOF);
-	getline(*addr1++, linebuf);
+	getline(core[addr1++], linebuf);
 	return(0);
 }

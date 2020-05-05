@@ -1,15 +1,18 @@
-/*% cc -c -O %
- */
-#include "vars.h"
-#define	ALWAYS	2
-#define GBSIZE	256
-until(nfl, n)
+#include "qed.h"
+
+enum {
+  ALWAYS = 2,
+  GBSIZE = 256
+};
+
+void
+until(int nfl, int n)
 {
-	register c, type;
-	char ubuf[GBSIZE];
+	int c, type;
+	int ubuf[GBSIZE];
 
 	c = getchar();
-	type=posn(c, "ft ");
+	type=posn(c, utfstr_ft_);
 	if(type < 0){
 		if(nfl==0)
 			error('x');
@@ -23,10 +26,12 @@ until(nfl, n)
 		   !((nfl && --n==0) || 
 		     (type != ALWAYS && type == truth())));
 }
-global(k)
+
+void
+global(int k)
 {
-	register int *a1;
-	char globuf[GBSIZE];
+	addr_i a1;
+	int globuf[GBSIZE];
 	struct buffer *startbuf;
 
 	if(gflag++)
@@ -37,16 +42,16 @@ global(k)
 	compile(getchar());
 	getglob(globuf);
 	for (a1=zero; ++a1<=dol;) {
-		*a1 &= ~01;
+		core[a1] = unmark(core[a1]);
 		if (a1>=addr1 && a1<=addr2 && execute(a1)==k)
-			*a1 |= 01;
+			core[a1] = mark(core[a1]);
 	}
 	startbuf = curbuf;
 	for (a1=zero; ++a1<=dol; ) {
-		if (*a1 & 01) {
-			*a1 &= ~01;
+		if (marked(core[a1])) {
+			core[a1] = unmark(core[a1]);
 			dot = a1;
-			if (!exglob(globuf, "p"))
+			if (!exglob(globuf, utfstr_p))
 				break;
 			chngbuf(startbuf-buffer);
 			a1 = zero;
@@ -56,10 +61,11 @@ global(k)
 	gflag=FALSE;
 }
 
-globuf(k)
+void
+globuf(int k)
 {
-	register struct buffer *bp;
-	char globbuf[GBSIZE];
+	struct buffer *bp;
+	int globbuf[GBSIZE];
 
 	if (biggflag++)
 		error('G');
@@ -73,23 +79,23 @@ globuf(k)
 	for (bp=buffer; bp < &buffer[NBUFS]; bp++)
 		if (bp->gmark == k) {
 			chngbuf(bp-buffer);
-			if (!exglob(globbuf, "f\n"))
+			if (!exglob(globbuf, utfstr_fnl))
 				break;
 		}
 	biggflag = FALSE;
 }
 
-getglob(globuf)
-	char globuf[];
+void
+getglob(int globuf[])
 {
-	register char *gp;
-	register c;
+	int *gp;
+	int c;
 	int getchar();
 	gp = globuf;
-	while ((c = getquote("\n", getchar)) != '\n') {
+	while ((c = getquote(utfstr_nl, getchar)) != '\n') {
 		if (c==EOF)
 			error('x');
-		*gp++ = c & 0177;
+		*gp++ = unescape(c);
 		if (gp >= &globuf[GBSIZE-2])
 			error('l');
 	}
@@ -97,12 +103,14 @@ getglob(globuf)
 	*gp++ = 0;
 }
 
-exglob(cmd, dflt)
-	char *cmd, *dflt;
+int
+exglob(int *cmd, int *dflt)
 {
-	register int nesting;
+        union pint_t uc;
+	int nesting;
 
-	pushinp(GLOB, eqstr(cmd,"\n")? dflt : cmd, FALSE);
+	uc.p=eqstr(cmd,utfstr_nl)? dflt : cmd;
+	pushinp(GLOB, uc, FALSE);
 	nesting = ++nestlevel;
 	commands();
 	if (nesting!=nestlevel)

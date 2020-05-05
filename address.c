@@ -1,12 +1,12 @@
-/*% cc -c -O %
- */
-#include "vars.h"
-int *
-address()
+#include "qed.h"
+
+addr_i
+address(void)
 {
-	register int sign, *a;
-	int opcnt, nextopand, *b;
-	register c;
+	addr_i a, b;
+	int sign;
+	int opcnt, nextopand;
+	int c;
 
 	nextopand = -1;
 	sign = 1;
@@ -35,7 +35,7 @@ address()
 				error('k');
 			a = zero;
 			c = posn(c, bname);	/* outside loop for efficiency */
-			do a++; while (a<=dol && names[c]!=(*a|01));
+			do a++; while (a<=dol && names[c]!=(mark(core[a])));
 			break;
 		case '?':
 			sign = -sign;

@@ -1,42 +1,49 @@
-/*% cc -c -O %
- */
-#include "vars.h"
-#define ESIZE	128	/* ESIZE-1 must fit in a signed byte */
-char	expbuf[ESIZE+4];
-int	expgood	/*0*/;		/* flag indicating if compiled exp is good */
-#define	CCHR	2
-#define	CDOT	4
-#define	CCL	6
-#define	NCCL	8
-#define CFUNNY	10
-#define	CALT	12
-#define	CBACK	14
+#include "qed.h"
 
-#define	STAR	01
+enum {
+  ESIZE = 128    /* ESIZE-1 must fit in a signed byte */
+};
+
+int	expbuf[ESIZE+4];
+int	expgood	/*0*/;		/* flag indicating if compiled exp is good */
+
+enum {
+  STAR = 1,
+  CCHR = 2,
+  CDOT = 4,
+  CCL = 6,
+  NCCL = 8,
+  CFUNNY = 10,
+  CALT = 12,
+  CBACK	= 14,
+  CKET = 16,
+  CDOL = 17,
+  CEOF = 18,
+  CBRA = 19,
+  CBOI = 20,
+  CEOI = 21,
+  CSPACE = 22
+};
+
 #define STARABLE CBACK
 
-#define	CKET	16
-#define	CDOL	17
-#define	CEOF	18
-#define	CBRA	19
-#define CBOI	20
-#define CEOI	21
-#define CSPACE	22
 int	circfl;
-char	pmagic[] = "/.$^*+\\()<|>{}[!_123456789";
-compile(eof)
-char eof;
+int	pmagic[] = {'/','.','$','^','*','+','\\','(',')','<','|','>','{','}',
+                    '[','!','_','1','2','3','4','5','6','7','8','9','\0'};
+
+void
+compile(int eof)
 {
-	register c;
-	register char *ep, *penultep;
-	char *lastep, *bracketp, bracket[NBRA];
+	int c;
+	int *ep, *penultep;
+	int *lastep, *bracketp, bracket[NBRA];
 	int getsvc();
 	int getchar();
 	struct{
-		char	*althd;		/* start of code for < ... > */
-		char	*altlast;	/* start of code for last < or | */
-		char	*bpstart;	/* bracketp at start of < and | */
-		char	*bpend;		/* bracketp at end of > or | */
+		int	*althd;		/* start of code for < ... > */
+		int	*altlast;	/* start of code for last < or | */
+		int	*bpstart;	/* bracketp at start of < and | */
+		int	*bpend;		/* bracketp at end of > or | */
 		int	nbstart;	/* nbra at start of < and | */
 		int	nbend;		/* nbra at end of > or | */
 		int	firstalt;	/* is this the first alternative? */
@@ -82,30 +89,30 @@ char eof;
 		penultep = lastep;
 		lastep = ep;
 
-		if(c != (eof|0200)) switch (c) {
-		case '('|0200:
+		if(c != escape(eof)) switch (c) {
+		case escape('('):
 			if (nbra >= NBRA)
 				goto cerror;
 			*bracketp++ = nbra;
 			*ep++ = CBRA;
 			*ep++ = nbra++;
 			continue;
-		case ')'|0200:
+		case escape(')'):
 			if (bracketp <= bracket)
 				goto cerror;
 			*ep++ = CKET;
 			*ep++ = *--bracketp;
 			continue;
-		case '{'|0200:
+		case escape('{'):
 			*ep++ = CBOI;
 			continue;
-		case '}'|0200:
+		case escape('}'):
 			*ep++ = CEOI;
 			continue;
-		case '_'|0200:
+		case escape('_'):
 			*ep++ = CSPACE;
 			continue;
-		case '!'|0200:
+		case escape('!'):
 			*ep++ = CFUNNY;
 			continue;
 		case '<':
@@ -191,7 +198,7 @@ char eof;
 					c=getsvc();
 					if (c == EOF || c == '\n' || c<=ep[-1])
 						goto cerror;
-					ep[-1] |= 0200;
+					ep[-1] |= ESC;
 					*ep++ = c;
 					lastc = getsvc();	/* prime lastc */
 				} else if (dflag&&'a'<=(c|' ')&&(c|' ')<='z')
@@ -214,12 +221,12 @@ char eof;
 		}
 		/* if fell through switch, match literal character */
 		/* Goddamned sign extension! */
-		if ((c&0200) && (c&0177)>='1' && (c&0177)<='9') {
+		if (escaped(c) && unescape(c)>='1' && unescape(c)<='9') {
 			*ep++ = CBACK;
-			*ep++ = c-('1'|0200);
+			*ep++ = c-escape('1');
 			continue;
 		}
-		c &= ~0200;
+		c = unescape(c);
 		if(dflag && c|' '>='a' && c|' '<='z'){
 			*ep++ = CCL;
 			*ep++ = 3;
@@ -234,16 +241,19 @@ char eof;
    cerror:
 	error('p');
 }
-getsvc(){
-	register c;
+
+int
+getsvc(void)
+{
+	int c;
 	addstring(c=getchar());
 	return(c);
 }
+
 int
-execute(addr)
-	int *addr;
+execute(addr_i addr)
 {
-	register char *p1, *p2;
+	int *p1, *p2;
 
 	if (addr==0) {
 		if((p1=loc2) == 0)	/* G command */
@@ -253,7 +263,7 @@ execute(addr)
 	} else {
 		if (addr==zero)
 			return(FALSE);
-		p1 = getline(*addr, linebuf);
+		p1 = getline(core[addr], linebuf);
 	}
 	p2 = expbuf;
 	if (circfl) {
@@ -272,11 +282,10 @@ execute(addr)
 }
 
 int
-advance(lp, ep)
-	register char *lp, *ep;
+advance(int *lp, int *ep)
 {
-	register char *curlp;
-	char *althd, *altend;
+	int *curlp;
+	int *althd, *altend;
 
 	for (;;) {
 		curlp = lp;
@@ -424,11 +433,10 @@ advance(lp, ep)
 	}
 }
 
-backref(i, lp)
-register i;
-register char *lp;
+int
+backref(int i, int *lp)
 {
-	register char *bp;
+	int *bp;
 
 	bp = braslist[i];
 	while (*bp++ == *lp++)
@@ -436,8 +444,9 @@ register char *lp;
 			return(TRUE);
 	return(FALSE);
 }
-int alfmatch(c,tail)
-register char c;
+
+int
+alfmatch(int c,int tail)
 {
 	return (('a' <= c && c <= 'z')  ||
 		('A' <= c && c <= 'Z')  ||
@@ -445,18 +454,16 @@ register char c;
 		(tail && '0' <= c && c<= '9'));
 }
 
-
-cclass(set, c, f)
-	register char *set;
-	register c;
+int
+cclass(int *set, int c, int f)
 {
-	register n;
+	int n;
 	if (c == 0)
 		return(0);
 	n = *set++;
 	while (--n) {
-		if (*set&0200) {
-			if ((*set++ & 0177) <= c) {
+		if (escaped(*set)) {
+			if (unescape(*set++) <= c) {
 				if (c <= *set++)
 					return(f);
 			} else

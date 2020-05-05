@@ -1,7 +1,5 @@
-/*% cc -c -O %
- */
-#include "vars.h"
-char	*nextip;
+#include "qed.h"
+int	*nextip;
 long	count;
 /*
  * newfile: read a new file name (if given) from command line.
@@ -18,10 +16,11 @@ long	count;
  *		always sets string[FILEBUF]
  *		zeroes count
  */
-newfile(nullerr, savspec, deffile)
-	char *deffile;
+
+int
+newfile(int nullerr, int savspec, int *deffile)
 {
-	register char c;
+	int c;
 
 	count = 0L;
 	cpstr(deffile, genbuf);	/* in case we strcompact() */
@@ -33,7 +32,7 @@ newfile(nullerr, savspec, deffile)
 		if(c != ' ')
 			error('f');
 		do  c = getchar();  while(c == ' ');
-		while(posn(c, " \t\n") < 0){
+		while(posn(c, utfstr_whitespace) < 0){
 			if(c<' ' || c=='\177')
 				error('f');
 			addstring(c);
@@ -52,7 +51,9 @@ newfile(nullerr, savspec, deffile)
 	}
 	return(!eqstr(genbuf, string[FILEBUF].str));
 }
-exfile()
+
+void
+exfile(void)
 {
 	close(io);
 	io = -1;
@@ -64,18 +65,20 @@ exfile()
 	}
 	setcount((int)count);
 }
-getfile()
+
+int
+getfile(void)
 {
-	register c;
-	register char *lp, *fp;
+	int c;
+	int *lp, *fp;
 	lp = linebuf;
 	fp = nextip;
 	do {
 		if (--ninbuf < 0) {
-			if ((ninbuf = read(io, genbuf, LBSIZE)-1) < 0) {
+			if ((ninbuf = uioread(uio, genbuf, LBSIZE)-1) < 0) {
 				if(ninbuf < -1)
 					error('r');
-				if(lp != linebuf)
+				if(lp != linebuf) 
 					error('N');
 				return(EOF);
 			}
@@ -93,23 +96,25 @@ getfile()
 	nextip = fp;
 	return(0);
 }
-putfile()
+
+void
+putfile(void)
 {
-	int *a1;
-	register char *fp, *lp;
-	register nib;
-	nib = 512;
+	addr_i a1;
+	int *fp, *lp;
+	int nib;
+	nib = LBSIZE;
 	fp = genbuf;
 	a1 = addr1;
 	if(a1 == zero)
-		*a1++;
+		a1++;
 	while(a1 <= addr2){
-		lp = getline(*a1++, linebuf);
+		lp = getline(core[a1++], linebuf);
 		for(;;){
 			if (--nib < 0) {
-				if(write(io, genbuf, fp-genbuf) < 0)
+				if(uiowrite(uio, genbuf, fp-genbuf) < 0)
 					error('w');
-				nib = 511;
+				nib = LBSIZE-1;
 				fp = genbuf;
 			}
 			count++;
@@ -119,26 +124,29 @@ putfile()
 			}
 		}
 	}
-	write(io, genbuf, fp-genbuf);
+	uiowrite(uio, genbuf, fp-genbuf);
+	uioflush(uio);    /* Don't forget to flush */
 }
-#define SIGHUP	1
-#define SIGINTR	2
-#define SIGQUIT	3
-#define	SIGBPIPE 13
-int savint= -1;	/* awful; this is known in error() */
-Unix(type)
-	char type;
+
+void (*savint)(int);	/* awful; this is known in error() */
+int savintf = -1;
+
+void
+Unix(int type)
 {
-	register pid, rpid;
-	register char *s;
-	int *a, c;
+	int n;
+        union pint_t uc;
+	int pid, rpid;
+	int *s;
+	int c;
+	addr_i a;
 	int getsvc();
-	int onbpipe;
+	void (*onpipe)(int);
 	int retcode;
-	char unixbuf[512];
+	int	unixbuf[512];
 	int	pipe1[2];
 	int	pipe2[2];
-	int	*a1, *a2, *ndot;
+	addr_i a1, a2, ndot;
 	startstring();	/* for the \zU register */
 	if(type == '!')
 		setnoaddr();
@@ -154,12 +162,13 @@ Unix(type)
 	/* Quick hack: if char is doubled, push \'zU */
 	if(nextchar()==type){
 		getchar();	/* throw it away */
-		pushinp(STRING, UNIX, TRUE);
+                uc.i=UNIX;
+		pushinp(STRING, uc, TRUE);
 	}
 	/*
 	 * Use c not *s as EOF and getchar() are int's
 	 */
-	for(s=unixbuf;(c=getquote("\n", getsvc))!='\n' && c!=EOF;*s++=(c&0177)){
+	for(s=unixbuf;(c=getquote(utfstr_nl, getsvc))!='\n' && c!=EOF;*s++=unescape(c)){
 		if(s>=unixbuf+512)
 			error('l');
 	}
@@ -170,7 +179,7 @@ Unix(type)
 	a2 = addr2;
 	if ((pid = fork()) == 0) {
 		signal(SIGHUP, onhup);
-		signal(SIGINTR, onintr);
+		signal(SIGINT, onintr);
 		signal(SIGQUIT, onquit);
 		if(type=='<' || type=='|'){
 			close(1);
@@ -185,8 +194,9 @@ Unix(type)
 		}
 		if(type == '|'){
 			if(pipe(pipe2) == -1){
-				puts("?|");
-				exit(1);
+				puts(utfstr_querypipe);
+				lasterr=1;
+				quit();
 			}
 			if((pid=fork()) == 0){
 				close(1);
@@ -195,14 +205,16 @@ Unix(type)
 				close(pipe2[1]);
 				tfile = tfile2;	/* ugh */
 				/*
-				 * It's ok if we get SIGBPIPE here
+				 * It's ok if we get SIGPIPE here
 				 */
 				display('p');
-				exit(0);
+				lasterr=0;
+				quit();
 			}
 			if(pid == -1){
-				puts("Can't fork\n?!");
-				exit(1);
+				puts(utfstr_cantforkqueryshriek);
+				lasterr=1;
+				quit();
 			}
 			close(0);
 			dup(pipe2[0]);
@@ -210,44 +222,49 @@ Unix(type)
 			close(pipe2[1]);
 		}
 		if (*unixbuf)
-			execl("/bin/sh", "sh", "-c", unixbuf, 0);
+			execl("/bin/sh", "sh", "-c", utf8(unixbuf), 0);
 		else
 			execl("/bin/sh", "sh", 0);
-		exit(-1);
+		lasterr=-1;
+		quit();
 	}
 	if(pid == -1){
-		puts("Can't fork");
+		puts(utfstr_cantfork);
 		error('!');
 	}
-	savint = signal(SIGINTR, 1);
+	savint = signal(SIGINT, SIG_IGN);
+        savintf++;
 	if(type=='<' || type=='|') {
 		close(pipe1[1]);
 		io = pipe1[0];
+		uioinitrd(io,uio);
 		ninbuf = 0;
 		append(getfile,addr2);
 		close(io);
 		io = -1;
 		ndot = dot;
 	} else if(type == '>') {
-		onbpipe = signal(SIGBPIPE, 1);
+		onpipe = signal(SIGPIPE, SIG_IGN);
 		close(pipe1[0]);
+		uioinit(pipe1[1],uio);
 		a=addr1;
 		do{
-			s=getline(*a++, linebuf);
+			s=getline(core[a++], linebuf);
 			do; while(*s++);
 			*--s='\n';
-			if (write(pipe1[1],linebuf,s-(linebuf-1))<0){
-				puts("?o");
+			n=utf8nstring(linebuf,utf8buff,s-(linebuf-1));
+			if (write(pipe1[1],utf8buff,n)<0){
+				puts(utfstr_queryo);
 				break;
 			}
 		}while (a<=addr2);
 		close(pipe1[1]);
-		signal(SIGBPIPE, onbpipe);
+		signal(SIGPIPE, onpipe);
 	}
 	while ((rpid = wait(&retcode)) != pid && rpid != -1);
 	retcode = (retcode>>8)&0377;
 	settruth(retcode);
-	signal(SIGINTR, savint);
+	signal(SIGINT, savint);
 	if(type == '|'){
 		if(retcode == 0){
 			addr1 = a1;
@@ -258,5 +275,5 @@ Unix(type)
 			error('0');
 	}
 	if(vflag)
-		puts("!");
+		puts(utfstr_shriek);
 }
