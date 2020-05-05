@@ -43,7 +43,6 @@ DOCS=\
 
 ARCHIVE=\
   mkfile\
-  NOTES\
   $DOCS\
   ${MODULES:%=%.c}\
   $HDRS\
