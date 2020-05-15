@@ -38,6 +38,7 @@ DOCS=\
   doc/tutorial
 
 ARCHIVE=\
+  Makefile\
   mkfile\
   $DOCS\
   ${MODULES:%=%.c}\
