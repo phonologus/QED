@@ -40,6 +40,8 @@ DOCS=\
 ARCHIVE=\
   Makefile\
   mkfile\
+  tutorial.pdf\
+  qed.1.pdf\
   $DOCS\
   ${MODULES:%=%.c}\
   $HDRS\
