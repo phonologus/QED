@@ -13,6 +13,8 @@ they are from the `unix-1992` sub-directory, which is from a tarball
 of Rob Pike's original sources of the University of Toronto version of QED.
 
 The manpage and tutorial in the `doc` subdirectory are essential (and fascinating) reading.
+Recently generated `pdf` run-offs of the manpage and the tutorial are
+in the top-level, for convenience.
 
 The `Makefile` provides a simple way to build a `qed` binary.
 
