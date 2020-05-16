@@ -132,7 +132,7 @@ getsub(void)
 	p1 = linebuf;
 	if ((p2 = linebp) == 0)
 		return(EOF);
-	do ; while (*p1++ = *p2++);
+	do ; while (*p1++ = unescape(*p2++));
 	linebp = 0;
 	return(0);
 }
@@ -149,10 +149,9 @@ dosub(void)
 	while (c = *p++) {
 		if (c=='&' || (c == '^' && uflag))
 			place(loc1,loc2,c=='^');
-		else if (escaped(c) && unescape(c)>='1' && unescape(c)<'1'+nbra) {
-			c=unescape(c);
+		else if (escaped(c) && (c=unescape(c))>='1' && c<'1'+nbra)
 			place(braslist[c-'1'],braelist[c-'1'], 0);
-		} else {
+		else {
 			*next_new++ = c;
 			if (next_new >= genbuf+LBSIZE)
 				error('l');
@@ -168,13 +167,13 @@ place(int *l1, int *l2, int ucase)
 
 	sp = next_new;
 	while (l1 < l2) {
-		*sp++ = *l1++;
+		*sp++ = unescape(*l1++);
 		if (sp >= &genbuf[LBSIZE])
 			error('l');
 	}
 	if(ucase){
 		for(l1 = next_new;l1 < sp;){
-			c = *l1;
+			c = unescape(*l1);
 			if((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')){
 				switch(uflag){
 				case 's':
