@@ -1,7 +1,7 @@
 qed
 *.o
 *.out
-*.pdf
+doc/*.pdf
 *.Z
 *:[ab]q
 UTF*.txt
