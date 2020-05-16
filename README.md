@@ -8,7 +8,7 @@ depends on just a few low-level kernel calls, so should be reasonably
 portable accross any Unix-like OS (*BSD, MacOS).
 
 The sources that this port began with were scavenged from Arnold Robbins's
-[qed-archive](https://github.com/arnoldrobbins/qed-archive.git). Specifically
+[qed-archive](https://github.com/arnoldrobbins/qed-archive). Specifically
 they are from the `unix-1992` sub-directory, which is from a tarball
 of Rob Pike's original sources of the University of Toronto version of QED.
 
@@ -16,6 +16,6 @@ The manpage and tutorial in the `doc` subdirectory are essential (and fascinatin
 
 The `Makefile` provides a simple way to build a `qed` binary.
 
-The more elaborate `mkfile` can build, install, and create a tarball.
+The more elaborate `mkfile` can build, install, and archive.
 It can also run off `pdf` versions of the turtorial and manpage. However, it
 depends on you having a working [plan9port](https://github.com/9fans/plan9port).
