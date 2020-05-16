@@ -19,3 +19,11 @@ The `Makefile` provides a simple way to build a `qed` binary.
 The more elaborate `mkfile` can build, install, and archive.
 It can also run off `pdf` versions of the turtorial and manpage. However, it
 depends on you having a working [plan9port](https://github.com/9fans/plan9port).
+
+The `read.me` file is Rob Pike's, accompanying his original tarball. It
+provides an interesting snapshot into the work-in-progress, and the
+relationship between QED and ED.
+
+The `q` subdirectory contains Rob's library of useful QED programs. Again
+a tutorial in themselves. The manpage builder is particularly cute,
+whereas the parenthesis-counter is a tour-de-force.
