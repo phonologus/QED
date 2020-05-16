@@ -1,16 +1,21 @@
-# QED For Unix - 1992
+# QED for Unix, UTF8/Unicode aware.
 
-# Introduction
+This is a port of Rob Pike's version of the QED editor for Unix, supporting
+fully UTF8-encoded Unicode.
 
-The files in this directory are from a tarball sent to me by Rob Pike
-(r AT golang.org),
-one of the original developers of QED at the University of Toronto.
-The files are dated September 7, 1992.  I chose not to try to layer
-them on top of the files I have from 1985, but simply to present
-them as I received them.
+The port was developed on a modern Linux (Fedora 32). It
+depends on just a few low-level kernel calls, so should be reasonably
+portable accross any Unix-like OS (*BSD, MacOS).
 
-Of note is that there is more documentation here than in my tarball.
+The sources that this port began with were scavenged from Arnold Robbins's
+[qed-archive](https://github.com/arnoldrobbins/qed-archive.git). Specifically
+they are from the `unix-1992` sub-directory, which is from a tarball
+of Rob Pike's original sources of the University of Toronto version of QED.
 
-#### Last Updated
+The manpage and tutorial in the `doc` subdirectory are essential (and fascinating) reading.
 
-Mon Dec 31 18:13:51 IST 2018
+The `Makefile` provides a simple way to build a `qed` binary.
+
+The more elaborate `mkfile` can build, install, and create a tarball.
+It can also run off `pdf` versions of the turtorial and manpage. However, it
+depends on you having a working [plan9port](https://github.com/9fans/plan9port).
