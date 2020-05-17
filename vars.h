@@ -14,7 +14,7 @@ extern jmp_buf	savej;
 extern addr_t *core;
 
 enum {
-	LINELEN=80
+	LINELEN=70
 };
 
 enum {
