@@ -6,6 +6,7 @@
 #include <setjmp.h>
 #include <sys/types.h>  /* for open(), creat() and symbols for flags */
 #include <sys/stat.h>  /* for open(), creat() and symbols for flags */
+#include <sys/wait.h>  /* for wait() */
 #include <fcntl.h>  /* for open(), creat() and symbols for flags */
 
 #include <unistd.h>
