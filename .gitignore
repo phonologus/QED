@@ -5,3 +5,4 @@ doc/*.pdf
 *.Z
 *:[ab]q
 UTF*.txt
+*.html

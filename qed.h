@@ -122,8 +122,6 @@ enum {
 typedef int addr_t; 
 typedef int addr_i; 
 
-typedef unsigned char byte;
-
 #include "vars.h"
 
 /* address.c */
