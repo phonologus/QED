@@ -26,7 +26,6 @@ setall(void)
 void
 setnoaddr(void)
 {
-	extern noaddr;
 	if (noaddr == FALSE)
 		error('$');
 }
