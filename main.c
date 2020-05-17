@@ -353,7 +353,7 @@ commands(void)
 	int getfile(), gettty();
 	int r;
 	int changed;
-	long locn, lseek();
+	long locn;
 	int startline;
 
 	for (;;) {
