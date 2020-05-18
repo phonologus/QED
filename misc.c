@@ -142,11 +142,9 @@ init(void)
 	 * before re-initializing.
 	 */
 	free(core);
-	if ((core=(addr_t*)malloc(sizeof(addr_t)))==(addr_t *)0) {
-		lasterr=-1;
-		quit();
-	}
-	fendcore=1;
+	if ((core=(addr_t*)malloc(sizeof(addr_t)))==(addr_t *)0) 
+		error('c');
+	fendcore=0;
 	endcore=fendcore-1;
 	bufinit(fendcore);
 	newbuf(0);
