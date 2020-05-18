@@ -3,10 +3,6 @@
 This is a port of Rob Pike's version of the QED editor for Unix,
 supporting UTF8-encoded Unicode.
 
-The editor works only in Unicode 'logical order':
-that is, it does not implement the [Unicode Bidirectional Algorithm](
-http://www.unicode.org/reports/tr9/).
-
 The port was developed on a modern Linux (Fedora 32). It
 depends on just a few low-level kernel calls, so should be reasonably
 portable accross any Unix-like OS (*BSD, MacOS).
