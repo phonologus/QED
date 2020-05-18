@@ -141,9 +141,6 @@ init(void)
 	 * a core already allocated, so we need to free it
 	 * before re-initializing.
 	 */
-	free(core);
-	if ((core=(addr_t*)malloc(sizeof(addr_t)))==(addr_t *)0) 
-		error('c');
 	fendcore=0;
 	endcore=fendcore-1;
 	bufinit(fendcore);
