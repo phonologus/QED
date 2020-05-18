@@ -227,7 +227,7 @@ compile(int eof)
 			continue;
 		}
 		c = unescape(c);
-		if(dflag && c|' '>='a' && c|' '<='z'){
+		if(dflag && (c|' ')>='a' && (c|' ')<='z'){
 			*ep++ = CCL;
 			*ep++ = 3;
 			*ep++ = c;
