@@ -64,7 +64,7 @@ compile(int eof)
 	lastep = 0;
 	bracketp = bracket;
 	nbra = 0;
-	asp = &altstk[-1];
+	asp = altstk-1;
 	startstring();	/* for the saved pattern register */
 	circfl = 0;
 	if (c=='^') {

@@ -1,7 +1,5 @@
 #include "qed.h"
 
-typedef	unsigned long ulong;
-
 int	col;
 
 void

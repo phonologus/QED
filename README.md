@@ -7,9 +7,7 @@ The port was developed on a modern Linux (Fedora 32). It
 depends on just a few low-level kernel calls, so should be reasonably
 portable accros any Unix-like OS. I have also successfully
 built this QED on macOS Catalina (10.15) with the Commandline
-Developer Tools. `clang` emits a litany of (harmless) warnings
-about coding style, but compiles and links cleanly to a working
-executable.
+Developer Tools.
 
 The sources that this port began with were scavenged from Arnold Robbins's
 [qed-archive](https://github.com/arnoldrobbins/qed-archive). Specifically
