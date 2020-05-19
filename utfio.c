@@ -68,7 +68,7 @@ uioread(utfio *io, int *ub, int bsize)
   b=&io->b[i];
 
   while(count<bsize) {
-    if(i>=z)          /* buffer is potentially exhausted */
+    if(i>=z){          /* buffer is potentially exhausted */
       if(uiofill(io)<0) {  /* try to refill buffer */
         return -1;         /* there was a read error */
       } else {
@@ -81,6 +81,7 @@ uioread(utfio *io, int *ub, int bsize)
           break;
         }
       }
+    }
     ii=convnutf(b,ub,z-i);
     if(ii>0){         /* converted one utf8 sequence OK */
       io->i=(i+=ii);
@@ -126,7 +127,7 @@ uiowrite(utfio *io, int *ub, int bsize)
   b=&io->b[i];
 
   while(count<bsize) {
-    if(i>=z)                /* buffer would over-flow */
+    if(i>=z){                /* buffer would over-flow */
       if(uioflush(io)<0) {  /* try to empty buffer */
         return -1;          /* there was a write error */
       } else {
@@ -134,6 +135,7 @@ uiowrite(utfio *io, int *ub, int bsize)
         z=io->z;
         b=&io->b[i];
       }
+    }
     ii=convnucode(*ub,b,z-i);
     if(ii>0){         /* converted one utf8 sequence OK */
       io->i=(i+=ii);

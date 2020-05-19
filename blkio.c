@@ -53,6 +53,7 @@ getline(addr_t tl, int *lbuf)
 	int *bp, *lp;
 	int nl;
 
+	bp = obuff;   /* silence compiler warning */
 	lp = lbuf;
         nl = -getoffset(tl);
         tl = getblock(tl);
@@ -72,7 +73,7 @@ getline(addr_t tl, int *lbuf)
 			nl += BLKSIZE;
 		}
 		nl--;
-	} while (*lp++ = *bp++);
+	} while ((*lp++ = *bp++));
 	return(lbuf);
 }
 

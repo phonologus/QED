@@ -1,7 +1,7 @@
 .SUFFIXES: .o .c .h
 .PHONY: all clean
 
-CFLAGS=-ansi -I. -O -D_POSIX_SOURCE -fno-builtin
+CFLAGS=-ansi -I. -O -D_POSIX_SOURCE -fno-builtin -Wall
 CC=gcc
 
 PROG=qed

@@ -177,6 +177,7 @@ Unix(int type)
 	*s='\0';
 	a1 = addr1;
 	a2 = addr2;
+	ndot = dot;  /* silence compiler warning */
 	if ((pid = fork()) == 0) {
 		signal(SIGHUP, onhup);
 		signal(SIGINT, onintr);

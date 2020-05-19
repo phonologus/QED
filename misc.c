@@ -56,7 +56,7 @@ fixbufs(int n)
 void
 syncbuf(void)
 {
-	/* curbuf->zero = zero;	/* we never assign to it, so needn't save */
+	curbuf->zero = zero;	/* we never assign to it, so needn't save */
 	curbuf->dot=dot;
 	curbuf->dol=dol;
 	curbuf->cflag = cflag!=FALSE;	/* Normalize to fit in a char */

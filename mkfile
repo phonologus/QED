@@ -1,4 +1,4 @@
-CFLAGS=-ansi -I. -O -D_POSIX_SOURCE -fno-builtin
+CFLAGS=-ansi -I. -O -D_POSIX_SOURCE -fno-builtin -Wall
 CC=gcc
 
 TAR=9 tar

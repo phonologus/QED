@@ -36,7 +36,7 @@ dropstring(void)
 void
 cpstr(int *a, int *b)
 {
-	do;while (*b++ = *a++);
+	do;while ((*b++ = *a++));
 }
 
 void
@@ -102,6 +102,7 @@ strcompact(void)
 	struct string *cursor;
 	struct string *thisstr;
 	int *s, *t;
+	thisstr=string;
 	s=strchars;
 	for(;;){
 		t=strchars+NSTRCHARS;
@@ -113,7 +114,7 @@ strcompact(void)
 		if(t==strchars+NSTRCHARS)
 			break;
 		thisstr->str=s;
-		do;while(*s++ = *t++);
+		do;while((*s++ = *t++));
 	}
 	t=strstart;
 	strstart=s;

@@ -325,13 +325,13 @@ advance(int *lp, int *ep)
 			break;
 
 		case CFUNNY:
-			if (*lp>=' ' && *lp!='\177' || *lp=='\t' || *lp=='\0')
+			if ((*lp>=' ' && *lp!='\177') || *lp=='\t' || *lp=='\0')
 				return(FALSE);
 			lp++;
 			continue;
 
 		case CFUNNY|STAR:
-			while (*lp<' ' && *lp && *lp!='\t'  ||  *lp=='\177')
+			while ((*lp<' ' && *lp && *lp!='\t') || *lp=='\177')
 				lp++;
 			lp++;
 			break;

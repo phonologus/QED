@@ -286,7 +286,6 @@ numcom(int z)
 	int *l;
 	int c;
 	int numeric;
-	extern int digits[];		/* defined in getchar.c = "0123456789" */
 
 	/*
 	 * Must generate error if attempt is made to do arithmetic on
@@ -368,6 +367,7 @@ int
 condition(int n, int m, int cond, int negate)
 {
 	int retval;
+	retval = 0;  /* silence compiler warning */
 	if(cond=='=')
 		retval = (n==m);
 	else if(cond=='<')
@@ -554,7 +554,7 @@ strcom(int z)
 		while(posn(c=getchar(), utfstr_rbracewhitespace)<0 && c!=EOF)
 			*q++ = c;
 		*q = '\0';
-		if((q=ucode(getenv(utf8(genbuf)))) == 0)
+		if((q=ucode((byte *)getenv((char *)(genbuf)))) == 0)
 			clearstring(z);
 		else{
 			startstring();
@@ -687,7 +687,7 @@ clean(int z)
 	int c;
 	d = genbuf;
 	for (s = string[z].str; (c = *s) == ' ' || c == '\t'; s++);
-	while (c = *s++) {
+	while ((c = *s++)) {
 		if (c == ' ' || c == '\t') {
 			*d++ = ' ';
 			while(*s == ' ' || *s == '\t')

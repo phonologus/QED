@@ -56,7 +56,7 @@ substitute(int inglob, int reg)
 				if(reg==-1){
 					p=linebuf;
 					q=genbuf;
-					do ; while (*p++ = *q++);
+					do ; while ((*p++ = *q++));
 					replace(a1,putline());
 					m=append(getsub,a1);
 					a1 += m;
@@ -73,13 +73,14 @@ substitute(int inglob, int reg)
 		error('s');
 	settruth(t);
 	setcount(count);
-	if(autop)
-		if(reg>=0)
+	if(autop) {
+		if(reg>=0) {
 			puts(string[reg].str);
-		else{
+		} else {
 			addr1=addr2=dot;
 			display('p');
 		}
+	}
 }
 
 int
@@ -132,7 +133,7 @@ getsub(void)
 	p1 = linebuf;
 	if ((p2 = linebp) == 0)
 		return(EOF);
-	do ; while (*p1++ = unescape(*p2++));
+	do ; while ((*p1++ = unescape(*p2++)));
 	linebp = 0;
 	return(0);
 }
@@ -146,7 +147,7 @@ dosub(void)
 	place(next_old,loc1,0);
 	next_old=loc2;
 	p=rhsbuf;
-	while (c = *p++) {
+	while ((c = *p++)) {
 		if (c=='&' || (c == '^' && uflag))
 			place(loc1,loc2,c=='^');
 		else if (escaped(c) && (c=unescape(c))>='1' && c<'1'+nbra)
@@ -258,12 +259,13 @@ join(void)
 	*p = '\0';
 	linebp=p=linebuf;
 	q=genbuf;
-	do ; while (*p++ = *q++);
+	do ; while ((*p++ = *q++));
 	getsub();
 	core[(l=addr1++)]=putline();
-	/* if you want marks preserved for join, change the above line to
-	/* the one commented out here.
-	/* problem: undo then undoes the join, but gets it wrong.  Your choice.
+	/* 
+	 * if you want marks preserved for join, change the above line to
+	 * the one commented out here.
+	 * problem: undo then undoes the join, but gets it wrong.  Your choice.
 	replace(l=addr1++, putline());
 	*/
 	if(l != addr2)
@@ -285,10 +287,6 @@ next_col(int col,int *cp,int input)
 		col |= 07;
 	else if (c<' ' || c=='\177')
 		error('t'); /* invalid character in x data */
-/*
-	else
-		if (input && (c==ttybuf.sg_erase || c==ttybuf.sg_kill))
-			col++;	/* One column for the backslash */
 	return (++col);
 }
 
@@ -325,7 +323,7 @@ xform(void)
 			change++;
 			i=linebuf;
 			o=genbuf;
-			do ; while (*o++ = *i++);
+			do ; while ((*o++ = *i++));
 			if (i+(m-rhsbuf) > linebuf+LBSIZE)
 				error('l'); /* out of space */
 			i=genbuf;
@@ -413,7 +411,7 @@ xform(void)
 			} else {
 				while (*m)
 					*o++ = *m++;
-				do ; while (*o++ = *i++);
+				do ; while ((*o++ = *i++));
 			}
 		}
 		if (change)

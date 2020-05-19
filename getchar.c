@@ -128,12 +128,12 @@ getc(void)
 	int *p;
 	static int bufbuf[LBSIZE];
 
-	if(c = peekc)	/* assignment = */
+	if((c = peekc))	/* assignment = */
 		peekc = 0;
 	else if(qcount) {
 		--qcount;
 		c = '\\';
-	} else if(c = afterq)	/* assignment = */
+	} else if((c = afterq))	/* assignment = */
 		afterq = 0;
 	else {
 		for(;;popinp()){

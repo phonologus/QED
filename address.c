@@ -78,4 +78,5 @@ address(void)
 	} while (zero<=a && a<=dol);
 	error('$');
 	/*NOTREACHED*/
+		return -1;    /* silence compiler warning */
 }

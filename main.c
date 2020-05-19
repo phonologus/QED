@@ -157,12 +157,12 @@ savall(void)
 		error('$');
 		return;
 	}
-	if((io = creat(utf8(filea()), 0644)) < 0)
+	if((io = creat((char *)utf8(filea()), 0644)) < 0)
 		error('o'|FILERR);
 	uioinit(io,uio);
 	putfile();
 	exfile();
-	if((fi = creat(utf8(fileb()), 0644)) < 0)
+	if((fi = creat((char *)utf8(fileb()), 0644)) < 0)
 		error('o'|FILERR);
 	write(fi, (byte *)buffer, sizeof buffer);
 	write(fi, (byte *)strarea, sizeof strarea);
@@ -176,11 +176,10 @@ void
 restor(void)
 {
 	int t;
-	struct buffer *b;
 	int fi;
 	int getfile();
 	curbuf = buffer;
-	if((t = open(utf8(filea()), O_RDONLY)) < 0){
+	if((t = open((char *)utf8(filea()), O_RDONLY)) < 0){
 		lastc = '\n';
 		error('o'|FILERR);
 	}
@@ -191,7 +190,7 @@ restor(void)
 	ninbuf = 0;
 	append(getfile, dol);
 	exfile();
-	if((fi = open(utf8(fileb()),O_RDONLY)) < 0)
+	if((fi = open((char *)utf8(fileb()),O_RDONLY)) < 0)
 		error('o'|FILERR);
 	if(read(fi,(byte *)buffer,sizeof buffer) != sizeof buffer
 		|| read(fi, (byte *)strarea, sizeof strarea) != sizeof strarea
@@ -275,7 +274,7 @@ main(int argc, char **argv)
 		case 'x':
 			if(argc == 2)
 				goto casedefault;
-			startup = ucode(argv[1]);
+			startup = ucode((byte *)argv[1]);
 			argv++;
 			--argc;
 		}
@@ -283,7 +282,7 @@ main(int argc, char **argv)
 		--argc;
 	}
 
-	if((startup==0)&&(b=getenv(utf8(QEDFILE))))
+	if((startup==0)&&(b=(byte *)getenv((char *)utf8(QEDFILE))))
 	 	startup = ucode(b);
 
 	curbuf = buffer;
@@ -323,7 +322,7 @@ main(int argc, char **argv)
 			buf = 0;
 			while(argc > 0) {
 				startstring();
-				copystring(ucode(*argv));
+				copystring(ucode((byte *)*argv));
 				setstring(FILE(buf++));
 				--argc;
 				argv++;
@@ -340,6 +339,8 @@ main(int argc, char **argv)
 	lastttyc = '\n';
 	commands();
 	quit();
+	/* not reached */
+	return -1;    /* silence compiler warning */
 }
 
 int	noaddr;
@@ -580,7 +581,7 @@ commands(void)
 	case 'r':
 		newfile(TRUE, SAVEIFFIRST, string[savedfile].str);
 	caseread:
-		if((io = open(utf8(string[FILEBUF].str), O_RDONLY)) < 0){
+		if((io = open((char *)utf8(string[FILEBUF].str), O_RDONLY)) < 0){
 			if(initflag){
 				putchar('?');
 				putchar('o');
@@ -597,7 +598,7 @@ commands(void)
   		ninbuf = 0;
 		append(getfile, addr2);
 		if(eqstr(string[savedfile].str, string[FILEBUF].str))
-			if(cflag = changed)	/* Assignment = */
+			if((cflag = changed))	/* Assignment = */
 				modified();
 		/* else append got cflag right */
 		exfile();
@@ -640,9 +641,9 @@ commands(void)
 			changed = cflag;
 		else
 			changed = (addr1>(zero+1) || addr2!=dol);
-		if(c=='w' || (io=open(utf8(string[FILEBUF].str),O_WRONLY))==-1){
+		if(c=='w' || (io=open((char *)utf8(string[FILEBUF].str),O_WRONLY))==-1){
 		  Create:
-			if ((io = creat(utf8(string[FILEBUF].str), 0666)) < 0)
+			if ((io = creat((char *)utf8(string[FILEBUF].str), 0666)) < 0)
 				error('o'|FILERR);
 		}else{
 			if((locn=lseek(io, 0L, SEEK_END)) == -1L)
@@ -652,7 +653,7 @@ commands(void)
 		}
 		uioinit(io,uio);
 		putfile();
-		if(cflag = changed)	/* Assignment = */
+		if((cflag = changed))	/* Assignment = */
 			modified();
 		exfile();
 		continue;
