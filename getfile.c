@@ -223,9 +223,9 @@ Unix(int type)
 			close(pipe2[1]);
 		}
 		if (*unixbuf)
-			execl("/bin/sh", "sh", "-c", utf8(unixbuf), 0);
+			execl("/bin/sh", "sh", "-c", utf8(unixbuf), (char *)NULL);
 		else
-			execl("/bin/sh", "sh", 0);
+			execl("/bin/sh", "sh", (char *)NULL);
 		lasterr=-1;
 		quit();
 	}
