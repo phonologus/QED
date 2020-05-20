@@ -5,9 +5,11 @@ supporting UTF8-encoded Unicode.
 
 The port was developed on a modern Linux (Fedora 32). It
 depends on just a few low-level kernel calls, so should be reasonably
-portable accros any Unix-like OS. I have also successfully
-built this QED on macOS Catalina (10.15) with the Commandline
-Developer Tools.
+portable across any Unix-like OS. I have built this QED successfully on:
+
++  Linux (Fedora 32, `gcc`)
++  macOS (Catalina 10.15 with Commandline Developer Tools, `clang`)
++  OpenBSD (6.7, both `gcc` and `clang`)
 
 The sources that this port began with were scavenged from Arnold Robbins's
 [qed-archive](https://github.com/arnoldrobbins/qed-archive). Specifically
