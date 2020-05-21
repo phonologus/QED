@@ -1,9 +1,8 @@
 # QED for Unix, UTF8/Unicode aware.
 
 This is a port of the University of Toronto Unix version of the QED editor,
-which was originally written by
-Rob Pike, David Tilbrook and Hugh
-Redelmeier. I have updated it to work with UTF8 and Unicode.
+which was originally written by Rob Pike, David Tilbrook, Hugh
+Redelmeier and Tom Duff. I have updated it to work with UTF8 and Unicode.
 
 This port was developed on a modern Linux (Fedora 32). It
 depends on just a few low-level kernel calls, so should be reasonably
@@ -39,7 +38,7 @@ relationship between the QED and ED editors.
 
 The `q` subdirectory contains Rob's library of useful QED programs. Again
 a tutorial in themselves. The manpage builder is particularly cute,
-whereas the parenthesis-counter is a tour-de-force.
+whereas the parenthesis-counter is a _tour-de-force_.
 
 ## Differences
 
@@ -55,3 +54,5 @@ This `qed` differs from the QED described in the manpage as follows:
   code-points in the Basic Multilingual Plane as `\uhhhh`, and
   code-points beyond the BMP as `\Uhhhhhh`.
 
++ The program `qedbufs` referred to in the manpage is not ported,
+  and likely won't be.
