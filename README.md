@@ -1,11 +1,13 @@
 # QED for Unix, UTF8/Unicode aware.
 
-This is a port of Rob Pike's version of the QED editor for Unix,
-supporting UTF8-encoded Unicode.
+This is a port of the University of Toronto Unix version of the QED editor,
+which was originally written by
+Rob Pike, David Tilbrook and Hugh
+Redelmeier. I have updated it to work with UTF8 and Unicode.
 
-The port was developed on a modern Linux (Fedora 32). It
+This port was developed on a modern Linux (Fedora 32). It
 depends on just a few low-level kernel calls, so should be reasonably
-portable across any Unix-like OS. I have built this QED successfully on:
+portable across any Unix-like OS. I have built this `qed` successfully on:
 
 +  Linux (Fedora 32, `gcc`)
 +  macOS (Catalina 10.15 with Commandline Developer Tools, `clang`)
@@ -21,14 +23,16 @@ Recently generated `pdf` run-offs of the manpage and the tutorial are
 in the top-level, for convenience.
 
 The `Makefile` provides a simple way to build a `qed` binary.
+`make clean && make` will build a fully stand-alone binary `qed`, which
+can be installed anywhere.
 
 The more elaborate `mkfile` can build, install, and archive.
 It can also run off `pdf` versions of the turtorial and manpage. However, it
 depends on you having a working [plan9port](https://github.com/9fans/plan9port).
 
-The `read.me` file is Rob Pike's, accompanying his original tarball. It
+The `doc/read.me` file is Rob Pike's, accompanying his original tarball. It
 provides an interesting snapshot into the work-in-progress, and the
-relationship between QED and ED.
+relationship between the QED and ED editors.
 
 The `q` subdirectory contains Rob's library of useful QED programs. Again
 a tutorial in themselves. The manpage builder is particularly cute,
