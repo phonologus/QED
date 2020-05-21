@@ -56,3 +56,9 @@ This `qed` differs from the QED described in the manpage as follows:
 
 + The program `qedbufs` referred to in the manpage is not ported,
   and likely won't be.
+
++ When reading in a file which does not terminate in a newline, this
+  `qed` supplies the newline, and notifies the user with the message
+  `?N: appended`. This matches the Plan9 `ed` behaviour. Previously
+  QED would throw an `?N` error, and discard any input from the last
+  newline to the end of file.
