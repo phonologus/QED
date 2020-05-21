@@ -21,6 +21,9 @@ of Rob Pike's original sources of the University of Toronto version of QED.
 The manpage and tutorial in the `doc` subdirectory are essential (and fascinating) reading.
 Recently generated `pdf` run-offs of the manpage and the tutorial are
 in the top-level, for convenience.
+It seems sacrilegious to make any changes to the manpage and tutorial,
+so I have left them as is. Where the behaviour of this `qed` differs
+significantly from the manpage is noted below.
 
 The `Makefile` provides a simple way to build a `qed` binary.
 `make clean && make` will build a fully stand-alone binary `qed`, which
@@ -37,3 +40,18 @@ relationship between the QED and ED editors.
 The `q` subdirectory contains Rob's library of useful QED programs. Again
 a tutorial in themselves. The manpage builder is particularly cute,
 whereas the parenthesis-counter is a tour-de-force.
+
+## Differences
+
+This `qed` differs from the QED described in the manpage as follows:
+
++ This `qed` consumes and outputs UTF8 Unicode. Internally, all
+  "characters" are stored and manipulated as Unicode code-points
+  represented as `int`-s. This means that even
+  emojis can appear in regexes. Shudder.
+
++ In *list mode*, this `qed` displays non-printing codepoints in the
+  ASCII range as `\xhh`. Additionally, it displays non-ASCII
+  code-points in the Basic Multilingual Plane as `\uhhhh`, and
+  code-points beyond the BMP as `\Uhhhhhh`.
+
