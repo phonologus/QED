@@ -14,7 +14,8 @@ extern jmp_buf	savej;
 extern addr_t *core;
 
 enum {
-	LINELEN=70
+	LINELEN=70,   /* Max number of glyphs in a display line */
+	BELL=6        /* A char could require up to BELL glyphs to display */
 };
 
 enum {

@@ -93,7 +93,7 @@ putchar(int c)
 				*lp++ = 'n';
 			}
 		} else {
-			if (col >= (LINELEN-6)) {
+			if (col >= (LINELEN-BELL)) {
 				*lp++ = '\\';
 				*lp++ = '\n';
 				*lp++ = '\t';
@@ -136,7 +136,7 @@ putchar(int c)
 		}
 	}
 	*lp++ = c;
-	if(c == '\n' || lp >= &line[LINELEN-6]) {
+	if(c == '\n' || lp >= &line[LINELEN-BELL]) {
 		linp = lp;
 		flush();
 		lp = linp;
