@@ -75,12 +75,17 @@ getfile(void)
 	fp = nextip;
 	do {
 		if (--ninbuf < 0) {
-			if ((ninbuf = uioread(uio, genbuf, LBSIZE)-1) < 0) {
-				if(ninbuf < -1)
-					error('r');
-				if(lp != linebuf) 
-					error('N');
-				return(EOF);
+			ninbuf = uioread(uio, genbuf, LBSIZE)-1;
+			if (ninbuf < -1) {
+				error('r');
+			} else if(ninbuf < 0) {
+				if(lp != linebuf) {
+					*genbuf='\n';
+					*(genbuf+1)='\0';
+					puts(utfstr_nappended);
+				} else {
+					return(EOF);
+				}
 			}
 			fp = genbuf;
 		}

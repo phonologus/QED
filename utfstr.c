@@ -5,6 +5,8 @@
 int utfstr_nl[]={'\n','\0'};
 int utfstr_nul[]={'\0'};
 
+int utfstr_nappended[]={'?','N',':',' ','a','p','p','e','n','d','e','d','\0'};
+
 int utfstr_whitespacequotes[]={' ','"','\t','\n','\0'};
 int utfstr_sharkteeth[]={'^','^','^','^','^','\0'};
 int utfstr_eqgtlt[]={'=','>','<','\0'};

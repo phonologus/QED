@@ -66,6 +66,8 @@ int uiowrite(utfio *,int *,int);
 extern int utfstr_nl[];
 extern int utfstr_nul[];
 
+extern int utfstr_nappended[];
+
 extern int utfstr_whitespacequotes[];
 extern int utfstr_sharkteeth[];
 extern int utfstr_eqgtlt[];
