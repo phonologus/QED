@@ -81,7 +81,7 @@ getfile(void)
 			} else if(ninbuf < 0) {
 				if(lp != linebuf) {
 					*genbuf='\n';
-					*(genbuf+1)='\0';
+					*(genbuf+1)=utfeof;
 					puts(utfstr_nappended);
 				} else {
 					return(EOF);
