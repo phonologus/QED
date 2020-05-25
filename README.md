@@ -19,18 +19,19 @@ of Rob Pike's original sources of the University of Toronto version of QED.
 
 The manpage and tutorial in the `doc` subdirectory are essential (and fascinating) reading.
 Recently generated `pdf` run-offs of the manpage and the tutorial are
-in the top-level, for convenience.
+there, too.
 It seems sacrilegious to make any changes to the manpage and tutorial,
 so I have left them as is. Where the behaviour of this `qed` differs
 significantly from the manpage is noted below.
 
+The tutorial is in manpage format, so can be read with `man` and
+typeset with `man -t`, as any other manpage. If you `make install`,
+you will be able to read the tutorial with `man qed-tutorial`.
+
 The `Makefile` provides a simple way to build a `qed` binary.
 `make clean && make` will build a fully stand-alone binary `qed`, which
-can be installed anywhere.
-
-The more elaborate `mkfile` can build, install, and archive.
-It can also run off `pdf` versions of the turtorial and manpage. However, it
-depends on you having a working [plan9port](https://github.com/9fans/plan9port).
+can be installed anywhere. `make install` with install the binary and
+the manpage and turoial. Edit the `Makefile` to change where this all goes.
 
 The `doc/read.me` file is Rob Pike's, accompanying his original tarball. It
 provides an interesting snapshot into the work-in-progress, and the
@@ -59,6 +60,8 @@ This `qed` differs from the QED described in the manpage as follows:
 
 + When reading in a file which does not terminate in a newline, this
   `qed` supplies the newline, and notifies the user with the message
-  `?N: appended`. This matches the Plan9 `ed` behaviour. Previously
+  `?N: appended`. This matches the Research Unix Version 10 `ed` and
+  the Plan9 `ed` behaviour. Previously
   QED would throw an `?N` error, and discard any input from the last
   newline to the end of file.
+
