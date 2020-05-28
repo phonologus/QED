@@ -24,6 +24,9 @@ It seems sacrilegious to make any changes to the manpage and tutorial,
 so I have left them as is. Where the behaviour of this `qed` differs
 significantly from the manpage is noted below.
 
+Rob Pike's sources had already evolved beyond the QED
+described in the manpage and tutorial. I have noted below where this is the case.
+
 The tutorial is in manpage format, so can be read with `man` and
 typeset with `man -t`, as any other manpage. If you `make install`,
 you will be able to read the tutorial with `man qed-tutorial`.
@@ -41,14 +44,12 @@ The `q` subdirectory contains Rob's library of useful QED programs. Again
 a tutorial in themselves. The manpage builder is particularly cute,
 whereas the parenthesis-counter is a _tour-de-force_.
 
-## Differences
-
-This `qed` differs from the QED described in the manpage as follows:
+## Differences introduced in this port
 
 + This `qed` consumes and outputs UTF8 Unicode. Internally, all
   "characters" are stored and manipulated as Unicode code-points
   represented as `int`-s. This means that even
-  emojis can appear in regexes. Shudder.
+  _emojis_ can appear in regexes. Shudder.
 
 + In *list mode*, this `qed` displays non-printing codepoints in the
   ASCII range as `\xhh`. Additionally, it displays non-ASCII
@@ -65,3 +66,13 @@ This `qed` differs from the QED described in the manpage as follows:
   QED would throw an `?N` error, and discard any input from the last
   newline to the end of file.
 
+## Differences already in the original sources
+
++ The QED in the tutorial accepts '`*`' as an alias for the address
+  range `1,$`. This `qed` does not, but the single character '`,`' as
+  an address stands for `1,$`, as described in the manpage.
+
++ When reading in files given on the commandline, this `qed` reports
+  the buffer name, `dol` (_i.e._ line count), and filename of each. The
+  QED in the tutorial and manpage simply reports a character count in
+  this case.
