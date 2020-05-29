@@ -56,6 +56,13 @@ whereas the parenthesis-counter is a _tour-de-force_.
   code-points in the Basic Multilingual Plane as `\uhhhh`, and
   code-points beyond the BMP as `\Uhhhhhh`.
 
++ This `qed` adds the special characters `\x`, `\u`, `\U` which
+  can be used to enter (valid) Unicode codepoints directly in
+  (lowercase) hexadecimal. For example `\x53`, will insert
+  ASCII `0x53` (`S`); `\u05d0` will insert Hebrew Aleph (`א`); and
+  `\U01f600` will insert a grinning _emoji_ (`😀`). The format
+  corresponds to the new *list mode* format described above.
+
 + The program `qedbufs` referred to in the manpage is not ported,
   and likely won't be.
 
