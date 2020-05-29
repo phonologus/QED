@@ -62,6 +62,9 @@ whereas the parenthesis-counter is a _tour-de-force_.
   ASCII `0x53` (`S`); `\u05d0` will insert Hebrew Aleph (`א`); and
   `\U01f600` will insert a grinning _emoji_ (`😀`). The format
   corresponds to the new *list mode* format described above.
+  If the wrong number of digits is supplied, or the resulting
+  codepoint falls outside the legitimate range, this `qed` generates
+  a `?U` error.
 
 + The program `qedbufs` referred to in the manpage is not ported,
   and likely won't be.
