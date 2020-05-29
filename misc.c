@@ -1,6 +1,6 @@
 #include "qed.h"
 
-char tfname[]="/tmp/qxxxxx";
+char tfname[]="/tmp/qXXXXXX";
 
 void
 quit(void)
@@ -70,26 +70,26 @@ error(int code)
 	if(code){
 		for(;stackp != stack ;--stackp)
 			if(stackp->type == BUF || stackp->type == STRING){
-				putchar('?');
+				putchr('?');
 				if(stackp->type == BUF){
-					putchar('b');
-					putchar(bname[stackp->bufptr - buffer]);
+					putchr('b');
+					putchr(bname[stackp->bufptr - buffer]);
 					putlong((long)stackp->lineno);
-					putchar('.');
+					putchr('.');
 				}else{
-					putchar('z');
-					putchar(bname[stackp->lineno]);
+					putchr('z');
+					putchr(bname[stackp->lineno]);
 				}
 				putlong((long)stackp->charno);
-				putchar(' ');
+				putchr(' ');
 			}
-		putchar('?');
-		putchar(lasterr=(code&~FILERR));
+		putchr('?');
+		putchr(lasterr=(code&~FILERR));
 		if(code&FILERR){
-			putchar(' ');
+			putchr(' ');
 			putl(string[FILEBUF].str);
 		} else
-			putchar('\n');
+			putchr('\n');
 	}
 	if(eflag && code) {
 		lasterr=code;
@@ -123,17 +123,15 @@ error(int code)
 void
 init(void)
 {
-	char *p;
-	int pid;
 	if(tfile > 0)
 		close(tfile);
-	pid = getpid();
-	for (p = &tfname[11]; p > &tfname[6];) {
-		*--p = (pid%10) + '0';
-		pid /= 10;
+	if((tfile=mkstemp(tfname))<0) {
+		putchr('?');
+		putchr('T');
+		putchr('\n');
+		lasterr=-1;
+		quit();		/* can't create temp file. Fail. */
 	}
-	close(creat(tfname, 0600));
-	tfile = open(tfname, O_RDWR);
 	tfile2 = open(tfname, O_RDWR);
 	/* (re-)initialize core.
 	 * core was initialized to 0 on program entry.
@@ -164,12 +162,12 @@ comment(void)
 	}
 	while(c != '\n' && c != '\"') {
 		if(mesg)
-			putchar(c);
+			putchr(c);
 		c = getchar();
 	}
 	if(mesg) {
 		if(c == '\n')
-			putchar(c);
+			putchr(c);
 		flush();
 	}
 }
