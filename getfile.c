@@ -61,7 +61,7 @@ exfile(void)
 		ncom('f');
 	else if (vflag) {
 		putlong(count);
-		putchar('\n');
+		putchr('\n');
 	}
 	setcount((int)count);
 }
@@ -82,7 +82,7 @@ getfile(void)
 				if(lp != linebuf) {
 					*genbuf='\n';
 					*(genbuf+1)=utfeof;
-					puts(utfstr_nappended);
+					putstr(utfstr_nappended);
 				} else {
 					return(EOF);
 				}
@@ -200,7 +200,7 @@ Unix(int type)
 		}
 		if(type == '|'){
 			if(pipe(pipe2) == -1){
-				puts(utfstr_querypipe);
+				putstr(utfstr_querypipe);
 				lasterr=1;
 				quit();
 			}
@@ -218,7 +218,7 @@ Unix(int type)
 				quit();
 			}
 			if(pid == -1){
-				puts(utfstr_cantforkqueryshriek);
+				putstr(utfstr_cantforkqueryshriek);
 				lasterr=1;
 				quit();
 			}
@@ -235,7 +235,7 @@ Unix(int type)
 		quit();
 	}
 	if(pid == -1){
-		puts(utfstr_cantfork);
+		putstr(utfstr_cantfork);
 		error('!');
 	}
 	savint = signal(SIGINT, SIG_IGN);
@@ -260,7 +260,7 @@ Unix(int type)
 			*--s='\n';
 			n=utf8nstring(linebuf,utf8buff,s-(linebuf-1));
 			if (write(pipe1[1],utf8buff,n)<0){
-				puts(utfstr_queryo);
+				putstr(utfstr_queryo);
 				break;
 			}
 		}while (a<=addr2);
@@ -281,5 +281,5 @@ Unix(int type)
 			error('0');
 	}
 	if(vflag)
-		puts(utfstr_shriek);
+		putstr(utfstr_shriek);
 }

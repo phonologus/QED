@@ -135,9 +135,9 @@ getchar(void)
 	c=getc();
 	if(tflag && !peek && stackp!= &stack[0]){
 		if(c==EOF)
-			puts(utfstr_starEOFstar);
+			putstr(utfstr_starEOFstar);
 		else
-			putchar(c);
+			putchr(c);
 	}
 	return(c);
 }
@@ -372,10 +372,10 @@ pushinp(int type, union pint_t arg, int literal)
 		error('l');
 	stackp->literal = literal;
 	if(tflag){
-		putchar('[');
+		putchr('[');
 		if(literal)
-			putchar('\'');
-		putchar(cspec[type]);
+			putchr('\'');
+		putchr(cspec[type]);
 	}
 	s->type=type;
 	s->charno = 0;
@@ -409,8 +409,8 @@ pushinp(int type, union pint_t arg, int literal)
 	}
 	if(tflag){
 		if(type==BFILEN || type==STRING || type==BUF)
-			putchar(bname[arg.i]);
-		putchar('=');
+			putchr(bname[arg.i]);
+		putchr('=');
 	}
 }
 
@@ -420,7 +420,7 @@ popinp(void)
 	if(stackp->type == BUF)
 		bbempty = TRUE;
 	if(tflag){
-		putchar(']');
+		putchr(']');
 		flush();
 	}
 	--stackp;

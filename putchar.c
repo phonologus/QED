@@ -6,7 +6,7 @@ void
 putdn(int i)
 {
 	putlong((ulong)i);
-	putchar('\n');
+	putchr('\n');
 }
 
 void
@@ -17,24 +17,24 @@ putlong(ulong i)
 	i /= 10;
 	if(i)
 		putlong(i);
-	putchar('0'+r);
+	putchr('0'+r);
 }
 
 void
 putl(int *sp)
 {
 	listf++;
-	puts(sp);
+	putstr(sp);
 	listf = FALSE;
 }
 
 void
-puts(int *sp)
+putstr(int *sp)
 {
 	col = 0;
 	while (*sp)
-		putchar(*sp++);
-	putchar('\n');
+		putchr(*sp++);
+	putchr('\n');
 }
 
 void
@@ -58,16 +58,16 @@ display(int lf)
 			putlong((ulong)r++);
 			for(i=0; i<NBUFS; i++)
 				if(mark(core[a1]) == names[i]){
-					putchar('\'');
-					putchar(bname[i]);
+					putchr('\'');
+					putchr(bname[i]);
 				}
 			listf = 0;
-			putchar('\t');
+			putchr('\t');
 			col = 8;
 			listf = lf;
 		}
-		for(p = getline(core[a1++],linebuf);*p;putchar(*p++));
-		putchar('\n');
+		for(p = getline(core[a1++],linebuf);*p;putchr(*p++));
+		putchr('\n');
 	}while (a1 <= addr2);
 	dot = addr2;
 	listf = FALSE;
@@ -76,12 +76,12 @@ display(int lf)
 void
 putct(int c)
 {
-	putchar(c);
-	putchar('\t');
+	putchr(c);
+	putchr('\t');
 }
 
 void
-putchar(int c)
+putchr(int c)
 {
 	int *lp;
 

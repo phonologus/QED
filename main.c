@@ -215,7 +215,7 @@ interrupt(int sig)
 		quit();
 	}
 	linp=line;
-	putchar('\n');
+	putchr('\n');
 	lastc = '\n';
 	error('?');
 }
@@ -311,7 +311,7 @@ main(int argc, char **argv)
 	 */
 	if(--argc > 0) {
 		if(argc >= 53)	/* buffer names a-zA-Z */
-			puts(utfstr_queryi);
+			putstr(utfstr_queryi);
 		else {
 			copystring(boot1);
 			for(i=0; i<argc; i++)	/* argument files only */
@@ -583,10 +583,10 @@ commands(void)
 	caseread:
 		if((io = open((char *)utf8(string[FILEBUF].str), O_RDONLY)) < 0){
 			if(initflag){
-				putchar('?');
-				putchar('o');
-				putchar(' ');
-				puts(string[FILEBUF].str);
+				putchr('?');
+				putchr('o');
+				putchr(' ');
+				putstr(string[FILEBUF].str);
 				continue;
 			}
 			lastc = '\n';

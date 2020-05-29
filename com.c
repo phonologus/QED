@@ -221,7 +221,7 @@ bcom(void)
 			addr1=zero+1;
 		if(dir==0){
 			display(bformat);
-			puts(utfstr_sharkteeth);
+			putstr(utfstr_sharkteeth);
 			addr2++;
 		}
 	}
@@ -273,7 +273,7 @@ allnums(void)
 		p = string[i].str;
 		if(*p!='\0' && alldigs(p)){
 			putct(bname[i]);
-			puts(p);
+			putstr(p);
 		}
 	}
 }
@@ -325,7 +325,7 @@ numcom(int z)
 
 		case 'p':
 			if(n<0)
-				putchar('-');
+				putchr('-');
 			putdn(abs(n));
 			goto Numeric;
 		case '+':
@@ -421,7 +421,7 @@ strcom(int z)
 	default:
 		error('x');
 	case 'p':
-		puts(sp->str);
+		putstr(sp->str);
 		break;
 	case 'l':
 		putl(sp->str);
@@ -644,7 +644,7 @@ ncom(int c)
 			*lp = '\0';
 			lp = linebuf;
 			while(*lp)
-				putchar(*lp++);
+				putchr(*lp++);
 			putl(f);
 		}
 	}while(bufp++!=stop);

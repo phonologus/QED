@@ -1,7 +1,7 @@
 .SUFFIXES: .o .c .h
 .PHONY: all clean install
 
-CFLAGS=-ansi -O -D_POSIX_SOURCE -fno-builtin -Wall
+CFLAGS=-O -Wall
 CC=gcc
 
 PROG=qed

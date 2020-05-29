@@ -249,10 +249,10 @@ typedef	unsigned long ulong;
 void putdn(int);
 void putlong(ulong);
 void putl(int *);
-void puts(int *);
+void putstr(int *);
 void display(int);
 void putct(int);
-void putchar(int);
+void putchr(int);
 void flush(void);
 
 /* setaddr.c */

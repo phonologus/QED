@@ -75,7 +75,7 @@ substitute(int inglob, int reg)
 	setcount(count);
 	if(autop) {
 		if(reg>=0) {
-			puts(string[reg].str);
+			putstr(string[reg].str);
 		} else {
 			addr1=addr2=dot;
 			display('p');
@@ -306,7 +306,7 @@ xform(void)
 		change=FALSE;
 		dot=line;
 		for(;;){
-			puts(linebuf);
+			putstr(linebuf);
                         uc.i=0;
 			pushinp(XTTY, uc, FALSE);
 			m=rhsbuf;
