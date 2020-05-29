@@ -5,6 +5,35 @@
 int digits[] = {'0','1','2','3','4','5','6','7','8','9','\0'};
 
 int
+gethexn(int n)
+{
+	int d, i;
+	d=0;
+	while((n-->0)&&((i=posn(nextchar(), hex)) >= 0)){
+		getchar();
+		d = d*16 + i;
+	}
+	if(n>0)
+		return -1;	/* error: not enough digits */
+	return d;
+}
+
+int
+getucs(int n)
+{
+	int c;
+	if((c=gethexn(n)) < 0)
+		error('U');	/* error: malformed \[uU] special */
+	if(c>0x10ffff)
+		error('U');	/* error: out of range (RFC 3629) */
+	if(c<0xd800 || c>0xdfff)
+		return c;	/* yay! valid UCS code point */
+	error('U');		/* error: out of range (RFC 3629) */
+	/* not reached */
+	return -1;
+}
+
+int
 getnum(void)
 {
 	int n, i;
@@ -92,7 +121,7 @@ getnm(int e, int (*f)())
 }
 
 int	special[] = {'x','g','B','b','B','c', 'f','F',
-                     'l','p','r','z','N','"','\\','\'','\0'};
+                     'l','p','r','z','N','"','\\','\'','x','u','U','\0'};
 int	qcount;
 int	afterq;
 
@@ -265,6 +294,15 @@ getc(void)
 				break;
 			case CURBN:
 				c = bname[curbuf-buffer];
+				break;
+			case ASCII:
+				c=getucs(2);
+				break;
+			case UCS2:
+				c=getucs(4);
+				break;
+			case UCS4:
+				c=getucs(6);
 				break;
 			case BACKSLASH:
 				qcount++;

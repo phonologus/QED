@@ -163,6 +163,8 @@ void clean(int);
 
 /* getchar.c */
 
+int gethexn(int n);
+int getucs(int n);
 int getnum(void);
 int getsigned(void);
 int qatoi(int *);

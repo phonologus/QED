@@ -67,7 +67,10 @@ enum {
   NEWL=9,
   NOTHING=10,
   BACKSLASH=11,
-  LITERAL=12
+  LITERAL=12,
+  ASCII=13,
+  UCS2=14,
+  UCS4=15
 };
 
 /*
