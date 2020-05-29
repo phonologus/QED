@@ -92,7 +92,7 @@ getnm(int e, int (*f)())
 }
 
 int	special[] = {'x','g','B','b','B','c', 'f','F',
-                     'l','p','r','z','N','"','\\','\0'};
+                     'l','p','r','z','N','"','\\','\'','\0'};
 int	qcount;
 int	afterq;
 
