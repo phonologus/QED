@@ -34,7 +34,7 @@ you will be able to read the tutorial with `man qed-tutorial`.
 The `Makefile` provides a simple way to build a `qed` binary.
 `make clean && make` will build a fully stand-alone binary `qed`, which
 can be installed anywhere. `make install` with install the binary and
-the manpage and turoial. Edit the `Makefile` to change where this all goes.
+the manpage and tutorial. Edit the `Makefile` to change where this all goes.
 
 The `doc/read.me` file is Rob Pike's, accompanying his original tarball. It
 provides an interesting snapshot into the work-in-progress, and the
