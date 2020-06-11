@@ -554,7 +554,7 @@ strcom(int z)
 		while(posn(c=getchar(), utfstr_rbracewhitespace)<0 && c!=EOF)
 			*q++ = c;
 		*q = '\0';
-		if((q=ucode((byte *)getenv((char *)(genbuf)))) == 0)
+		if((q=ucode((byte *)getenv((char *)utf8(genbuf)))) == 0)
 			clearstring(z);
 		else{
 			startstring();
