@@ -29,15 +29,15 @@ described in the manpage and tutorial. I have noted below where this is the case
 
 The tutorial is in manpage format, so can be read with `man` and
 typeset with `man -t`, as any other manpage. If you `make install`,
-you will be able to read the tutorial with `man qed-tutorial`.
+you should be able to read the tutorial with `man qed-tutorial`.
 
 The `Makefile` provides a simple way to build a `qed` binary.
 `make clean && make` will build a fully stand-alone binary `qed`, which
-can be installed anywhere. `make install` with install the binary and
+can be installed anywhere. `make install` will install the binary and
 the manpage and tutorial. Edit the `Makefile` to change where this all goes.
 
 The `doc/read.me` file is Rob Pike's, accompanying his original tarball. It
-provides an interesting snapshot into the work-in-progress, and the
+provides an interesting snapshot into the work-in-progress at the time, and the
 relationship between the QED and ED editors.
 
 The `q` subdirectory contains Rob's library of useful QED programs. Again
@@ -57,7 +57,7 @@ whereas the parenthesis-counter is a _tour-de-force_.
   code-points beyond the BMP as `\Uhhhhhh`.
 
 + This `qed` adds the special characters `\x`, `\u`, `\U` which
-  can be used to enter (valid) Unicode codepoints directly in
+  can be used to enter (valid) Unicode codepoints directly, using 
   (lowercase) hexadecimal. For example `\x53`, will insert
   ASCII `0x53` (`S`); `\u05d0` will insert Hebrew Aleph (`א`); and
   `\U01f600` will insert a grinning _emoji_ (`😀`). The format
@@ -86,3 +86,4 @@ whereas the parenthesis-counter is a _tour-de-force_.
   the buffer name, `dol` (_i.e._ line count), and filename of each. The
   QED in the tutorial and manpage simply reports a character count in
   this case.
+
