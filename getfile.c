@@ -145,7 +145,6 @@ Unix(int type)
 	int *s;
 	int c;
 	addr_i a;
-	int getsvc();
 	void (*onpipe)(int);
 	int retcode;
 	int	unixbuf[512];

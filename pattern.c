@@ -37,8 +37,6 @@ compile(int eof)
 	int c;
 	int *ep, *penultep;
 	int *lastep, *bracketp, bracket[NBRA];
-	int getsvc();
-	int getchar();
 	struct{
 		int	*althd;		/* start of code for < ... > */
 		int	*altlast;	/* start of code for last < or | */

@@ -90,7 +90,6 @@ getglob(int globuf[])
 {
 	int *gp;
 	int c;
-	int getchar();
 	gp = globuf;
 	while ((c = getquote(utfstr_nl, getchar)) != '\n') {
 		if (c==EOF)

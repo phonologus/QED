@@ -9,7 +9,6 @@ move(int copyflag)
 	int tonewdot;
 	int totmved;
 	int temp;
-	int getcopy();
 
 	setdot();
 	nonzero();

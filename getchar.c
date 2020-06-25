@@ -99,14 +99,12 @@ int bname[] = {'a','b','c','d','e','f','g','h','i','j','k','l','m',
 int
 getname(int e)
 {
-	int getc();
 	return(getnm(e, getc));
 }
 
 int
 getaz(int e)
 {
-	int getchar();
 	return(getnm(e, getchar));
 }
 

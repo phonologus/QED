@@ -177,7 +177,6 @@ restor(void)
 {
 	int t;
 	int fi;
-	int getfile();
 	curbuf = buffer;
 	if((t = open((char *)utf8(filea()), O_RDONLY)) < 0){
 		lastc = '\n';
@@ -351,7 +350,6 @@ commands(void)
         union pint_t uc;
 	addr_i a;
 	int c, lastsep;
-	int getfile(), gettty();
 	int r;
 	int changed;
 	long locn;

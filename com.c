@@ -406,7 +406,6 @@ strcom(int z)
 {
 	int *q;
 	int n;
-	int getchar();
 	struct string *sp;
 	int cond, c, negate;
 	setdot();

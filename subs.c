@@ -14,7 +14,6 @@ substitute(int inglob, int reg)
 	int *q;
 	addr_i a1;
 	int gsubf;
-	extern int getsub();
 	int t, count, autop=0;
 
 	count=0;
@@ -89,7 +88,6 @@ compsub(int subbing, int *autop)
 	int seof, c;
 	int *rhsmagic;
 	int *p;
-	int getsvc();
 
 	*autop=FALSE;
 	seof = getchar();
