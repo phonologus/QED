@@ -1,14 +1,16 @@
 .SUFFIXES: .o .c .h
 .PHONY: all clean install
 
-CFLAGS=-O -Wall
-CC=gcc
+CFLAGS=-O2 -Wall
+CC=cc
+
+INSTALL=install
 
 PROG=qed
 
-INSTALLD=$(HOME)/opt/$(PROG)
+INSTALLD=/usr/local
 BINDIR=$(INSTALLD)/bin
-MANDIR=$(INSTALLD)/man/man1
+MANDIR=$(INSTALLD)/share/man/man1
 
 MANPAGE=\
   doc/qed.1 \
@@ -51,8 +53,7 @@ clean:
 	rm -f *.o $(PROG) 
 
 install: all $(MANPAGE)
-	rm -rf $(INSTALLD)
-	mkdir -p $(BINDIR) $(MANDIR)
-	cp $(PROG) $(BINDIR)/
-	cp $(MANPAGE) $(MANDIR)/
+	$(INSTALL) -d $(BINDIR) $(MANDIR)
+	$(INSTALL) -s $(PROG) $(BINDIR)/
+	$(INSTALL) $(MANPAGE) $(MANDIR)/
 
