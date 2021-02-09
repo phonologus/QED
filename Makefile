@@ -1,5 +1,5 @@
 .SUFFIXES: .o .c .h
-.PHONY: all clean install
+.PHONY: all clean install uninstall
 
 CFLAGS=-O2 -Wall
 CC=cc
@@ -12,9 +12,8 @@ INSTALLD=/usr/local
 BINDIR=$(INSTALLD)/bin
 MANDIR=$(INSTALLD)/share/man/man1
 
-MANPAGE=\
-  doc/qed.1 \
-  doc/qed-tutorial.1
+MANPAGE=doc/qed.1
+TUTORIAL=doc/qed-tutorial.1
 
 HDRS=\
   vars.h \
@@ -56,4 +55,10 @@ install: all $(MANPAGE)
 	$(INSTALL) -d $(BINDIR) $(MANDIR)
 	$(INSTALL) -s $(PROG) $(BINDIR)/
 	$(INSTALL) $(MANPAGE) $(MANDIR)/
+	$(INSTALL) $(TUTORIAL) $(MANDIR)/
+
+uninstall:
+	rm -f $(BINDIR)/$(PROG)
+	rm -f $(MANDIR)/$(MANPAGE)
+	rm -f $(MANDIR)/$(TUTORIAL)
 
