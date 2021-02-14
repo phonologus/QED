@@ -4,12 +4,21 @@ This is a port of the University of Toronto Unix version of the QED editor,
 which was originally written by Rob Pike, David Tilbrook, Hugh
 Redelmeier and Tom Duff. I have updated it to work with UTF8 and Unicode.
 
-This port was developed on a modern Linux (Fedora 32). It
-depends on just a few low-level kernel calls, so should be reasonably
+The behaviour of this `qed` when displaying Unicode is entirely dependent on the
+capabilities of the terminal it is running under. In particular, `qed` 
+outputs Unicode in Logical Order, leaving the handling of the
+complexities of rendering bi-directional text and wide-characters on-screen
+to the terminal. On macOS, the `Terminal.app` program is quite successful with
+displaying bi-directional text, whereas `xterm` on Linux sticks to
+Logical Order.
+
+This port was developed on a modern Linux (Fedora 32) and macOS. It
+depends on just a few low-level Unix system calls, so should be reasonably
 portable across any Unix-like OS. I have built this `qed` successfully on:
 
 +  Linux (Fedora 32, `gcc`)
-+  macOS (Catalina 10.15 with Commandline Developer Tools, `clang`)
++  macOS Intel (Catalina 10.15 with Commandline Developer Tools, `clang`)
++  macOS Apple Silicon (Big Sur 11.2 with Commandline Developer Tools, `clang`)
 +  OpenBSD (6.7, both `gcc` and `clang`)
 
 The sources that this port began with were scavenged from Arnold Robbins's
@@ -78,8 +87,8 @@ whereas the parenthesis-counter is a _tour-de-force_.
 
 ## Differences already in the original sources
 
-+ The QED in the tutorial accepts '`*`' as an alias for the address
-  range `1,$`. This `qed` does not, but the single character '`,`' as
++ The QED in the tutorial accepts `*` as an alias for the address
+  range `1,$`. This `qed` does not, but the single character `,` as
   an address stands for `1,$`, as described in the manpage.
 
 + When reading in files given on the commandline, this `qed` reports
@@ -87,3 +96,19 @@ whereas the parenthesis-counter is a _tour-de-force_.
   QED in the tutorial and manpage simply reports a character count in
   this case.
 
++ The Tutorial does not mention that strings with embedded newlines
+  can be assigned to registers by escaping a literal newline with
+  a backslash. On page 11 of the Tutorial, the effect of the command
+  `za:line1\cNline2` can also be achieved by typing:
+
+  			za:line1\
+			line2
+
+  This facility is correctly described in the manpage.
+
++ The syntax of arithmetic operators on registers is correctly described
+  in the `manpage`. The description on page 12 of the Tutorial
+  is incorrect. In particular, multiple operators chained together should _not_
+  be prefixed with `#`: the command `za#:4#*-5#p` in the
+  Tutorial generates an error in this `qed`. The correct syntax is:
+  `za#:4*-5p`
