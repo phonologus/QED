@@ -1,4 +1,11 @@
+# macOS debris
+.DS_Store
+._*
+
+# Build artefacts
 qed
 *.o
+
+# core dumps
 *:[ab]q
 
