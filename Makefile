@@ -1,10 +1,11 @@
-.SUFFIXES: .o .c .h
-.PHONY: all clean install uninstall
+.SUFFIXES: .o .c .h .md .html
+.PHONY: all clean install uninstall tutorial
 
 CFLAGS=-O2 -Wall
 CC=cc
 
 INSTALL=install
+MD=markdown
 
 PROG=qed
 
@@ -13,7 +14,7 @@ BINDIR=$(INSTALLD)/bin
 MANDIR=$(INSTALLD)/share/man/man1
 
 MANPAGE=doc/qed.1
-TUTORIAL=doc/qed-tutorial.1
+TUTORIAL=doc/qed-tutorial.html
 
 HDRS=\
   vars.h \
@@ -43,7 +44,12 @@ OBJS=$(MODULES:=.o)
 .c.o:
 	$(CC) -c $(CFLAGS) $<
 
+.md.html:
+	$(MD) $< > $*.html
+
 all: $(PROG)
+
+tutorial: $(TUTORIAL)
 
 $(PROG): $(OBJS)  $(HDRS)
 	$(CC) $(LDFLAGS) -o $(PROG) $(OBJS)
