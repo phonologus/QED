@@ -1,8 +1,8 @@
-# QED for Unix, UTF8/Unicode aware.
+# QED for Unix, UTF-8/Unicode aware.
 
 This is a port of the University of Toronto Unix version of the QED editor,
 which was originally written by Rob Pike, David Tilbrook, Hugh
-Redelmeier and Tom Duff. I have updated it to work with UTF8 and Unicode.
+Redelmeier and Tom Duff. I have updated it to work with UTF-8 and Unicode.
 
 The behaviour of this `qed` when displaying Unicode is entirely dependent on the
 capabilities of the terminal it is running under. In particular, `qed` 
@@ -66,7 +66,7 @@ through the tutorial.
 
 ## Differences introduced in this port
 
-+ This `qed` consumes and outputs UTF8 Unicode. Internally, all
++ This `qed` consumes and outputs UTF-8 Unicode. Internally, all
   "characters" are stored and manipulated as Unicode code-points
   represented as `int`-s. The full Unicode range is supported,
   thus even _emojis_ and other exotica beyond the Basic
