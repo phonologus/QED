@@ -23,7 +23,9 @@ portable across any Unix-like OS. I have built this `qed` successfully on:
 
 The sources that this port began with were scavenged from Arnold Robbins's
 [qed-archive](https://github.com/arnoldrobbins/qed-archive). Specifically
-they are from the `unix-1992` sub-directory, which is from a tarball
+they are from the
+[`unix-1992`](https://github.com/arnoldrobbins/qed-archive/unix-1992)
+sub-directory, which is from a tarball
 of Rob Pike's original sources of the University of Toronto version of QED.
 
 The [manpage](doc/qed.1.pdf) and [tutorial](doc/qed-tutorial.md)
@@ -67,7 +69,8 @@ through the tutorial.
 + This `qed` consumes and outputs UTF8 Unicode. Internally, all
   "characters" are stored and manipulated as Unicode code-points
   represented as `int`-s. The full Unicode range is supported,
-  thus even _emojis_ and other exotica beyond the BMP can appear,
+  thus even _emojis_ and other exotica beyond the Basic
+  Multilingual Plain can appear,
   even in regexes. 
 
 + In *list mode*, this `qed` displays non-printing codepoints in the
