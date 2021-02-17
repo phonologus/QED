@@ -61,10 +61,8 @@ install: all $(MANPAGE)
 	$(INSTALL) -d $(BINDIR) $(MANDIR)
 	$(INSTALL) -s $(PROG) $(BINDIR)/
 	$(INSTALL) $(MANPAGE) $(MANDIR)/
-	$(INSTALL) $(TUTORIAL) $(MANDIR)/
 
 uninstall:
 	rm -f $(BINDIR)/$(PROG)
 	rm -f $(MANDIR)/$(MANPAGE)
-	rm -f $(MANDIR)/$(TUTORIAL)
 
