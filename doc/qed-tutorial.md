@@ -211,7 +211,7 @@ to that buffer.
 and look at the output. It should be nearly identical to the above output *Qed*
 printed when it loaded the files on start up, but now there is only one `.`,
 indicating that buffer `a` is the current buffer. 
-The `n` (for _names_) command is *Qed&lsquo;*s equivalent of `ls -l`.
+The `n` (for _names_) command is *Qed&rsquo;*s equivalent of `ls -l`.
 
                 a .82	address.c
                 b  121	blkio.c
