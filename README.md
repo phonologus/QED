@@ -47,9 +47,9 @@ browsing buffers; Unicode input; the `xform` edit mode;
 up-to-date examples (`qed` programs to streamline a `git`
 work-flow, for instance).
 
-Unlike the original tutorial, the original manpage is mostly up-to-date
-(*modulo* Unicode). Where the behaviour of this `qed` differs
-significantly from the manpage is noted below.
+Unlike the original tutorial, the original manpage is up-to-date,
+except for the new Unicode functionality.
+This new functionality is described below.
 
 The `Makefile` provides a simple way to build a `qed` binary.
 `make clean && make` will build a fully stand-alone binary `qed`, which
@@ -111,11 +111,4 @@ through the tutorial.
   editing. It is very impressive with single-width, left-to-right,
   text. Any other text is likely to have very unpredictable,
   terminal-dependent, and unintended results.
-
-## Differences from the manpage in the original sources
-
-+ When reading in files given on the commandline, this `qed` reports
-  the buffer name, `$` (_i.e._ line count), and filename of each. The
-  QED in the original tutorial and manpage simply reports a character count in
-  this case.
 
