@@ -1,0 +1,2 @@
+:qed-session: subs="quotes,macros,callouts"
+

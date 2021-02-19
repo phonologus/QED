@@ -28,13 +28,17 @@ they are from the
 sub-directory, which is from a tarball
 of Rob Pike's original sources of the University of Toronto version of QED.
 
-The [manpage](doc/qed.1.pdf) and [tutorial](doc/qed-tutorial.md)
+The updated [Qed tutorial](doc/qed-tutorial.html) 
+and original [manpage](doc/qed.1.pdf)
 in the `doc` subdirectory are essential reading.
+
 The tutorial is a heavily edited an updated version of Rob Pike's
-[tutorial](doc/historical/qed-tutorial.pdf), which was
+original [tutorial](doc/historical/qed-tutorial.pdf) which was
 already very out-of-date, even before this port began. Rob's
-original tutorial was written in _troff_ using the manpage macros,
-and I generated the `pdf` version with `man -t`
+original tutorial was written in _troff_ using the manpage macros.
+The updated tutorial has been translated into `asciidoc`, which
+makes for a very pretty html runoff, as well as a traditional
+manpage format.
 
 A brand new tutorial for a modern audience would be
 a nice thing to have. Conspicuously missing from the tutorial
@@ -49,12 +53,16 @@ significantly from the manpage is noted below.
 
 The `Makefile` provides a simple way to build a `qed` binary.
 `make clean && make` will build a fully stand-alone binary `qed`, which
-can be installed anywhere. `make install` will install the binary and
-the manpage. Edit the `Makefile` to change where this all goes.
+can be installed anywhere. `make install` will install the binary,
+the manpage, and the tutorial. The tutorial is installed as
+`qed-tutorial(7)`, and can be summoned with `man qed-tutorial`, or
+`man 7 qed-tutorial`.
 
-To regenerate the `html` version of the tutorial, `make tutorial`. This
-depends on there being a `markdown` program in your path. The `tutorial`
-target is *not* invoked as part of `make all`.
+Edit the `Makefile` to change where this all goes. 
+
+To regenerate the `html` and manpage versions of the tutorial,
+`cd doc && make`. This depends on there being an
+`asciidoctor` program in your path.
 
 The `doc/historical/read.me` file is Rob Pike's, accompanying his original tarball. It
 provides an interesting snapshot into the work-in-progress at the time, and the

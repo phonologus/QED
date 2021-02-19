@@ -1,0 +1,8 @@
+= Programming in Qed: A Tutorial
+Robert Pike; Sean Jensen (ed.)
+:description: A tutorial introduction to the Qed editor.
+:sectnums:
+include::qed-tutorial-attr.txt[]
+
+include::qed-tutorial-main.txt[]
+

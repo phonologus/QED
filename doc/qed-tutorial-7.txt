@@ -1,0 +1,22 @@
+= qed-tutorial(7)
+Robert Pike, Sean Jensen (ed.)
+v1.0.0
+:doctype: manpage
+include::qed-tutorial-attr.txt[]
+
+== NAME
+
+qed-tutorial - Programming in Qed: A Tutorial
+
+== SYNOPSIS
+
+man 7 qed-tutorial
+
+include::qed-tutorial-main.txt[]
+
+== SEE ALSO
+
+qed(1),
+ed(1)
+
+

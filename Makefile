@@ -1,20 +1,22 @@
-.SUFFIXES: .o .c .h .md .html
-.PHONY: all clean install uninstall tutorial
+.SUFFIXES: .o .c .h
+.PHONY: all clean install uninstall
 
 CFLAGS=-O2 -Wall
 CC=cc
 
 INSTALL=install
-MD=markdown
 
 PROG=qed
 
 INSTALLD=/usr/local
 BINDIR=$(INSTALLD)/bin
-MANDIR=$(INSTALLD)/share/man/man1
+MANDIR=$(INSTALLD)/share/man/man
 
-MANPAGE=doc/qed.1
-TUTORIAL=doc/qed-tutorial.html
+MSECTION=1
+TSECTION=7
+
+MANPAGE=doc/qed.$(MSECTION)
+TUTORIAL=doc/qed-tutorial.$(TSECTION)
 
 HDRS=\
   vars.h \
@@ -49,20 +51,21 @@ OBJS=$(MODULES:=.o)
 
 all: $(PROG)
 
-tutorial: $(TUTORIAL)
-
 $(PROG): $(OBJS)  $(HDRS)
 	$(CC) $(LDFLAGS) -o $(PROG) $(OBJS)
 
 clean:
 	rm -f *.o $(PROG) 
 
-install: all $(MANPAGE)
-	$(INSTALL) -d $(BINDIR) $(MANDIR)
+install: all $(MANPAGE) $(TUTORIAL)
+	$(INSTALL) -d $(BINDIR) $(MANDIR)$(MSECTION)
+	$(INSTALL) -d $(BINDIR) $(MANDIR)$(TSECTION)
 	$(INSTALL) -s $(PROG) $(BINDIR)/
-	$(INSTALL) $(MANPAGE) $(MANDIR)/
+	$(INSTALL) $(MANPAGE) $(MANDIR)$(MSECTION)/
+	$(INSTALL) $(TUTORIAL) $(MANDIR)$(TSECTION)/
 
 uninstall:
 	rm -f $(BINDIR)/$(PROG)
-	rm -f $(MANDIR)/$(MANPAGE)
+	rm -f $(MANDIR)$(MSECTION)/$(MANPAGE)
+	rm -f $(MANDIR)$(TSECTION)/$(TUTORIAL)
 
