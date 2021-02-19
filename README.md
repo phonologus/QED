@@ -28,7 +28,7 @@ they are from the
 sub-directory, which is from a tarball
 of Rob Pike's original sources of the University of Toronto version of QED.
 
-The updated [Qed tutorial](doc/qed-tutorial.html) 
+The updated [Qed tutorial](doc/qed-tutorial.pdf) 
 and original [manpage](doc/qed.1.pdf)
 in the `doc` subdirectory are essential reading.
 
@@ -37,7 +37,7 @@ original [tutorial](doc/historical/qed-tutorial.pdf) which was
 already very out-of-date, even before this port began. Rob's
 original tutorial was written in _troff_ using the manpage macros.
 The updated tutorial has been translated into `asciidoc`, which
-makes for a very pretty html runoff, as well as a traditional
+makes for a very pretty html and pdf runoff, as well as a traditional
 manpage format.
 
 A brand new tutorial for a modern audience would be
@@ -60,9 +60,9 @@ the manpage, and the tutorial. The tutorial is installed as
 
 Edit the `Makefile` to change where this all goes. 
 
-To regenerate the `html` and manpage versions of the tutorial,
-`cd doc && make`. This depends on there being an
-`asciidoctor` program in your path.
+To regenerate the `html`, `pdf`, and manpage versions of the tutorial,
+`cd doc && make`. This depends on an `asciidoctor` and `asciidoctor-pdf`
+toolchain being installed.
 
 The `doc/historical/read.me` file is Rob Pike's, accompanying his original tarball. It
 provides an interesting snapshot into the work-in-progress at the time, and the

@@ -1,2 +1,2 @@
-:qed-session: subs="quotes,macros,callouts"
+:qed-session: subs="verbatim,quotes,macros,callouts"
 

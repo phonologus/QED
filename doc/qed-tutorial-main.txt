@@ -665,12 +665,15 @@ number of times the interpretation is to be delayed.
 To decide how many delays are necessary, here is the list
 of input forms that cause characters to be interpreted:
 
-+ terminal input
+****
+* terminal input
 
-+ commands or text (such as that saved in buffers) invoked using a special character
+* commands or text (such as that saved in buffers) invoked using a special character
 
-+ command lines for the `g`, `v`, `G`, `V`, or `h` commands (`g` and `v` are
-the same as in *Ed*; we'll see the others a little later)
+* command lines for the `*g*`, `*v*`, `*G*`, `*V*`, or `*h*` 
+  commands (`g` and `v` are
+  the same as in *Ed*; we'll see the others a little later)
+****
 
 Note that characters are _not_
 interpreted when buffers are read from or written to files,
@@ -1049,8 +1052,8 @@ but it _is_ important to understand how it behaves.
 
 An early version of U. of T. *Qed* had only lower case buffer names,
 and when the names `{` through `~` were added it was necessary
-to go through the manual changing some of the instances of `` `z' `` into
-`` `~' ``, but not all of them.
+to go through the manual changing some of the instances of `pass:[`z']` into
+`pass:[`~']`, but not all of them.
 The following single line made the job very simple:
 
 [source,{qed-session}]
@@ -1058,11 +1061,11 @@ The following single line made the job very simple:
 *+g/`z'/ p ""replacement:" s//`\cl'/p+*
 ----
 
-Each line (`g`) with a `` `z' `` (``/`z'/``) is printed (`p`),
+Each line (`g`) with a `pass:[`z']` (`pass:[/`z'/]`) is printed (`p`),
 the user is prompted for the
 replacement (`""replacement:"`), and the response (`\l`) --
 either a `z` or a `~` in our case -- 
-is substituted (``s//`\cl'/``).
+is substituted (`pass:[s//`\cl'/]`).
 The single delay ensures that `g` places a literal `\l`
 in the substitution string,
 which is then interpreted when each call to the substitute command
@@ -1076,12 +1079,12 @@ Here's another example:
 [source,{qed-session}]
 ----
 *bz ,d*
-*ap ""Comment:\cl" s|$|	/* \cl */|p*
-	""Comment:\l" s|$|	/* \l */|p
+*ap ""Comment:\cl" s|$|	+/* \cl */+|p*
+	""Comment:\l" s|$|	+/* \l */+|p
 ----
 
 On any line which invokes this buffer with a `\bz`, the first `\l`
-in the comment will ``eat'' any input remaining
+in the comment will "`eat`" any input remaining
 on the line after the `\bz` (and inserts it into the comment command (`""`)
 where the first `\l` appears, namely after the `:`. Perhaps not very useful!).
 
@@ -1094,14 +1097,14 @@ where the first `\l` appears, namely after the `:`. Perhaps not very useful!).
 
 *a	more.code;*
 *\bz foobar*
-	Comment:foobar**stylish**		<2>
+	Comment:foobar**stylish**			<2>
 		more.code;	+/* stylish */+
 ----
 <1> Prompt is `Comment:`, user types `stylish`
 <2> Prompt is `Comment:foobar` (_sic!_), user types `stylish`
 
 (Also, of course, if what the user typed at the prompt contains the character
-`|`, problems will occur...)
+`|`, problems will occur.)
 
 Now, if we intend to be able to type our C comment text
 on the same line as the invocation of the buffer,
@@ -1113,7 +1116,7 @@ try it again:
 
 [source,{qed-session}]
 ----
-*bz s/".*" //p*
+*+bz s/".*" //p+*
 	s|$|        +/* \l */+|p
 *ba a	yetmore.code;*
 *\bzstylish*
@@ -1275,8 +1278,8 @@ These operations are quite straightforward; we will see them
 all used when we start to program *Qed*.
 
 Registers can also be manipulated numerically. This is indicated
-by the `#` (for _number_) operation: `za#...` . The text following
-the `#` is then interpreted specially. Decimal numbers (integers)
+by the `+#+` (for _number_) operation: `+za#...+` . The text following
+the `+#+` is then interpreted specially. Decimal numbers (integers)
 stand for themselves, and numeric assignment to the register is `:`. So:
 
 [source,{qed-session}]
@@ -1343,12 +1346,12 @@ line as regular *Qed* commands. This can have some bizarre side-effects:
 	foo.bar;
 ----
 
-In `za#:99 p`, the space (after the `99`) is _not_ a valid character in
-numeric-register context, so it terminates the `za#:99` command. The
+In `+za#:99 p+`, the space (after the `99`) is _not_ a valid character in
+numeric-register context, so it terminates the `+za#:99+` command. The
 remainder of the line (` p`) is then interpreted as a regular *Qed*
 command (namely, _print the current line_), which it duly does.
 
-It is an error (`?#`) to try to perform numeric operations on a register
+It is an error (`+?#+`) to try to perform numeric operations on a register
 which does not contain a (possibly negative) decimal integer:
 
 [source,{qed-session}]
@@ -1386,7 +1389,7 @@ number of lines in the current buffer; and
 
 saves in `za` the address of the first forward occurrence of `xxxx`.
 
-The `r' operation character (for _range_)
+The `r` operation character (for _range_)
 stores the first given address in the named register,
 and the second address in the register whose name is
 lexically one greater:
@@ -1433,10 +1436,10 @@ such as when generating defined constants for a table:
 *creat*
 *.*
 *" capitalize*
-*?read?,.s/.*/^/p*
+*+?read?,.s/.*/^/p+*
 	CREAT
 *za#:0*
-*?READ?,.g/^/s/.*/+#define+ &	\cza/p za#+1*
+*+?READ?,.g/^/s/.*/#define &	\cza/p za#+1+*
 	#define READ	0
 	#define WRITE	1
 	#define OPEN	2

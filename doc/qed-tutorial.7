@@ -823,12 +823,43 @@ number of times the interpretation is to be delayed.
 To decide how many delays are necessary, here is the list
 of input forms that cause characters to be interpreted:
 .sp
-+ terminal input
+.RS 4
 .sp
-+ commands or text (such as that saved in buffers) invoked using a special character
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+terminal input
+.RE
 .sp
-+ command lines for the \f(CRg\fP, \f(CRv\fP, \f(CRG\fP, \f(CRV\fP, or \f(CRh\fP commands (\f(CRg\fP and \f(CRv\fP are
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+commands or text (such as that saved in buffers) invoked using a special character
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+command lines for the \f(CR\fBg\fP\fP, \f(CR\fBv\fP\fP, \f(CR\fBG\fP\fP, \f(CR\fBV\fP\fP, or \f(CR\fBh\fP\fP
+commands (\f(CRg\fP and \f(CRv\fP are
 the same as in \fBEd\fP; we\(cqll see the others a little later)
+.RE
+.RE
 .sp
 Note that characters are \fInot\fP
 interpreted when buffers are read from or written to files,
@@ -1283,8 +1314,8 @@ but it \fIis\fP important to understand how it behaves.
 .sp
 An early version of U. of T. \fBQed\fP had only lower case buffer names,
 and when the names \f(CR{\fP through \f(CR~\fP were added it was necessary
-to go through the manual changing some of the instances of \f(CR `z\(aq \fP into
-\f(CR `~\(aq \fP, but not all of them.
+to go through the manual changing some of the instances of \f(CR`z\(aq\fP into
+\f(CR`~\(aq\fP, but not all of them.
 The following single line made the job very simple:
 .sp
 .if n .RS 4
@@ -1295,10 +1326,10 @@ The following single line made the job very simple:
 .fi
 .if n .RE
 .sp
-Each line (\f(CRg\fP) with a \f(CR \f(CRz\(aq \fP (\f(CR/`z\(aq/\fP) is printed (`p\fP),
+Each line (\f(CRg\fP) with a \f(CR`z\(aq\fP (\f(CR/`z\(aq/\fP) is printed (\f(CRp\fP),
 the user is prompted for the
-replacement (\f(CR""replacement:"\fP), and the response (\f(CR\(rsl\fP) \(em either a \f(CRz\fP or a \f(CR~\fP in our case \(em is substituted (\f(CRs//\f(CR\(rscl\(aq/\fP).
-The single delay ensures that `g\fP places a literal \f(CR\(rsl\fP
+replacement (\f(CR""replacement:"\fP), and the response (\f(CR\(rsl\fP) \(em either a \f(CRz\fP or a \f(CR~\fP in our case \(em is substituted (\f(CRs//`\(rscl\(aq/\fP).
+The single delay ensures that \f(CRg\fP places a literal \f(CR\(rsl\fP
 in the substitution string,
 which is then interpreted when each call to the substitute command
 builds its replacement (\fIright\-hand side\fP) text.
@@ -1312,15 +1343,15 @@ Here\(cqs another example:
 .nf
 .fam C
 \fBbz ,d\fP
-\fBap ""Comment:\(rscl" s|$|        /\fP \(rscl \fB/|p\fP
+\fBap ""Comment:\(rscl" s|$|        /* \(rscl */|p\fP
         ""Comment:\(rsl" s|$|        /* \(rsl */|p
 .fam
 .fi
 .if n .RE
 .sp
 On any line which invokes this buffer with a \f(CR\(rsbz\fP, the first \f(CR\(rsl\fP
-in the comment will \f(CR`eat\(aq\(aq any input remaining
-on the line after the `\(rsbz\fP (and inserts it into the comment command (\f(CR""\fP)
+in the comment will \(lqeat\(rq any input remaining
+on the line after the \f(CR\(rsbz\fP (and inserts it into the comment command (\f(CR""\fP)
 where the first \f(CR\(rsl\fP appears, namely after the \f(CR:\fP. Perhaps not very useful!).
 .sp
 .if n .RS 4
@@ -1328,12 +1359,12 @@ where the first \f(CR\(rsl\fP appears, namely after the \f(CR:\fP. Perhaps not v
 .fam C
 \fBba a        c.code;\fP
 \fB\(rsbz\fP
-        Comment:\fBstylish\fP                                <1>
+        Comment:\fBstylish\fP                                \fB(1)\fP
                 c.code;        /* stylish */
 
 \fBa        more.code;\fP
 \fB\(rsbz foobar\fP
-        Comment:foobar\fBstylish\fP                <2>
+        Comment:foobar\fBstylish\fP                        \fB(2)\fP
                 more.code;        /* stylish */
 .fam
 .fi
@@ -1350,7 +1381,7 @@ T}
 .TE
 .sp
 (Also, of course, if what the user typed at the prompt contains the character
-\f(CR|\fP, problems will occur...)
+\f(CR|\fP, problems will occur.)
 .sp
 Now, if we intend to be able to type our C comment text
 on the same line as the invocation of the buffer,
@@ -1363,7 +1394,7 @@ try it again:
 .if n .RS 4
 .nf
 .fam C
-\fBbz s/".\fP" //p*
+\fBbz s/".*" //p\fP
         s|$|        /* \(rsl */|p
 \fBba a        yetmore.code;\fP
 \fB\(rsbzstylish\fP
@@ -1545,7 +1576,7 @@ These operations are quite straightforward; we will see them
 all used when we start to program \fBQed\fP.
 .sp
 Registers can also be manipulated numerically. This is indicated
-by the \f(CR\fP (for \fInumber\fP) operation: \f(CRza...\fP . The text following
+by the \f(CR#\fP (for \fInumber\fP) operation: \f(CRza#...\fP . The text following
 the \f(CR#\fP is then interpreted specially. Decimal numbers (integers)
 stand for themselves, and numeric assignment to the register is \f(CR:\fP. So:
 .sp
@@ -1677,7 +1708,7 @@ number of lines in the current buffer; and
 .sp
 saves in \f(CRza\fP the address of the first forward occurrence of \f(CRxxxx\fP.
 .sp
-The `r\(aq operation character (for \fIrange\fP)
+The \f(CRr\fP operation character (for \fIrange\fP)
 stores the first given address in the named register,
 and the second address in the register whose name is
 lexically one greater:
@@ -1734,10 +1765,10 @@ such as when generating defined constants for a table:
 \fBcreat\fP
 \fB.\fP
 \fB" capitalize\fP
-\fB?read?,.s/.\fP/^/p*
+\fB?read?,.s/.*/^/p\fP
         CREAT
 \fBza#:0\fP
-\fB?READ?,.g/^/s/.\fP/#define &        \(rscza/p za#+1*
+\fB?READ?,.g/^/s/.*/#define &        \(rscza/p za#+1\fP
         #define READ        0
         #define WRITE        1
         #define OPEN        2
