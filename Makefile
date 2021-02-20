@@ -46,9 +46,6 @@ OBJS=$(MODULES:=.o)
 .c.o:
 	$(CC) -c $(CFLAGS) $<
 
-.md.html:
-	$(MD) $< > $*.html
-
 all: $(PROG)
 
 $(PROG): $(OBJS)  $(HDRS)
