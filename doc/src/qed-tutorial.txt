@@ -1,0 +1,7 @@
+ifdef::as_manpage[]
+include::qed-tutorial-manpage.txt[]
+endif::[]
+ifdef::as_article[]
+include::qed-tutorial-article.txt[]
+endif::[]
+

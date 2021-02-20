@@ -2,7 +2,6 @@
 Robert Pike, Sean Jensen (ed.)
 v1.0.0
 :doctype: manpage
-include::qed-tutorial-attr.txt[]
 
 == NAME
 
@@ -12,7 +11,7 @@ qed-tutorial - Programming in Qed: A Tutorial
 
 man 7 qed-tutorial
 
-include::qed-tutorial-main.txt[]
+include::qed-tutorial-body.txt[]
 
 == SEE ALSO
 
