@@ -45,7 +45,9 @@ a nice thing to have. Conspicuously missing from the tutorial
 here are: introduction to line-oriented editing;
 browsing buffers; Unicode input; the `xform` edit mode;
 up-to-date examples (`qed` programs to streamline a `git`
-work-flow, for instance).
+work-flow, for instance). I will be writing a new _Qed Book_
+from scratch out-of-tree, so the updated tutorial here will
+not receive any more revisions.
 
 Unlike the original tutorial, the original manpage is up-to-date,
 except for the new Unicode functionality.
