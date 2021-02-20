@@ -447,10 +447,33 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <span id="author" class="author">Robert Pike</span><br>
 <span id="author2" class="author">Sean Jensen (ed.)</span><br>
 </div>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_introduction">1. Introduction</a></li>
+<li><a href="#_buffers">2. Buffers</a></li>
+<li><a href="#_special_characters_1">3. Special Characters (1)</a></li>
+<li><a href="#_special_characters_2">4. Special Characters (2)</a></li>
+<li><a href="#_special_characters_3">5. Special Characters (3)</a></li>
+<li><a href="#_registers">6. Registers</a></li>
+<li><a href="#_control_structures">7. Control Structures</a></li>
+<li><a href="#_calling_the_shell">8. Calling the Shell</a></li>
+<li><a href="#_programming_1">9. Programming (1)</a></li>
+<li><a href="#_programming_2">10. Programming (2)</a></li>
+<li><a href="#_final_comments">11. Final Comments</a></li>
+<li><a href="#_editors_notes">12. Editor&#8217;s Notes</a>
+<ul class="sectlevel2">
+<li><a href="#_remarks">12.1. Remarks</a></li>
+<li><a href="#_history">12.2. History</a></li>
+<li><a href="#_resources">12.3. Resources</a></li>
+</ul>
+</li>
+</ul>
+</div>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_introduction">1. INTRODUCTION</h2>
+<h2 id="_introduction">1. Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p><strong>Qed</strong> is a programmable text editor, intended for use primarily
@@ -544,13 +567,17 @@ but it is very easy to do in <strong>Ed</strong>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>g/^/m0</strong></code></pre>
+<pre class="highlight"><code>g/^/m0</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>(It will be the convention in this tutorial to show user input
-in <strong>bold</strong>, and editor output in regular font, offset from the left
-margin.)</p>
+<p>(For readability&#8217;s sake,
+it will be the convention in this tutorial to show user input
+aligned with the left margin,
+and editor output offset by a tab from the left margin.
+In actual practice on the terminal screen,
+the editor output is left-aligned on
+the left margin, exactly as the input is.)</p>
 </div>
 <div class="paragraph">
 <p>A second, slightly more complicated example is the problem of
@@ -560,18 +587,18 @@ alongside each other in a buffer.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>$ <strong>ed file1</strong>
+<pre class="highlight"><code>$ ed file1
 	142
-<strong>.=</strong>
+.=
 	15
-<strong>r file2</strong>
+r file2
 	153
-<strong>.=</strong>
+.=
 	30
-<strong>1ka</strong>
-<strong>16,30 g/^/m'a\</strong>
-<strong>+ka</strong>
-<strong>g/^/ .,+j/       /</strong></code></pre>
+1ka
+16,30 g/^/m'a\
++ka
+g/^/ .,+j/       /</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -621,6 +648,7 @@ to save typing.</p>
 you must be determined,
 so you&#8217;re ready to learn about buffers.</p>
 </div>
+<div style="page-break-after: always;"></div>
 </div>
 </div>
 <div class="sect1">
@@ -639,7 +667,7 @@ The easiest way to see how they work is to
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>$ <strong>qed *.c</strong></code></pre>
+<pre class="highlight"><code>$ qed *.c</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -681,7 +709,7 @@ to that buffer.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>n</strong>
+<pre class="highlight"><code>n
 	a .82	address.c
 	b  121	blkio.c
 	c  702	com.c
@@ -712,7 +740,7 @@ The <code>n</code> (for <em>names</em>) command is <strong>Qed</strong>'s equiva
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>f</strong>
+<pre class="highlight"><code>f
 	a .82	address.c</code></pre>
 </div>
 </div>
@@ -723,8 +751,8 @@ or delete an empty line, and do another <code>f</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>f</strong>
-	address.c</code></pre>
+<pre class="highlight"><code>f
+	a'.82	ddress.c</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -734,7 +762,7 @@ Now try</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>bb f</strong>
+<pre class="highlight"><code>bb f
 	b .121	blkio.c</code></pre>
 </div>
 </div>
@@ -759,7 +787,7 @@ Then type</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>'a,'b tz0</strong></code></pre>
+<pre class="highlight"><code>'a,'b tz0</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -773,6 +801,7 @@ Do another <code>n</code>: you will see that you are currently
 in buffer <code>z</code>, and <em>dot</em> is set to the last line copied.
 The <code>m</code> (<em>move</em>) command behaves similarly.</p>
 </div>
+<div style="page-break-after: always;"></div>
 </div>
 </div>
 <div class="sect1">
@@ -783,7 +812,7 @@ The <code>m</code> (<em>move</em>) command behaves similarly.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>bz 0,$d</strong></code></pre>
+<pre class="highlight"><code>bz 0,$d</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -794,7 +823,7 @@ As well, you could have typed</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>bz Z</strong></code></pre>
+<pre class="highlight"><code>bz Z</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -804,7 +833,7 @@ Now do the following:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>ap g/^[a-zA-Z_].</strong>(/p*
+<pre class="highlight"><code>ap g/^[a-zA-Z_].*(/p
 	g/^[a-zA-Z_].*(/p</code></pre>
 </div>
 </div>
@@ -823,8 +852,8 @@ some there, and try out the buffer like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>bb</strong>
-<strong>\bz</strong>
+<pre class="highlight"><code>bb
+\bz
 	initio(void)
 	getline(addr_t tl, int *lbuf)
 	putline(void)
@@ -842,7 +871,7 @@ numbers as well, you could tag a <code>.=</code> command on the end:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>\bz .=</strong>
+<pre class="highlight"><code>\bz .=
 	initio(void)
 	43
 	getline(addr_t tl, int *lbuf)
@@ -877,14 +906,14 @@ Try the following examples:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>by a</strong>
-<strong>\bz</strong>
-<strong>.</strong>
-<strong>p</strong>
-	g/^[a-zA-Z_].<strong>(/p
-*ap \bz</strong>
-	g/^[a-zA-Z_].<strong>(/p
-*!echo "\bz"</strong>
+<pre class="highlight"><code>by a
+\bz
+.
+p
+	g/^[a-zA-Z_].*(/p
+ap \bz
+	g/^[a-zA-Z_].*(/p
+!echo "\bz"
 	g/^[a-zA-Z_].*(/p
 	!</code></pre>
 </div>
@@ -901,7 +930,7 @@ multiline buffer in <code>z</code>, the command</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>s/x/\bz/p</strong></code></pre>
+<pre class="highlight"><code>s/x/\bz/p</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -911,10 +940,10 @@ say a frequently typed word, we would really be saying:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>s/x/1ka</strong>
-<strong>16,30 g/^/m'a\</strong>
-*    +ka*
-<strong>g/^/ .,+j/       //p</strong></code></pre>
+<pre class="highlight"><code>s/x/1ka
+16,30 g/^/m'a\
+    +ka
+g/^/ .,+j/       //p</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -972,11 +1001,11 @@ First, enter buffer <code>z</code> again and append:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>bz</strong>
-<strong>a</strong>
-<strong>\Fa</strong>
-<strong>\Fb</strong>
-<strong>.</strong></code></pre>
+<pre class="highlight"><code>bz
+a
+\Fa
+\Fb
+.</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -984,7 +1013,7 @@ First, enter buffer <code>z</code> again and append:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>-,p</strong>
+<pre class="highlight"><code>-,p
 	address.c
 	blkio.c</code></pre>
 </div>
@@ -1000,11 +1029,11 @@ Try</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>f junk</strong>
+<pre class="highlight"><code>f junk
 	z'.2	junk
-<strong>w</strong>
+w
 	18
-<strong>!ls \f</strong>
+!ls \f
 	junk
 	!</code></pre>
 </div>
@@ -1014,7 +1043,7 @@ Try</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>!cc \f</strong></code></pre>
+<pre class="highlight"><code>!cc \f</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1027,7 +1056,7 @@ Thus, you can type</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>e \f</strong></code></pre>
+<pre class="highlight"><code>e \f</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1035,7 +1064,7 @@ Thus, you can type</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>e /sys/src/cmd/\f</strong></code></pre>
+<pre class="highlight"><code>e /sys/src/cmd/\f</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1047,11 +1076,12 @@ Try</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>!echo \B</strong>
+<pre class="highlight"><code>!echo \B
 	z
 	!</code></pre>
 </div>
 </div>
+<div style="page-break-after: always;"></div>
 </div>
 </div>
 <div class="sect1">
@@ -1069,7 +1099,7 @@ The line is ignored by
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>4 " This comment sets dot to line 4</strong></code></pre>
+<pre class="highlight"><code>4 " This comment sets dot to line 4</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1080,13 +1110,13 @@ newline, no newline is printed:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>bx</strong>
-<strong>" hi</strong>
-<strong>"" hi</strong>
+<pre class="highlight"><code>bx
+" hi
+"" hi
 	 hi
-<strong>"" hi there "</strong>
+"" hi there "
 	 hi there |&lt;- cursor is left on this line
-<strong>""Current buffer: b\B</strong>
+""Current buffer: b\B
 	Current buffer: bx</code></pre>
 </div>
 </div>
@@ -1097,10 +1127,10 @@ and call it back, from any buffer, when desired?</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>bx Z</strong>
-<strong>ap ""Current buffer: b\B</strong>
+<pre class="highlight"><code>bx Z
+ap ""Current buffer: b\B
 	""Current buffer: bx
-<strong>bA \bx</strong>
+bA \bx
 	Current buffer: bx</code></pre>
 </div>
 </div>
@@ -1167,13 +1197,13 @@ The <code>\cB</code> will reduce to a literal <code>\B</code> when typed in:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>bx Z</strong>
-<strong>ap ""Current buffer: b\cB</strong>
+<pre class="highlight"><code>bx Z
+ap ""Current buffer: b\cB
 	""Current buffer: b\B
 
-<strong>bA \bx</strong>
+bA \bx
 	Current buffer: bA
-<strong>bB \bx</strong>
+bB \bx
 	Current buffer: bB</code></pre>
 </div>
 </div>
@@ -1214,7 +1244,7 @@ Experience is a great help here, so let&#8217;s look at some examples:</p>
 <div class="listingblock">
 <div class="title">delay and substitution</div>
 <div class="content">
-<pre>bx			"switch to buffer x
+<pre>bx				"switch to buffer x
 s/$/\B/			"appends x to current line
 s/$/\cB/		"appends \B to current line
 s/$/\ccB/		"appends \cB to current line</pre>
@@ -1237,11 +1267,11 @@ There are two ways:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre><strong>,s/\n/\n\t/</strong>
-<strong>" equivalent to</strong>
-<strong>,s/\cn/\cn\ct/</strong>
-<strong>" or</strong>
-<strong>g/\n/ s/\n/\n\t/</strong></pre>
+<pre>,s/\n/\n\t/
+" equivalent to
+,s/\cn/\cn\ct/
+" or
+g/\n/ s/\n/\n\t/</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1263,8 +1293,8 @@ The <strong>Ed</strong> sequence</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre><strong>g/xxxx/ r\</strong>
-<strong>.=</strong></pre>
+<pre>g/xxxx/ r\
+.=</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1272,7 +1302,7 @@ The <strong>Ed</strong> sequence</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre><strong>g/xxxx/ r\cN .=</strong></pre>
+<pre>g/xxxx/ r\cN .=</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1284,7 +1314,7 @@ but it&#8217;s straightforward (by <strong>Qed</strong> standards!) in <strong>Q
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>g/xxxx/ s//\\cN/p</strong></code></pre>
+<pre class="highlight"><code>g/xxxx/ s//\\cN/p</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1296,8 +1326,8 @@ by the functionally slightly different</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>g/xxxx/ s//\\</strong>
-<strong>/p</strong></code></pre>
+<pre class="highlight"><code>g/xxxx/ s//\\
+/p</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1323,7 +1353,7 @@ As mentioned earlier, the <strong>Ed</strong> command</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>s2/"/\\n"/p</strong></code></pre>
+<pre class="highlight"><code>s2/"/\\n"/p</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1331,15 +1361,15 @@ As mentioned earlier, the <strong>Ed</strong> command</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>s2/"/\n"/p</strong></code></pre>
+<pre class="highlight"><code>s2/"/\n"/p</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>in <strong>Qed</strong>, because <code>\n</code> is <em>not</em> a special character.
-There are, however, characters which are not &#8216;special&#8217;
+There are, however, characters which are not &#8220;special&#8221;
 in the sense
-we are using here, but are &#8216;magic&#8217;
-in that they have non-literal meaning.
+we are using here, but are &#8220;magic&#8221; in
+that they have non-literal meaning.
 The most obvious are characters such as <code>.</code> and <code>$</code> in regular
 expressions, which must be <em>quoted</em> with a backslash to remove
 their special meaning and make them literal.
@@ -1347,18 +1377,18 @@ their special meaning and make them literal.
 <em>all</em>
 the magic characters in regular expressions and the like
 should require a backslash to become
-<code>`magic'',
+&#8220;magic&#8221;,
 rather than literal,
 but the current choice is too wired-in to the minds of
 most <strong>Ed</strong> users to be changed now.)
 Because they are not special characters,
 their interpretation need not be delayed:
-they only mean something to the `s</code> <em>substitute</em> command.
+they only mean something to the <code>s</code> <em>substitute</em> command.
 None of the magic characters in the substitution</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>s/\(\.</strong>\)xxx$/\1/*</code></pre>
+<pre class="highlight"><code>s/\(\.*\)xxx$/\1/</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1366,7 +1396,7 @@ None of the magic characters in the substitution</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>g/xyz/ s/\(\.</strong>\)xxx$/\1/*</code></pre>
+<pre class="highlight"><code>g/xyz/ s/\(\.*\)xxx$/\1/</code></pre>
 </div>
 </div>
 <div class="sidebarblock">
@@ -1377,7 +1407,7 @@ None of the magic characters in the substitution</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>s/\c(\c.</strong>\c)xxx$/\c1/*</code></pre>
+<pre class="highlight"><code>s/\c(\c.*\c)xxx$/\c1/</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1386,7 +1416,7 @@ Is the following the same as the global substitution?</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>g/xyz/ s/\c(\c.</strong>\c)xxx$/\c1/*</code></pre>
+<pre class="highlight"><code>g/xyz/ s/\c(\c.*\c)xxx$/\c1/</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1402,12 +1432,12 @@ in a real backslash before a magic character:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>a abc xyz def</strong>
-<strong>s/xyz/\\&amp;/p</strong>
+<pre class="highlight"><code>a abc xyz def
+s/xyz/\\&amp;/p
 	abc \xyz def
-<strong>up</strong>
+up
 	abc xyz def
-<strong>s/xyz/\\\&amp;/p</strong>
+s/xyz/\\\&amp;/p
 	abc \&amp; def</code></pre>
 </div>
 </div>
@@ -1429,7 +1459,7 @@ If the current buffer is buffer <code>a</code>, then</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>s/\\B/x/</strong></code></pre>
+<pre class="highlight"><code>s/\\B/x/</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1437,7 +1467,7 @@ If the current buffer is buffer <code>a</code>, then</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>s/\a/x/</strong></code></pre>
+<pre class="highlight"><code>s/\a/x/</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1446,7 +1476,7 @@ regular expressions,</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>s2/"/\\n"/p</strong></code></pre>
+<pre class="highlight"><code>s2/"/\\n"/p</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1454,7 +1484,7 @@ regular expressions,</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>s2/"/\n"/p</strong></code></pre>
+<pre class="highlight"><code>s2/"/\n"/p</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1473,11 +1503,11 @@ of a line:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>/proc()/</strong>
+<pre class="highlight"><code>/proc()/
 	    x=proc();
-<strong>//</strong>
-	    x=proc()<strong>2;
-*/^\p/</strong>
+//
+	    x=proc()*2;
+/^\p/
 	proc(){</code></pre>
 </div>
 </div>
@@ -1490,11 +1520,11 @@ is simplified considerably by using <code>\r</code> :</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>s/apples/mangos and pears/p</strong>
+<pre class="highlight"><code>s/apples/mangos and pears/p
 	I ain't got no mangos and pears
-<strong>//</strong>
+//
 	your mother's apples smelled like they were
-<strong>s//\r/p</strong>
+s//\r/p
 	your mother's mangos and pears smelled like they were</code></pre>
 </div>
 </div>
@@ -1507,15 +1537,15 @@ it may be difficult to deal with <code>troff</code> font changes:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>p</strong>
+<pre class="highlight"><code>p
 	editors such as Wylbur are so
-<strong>s/Wylbur/\cfBWylbur\cfP/p</strong>
+s/Wylbur/\cfBWylbur\cfP/p
 	editors such as \fBWylbur\fP are so
-<strong>//</strong>
+//
 	Wylbur is also no good for
-<strong>s//\r/p</strong>
+s//\r/p
 	wylbur.msBWylburwylbur.msP is also no good for
-<strong>" Oops</strong></code></pre>
+" Oops</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1527,30 +1557,29 @@ If we had used it above, things would have worked properly:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>p</strong>
+<pre class="highlight"><code>p
 	editors such as Wylbur are so
-<strong>s/Wylbur/\cfBWylbur\cfP/p</strong>
+s/Wylbur/\cfBWylbur\cfP/p
 	editors such as \fBWylbur\fP are so
-<strong>//</strong>
+//
 	Wylbur is also no good for
-<strong>s//\'r/p</strong>
+s//\'r/p
 	\fBWylbur\fP is also no good for
-<strong>" Much better</strong></code></pre>
+" Much better</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p><code>\er</code> is also handy for fixing a certain class of mistakes:</p>
+<p><code>\r</code> is also handy for fixing a certain class of mistakes:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>p</strong>
+<pre class="highlight"><code>p
 	textp=get(a-&gt;text.fdes);
-<strong>s/text/tbuf/p</strong>
+s/text/tbuf/p
 	tbufp=get(a-&gt;text.fdes);
-<strong>" Oops again</strong>
-<strong>us2//\'r/p</strong>
+" Oops again
 	textp=get(a-&gt;tbuf.fdes);
-<strong>" Got it!</strong></code></pre>
+" Got it!</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1566,6 +1595,7 @@ confusing, work with
 until the confusion disappears.
 What follows will be much stranger &#8230;&#8203;</p>
 </div>
+<div style="page-break-after: always;"></div>
 </div>
 </div>
 <div class="sect1">
@@ -1589,13 +1619,13 @@ in immediate mode:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>""\lMessage\N</strong>
+<pre class="highlight"><code>""\lMessage\N
 	Message
-<strong>""\lMessage</strong>
+""\lMessage
 
 	Message
-<strong>""\lMessage</strong>
-<strong>s of words</strong>
+""\lMessage
+s of words
 	Messages of words</code></pre>
 </div>
 </div>
@@ -1628,7 +1658,7 @@ The following single line made the job very simple:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>g/`z'/ p ""replacement:" s//`\cl'/p</strong></code></pre>
+<pre class="highlight"><code>g/`z'/ p ""replacement:" s//`\cl'/p</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1648,8 +1678,8 @@ to do most of the work.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>bz ,d</strong>
-<strong>ap ""Comment:\cl" s|$|	/* \cl */|p</strong>
+<pre class="highlight"><code>bz ,d
+ap ""Comment:\cl" s|$|	/* \cl */|p
 	""Comment:\l" s|$|	/* \l */|p</code></pre>
 </div>
 </div>
@@ -1661,14 +1691,14 @@ where the first <code>\l</code> appears, namely after the <code>:</code>. Perhap
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>ba a	c.code;</strong>
-<strong>\bz</strong>
-	Comment:<strong>stylish</strong>				<b class="conum">(1)</b>
+<pre class="highlight"><code>ba a	c.code;
+\bz
+	Comment:stylish				<b class="conum">(1)</b>
 		c.code;	/* stylish */
 
-<strong>a	more.code;</strong>
-<strong>\bz foobar</strong>
-	Comment:foobar<strong>stylish</strong>			<b class="conum">(2)</b>
+a	more.code;
+\bz foobar
+	Comment:foobarstylish		<b class="conum">(2)</b>
 		more.code;	/* stylish */</code></pre>
 </div>
 </div>
@@ -1697,10 +1727,10 @@ try it again:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>bz s/".*" //p</strong>
+<pre class="highlight"><code>bz s/".*" //p
 	s|$|        /* \l */|p
-<strong>ba a	yetmore.code;</strong>
-<strong>\bzstylish</strong>
+ba a	yetmore.code;
+\bzstylish
 		yetmore.code;	      /* stylish */</code></pre>
 </div>
 </div>
@@ -1713,7 +1743,7 @@ For example, to comment all occurrences of a variable named <code>var</code>:</p
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>g/\{var\}/ p \cbz</strong></code></pre>
+<pre class="highlight"><code>g/\{var\}/ p \cbz</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1752,6 +1782,7 @@ they do begin to show how the parts of <strong>Qed</strong> fit together.
 Later, we will see how the <code>\l</code> can be used
 to control execution of commands.</p>
 </div>
+<div style="page-break-after: always;"></div>
 </div>
 </div>
 <div class="sect1">
@@ -1783,8 +1814,8 @@ The most straightforward operations are assignment (<code>:</code>) and printing
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>za:procrastination</strong>
-<strong>zap</strong>
+<pre class="highlight"><code>za:procrastination
+zap
 	procrastination</code></pre>
 </div>
 </div>
@@ -1795,13 +1826,13 @@ the cleanest mechanism:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>za:line1\cNline2</strong>
-<strong>zap</strong>
+<pre class="highlight"><code>za:line1\cNline2
+zap
 	line1\Nline2
-<strong>a</strong>
-<strong>\za</strong>
-<strong>.</strong>
-<strong>-,p</strong>
+a
+\za
+.
+-,p
 	line1
 	line2</code></pre>
 </div>
@@ -1812,15 +1843,15 @@ to a register by escaping a literal newline with <code>\</code> :</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>za:line1\</strong>
-<strong>line2</strong>
-<strong>zap</strong>
+<pre class="highlight"><code>za:line1\
+line2
+zap
 	line1
 	line2
-<strong>a</strong>
-<strong>\za</strong>
-<strong>.</strong>
-<strong>-,p</strong>
+a
+\za
+.
+-,p
 	line1
 	line2</code></pre>
 </div>
@@ -1836,9 +1867,9 @@ and the second (<code>line2</code>) to be interpreted as (ill-formed) command in
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>zap</strong>
+<pre class="highlight"><code>zap
 	line1\Nline2
-<strong>a \za</strong>
+a \za
 	line1
 	?za10 ?x</code></pre>
 </div>
@@ -1883,11 +1914,11 @@ stand for themselves, and numeric assignment to the register is <code>:</code>. 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>za#:42</strong>
-<strong>zap</strong>
+<pre class="highlight"><code>za#:42
+zap
 	42
-<strong>za#:-42</strong>
-<strong>zap</strong>
+za#:-42
+zap
 	-42</code></pre>
 </div>
 </div>
@@ -1901,12 +1932,12 @@ operations together (without spaces):</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>za#:42p</strong>
+<pre class="highlight"><code>za#:42p
 	42
-<strong>za#:-42p:99p</strong>
+za#:-42p:99p
 	-42
 	99
-<strong>zap</strong>
+zap
 	99</code></pre>
 </div>
 </div>
@@ -1923,12 +1954,12 @@ have their familiar C language meanings:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>za#:1</strong>
-<strong>za#+1p</strong>
+<pre class="highlight"><code>za#:1
+za#+1p
 	2
-<strong>za#*2p</strong>
+za#*2p
 	4
-<strong>za#*2+1p</strong>
+za#*2+1p
 	9</code></pre>
 </div>
 </div>
@@ -1941,11 +1972,11 @@ line as regular <strong>Qed</strong> commands. This can have some bizarre side-e
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>ba Z</strong>
-<strong>a foo.bar;</strong>
-<strong>za#:99p</strong>
+<pre class="highlight"><code>ba Z
+a foo.bar;
+za#:99p
 	99
-<strong>za#:99 p</strong>
+za#:99 p
 	foo.bar;</code></pre>
 </div>
 </div>
@@ -1961,8 +1992,8 @@ which does not contain a (possibly negative) decimal integer:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>za:44moose</strong>
-<strong>za#*2</strong>
+<pre class="highlight"><code>za:44moose
+za#*2
 	?#</code></pre>
 </div>
 </div>
@@ -1983,7 +2014,7 @@ the line number of the address of the <code>z</code> command:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>$za#a</strong></code></pre>
+<pre class="highlight"><code>$za#a</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1992,7 +2023,7 @@ number of lines in the current buffer; and</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>/xxxx/za#a</strong></code></pre>
+<pre class="highlight"><code>/xxxx/za#a</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2006,8 +2037,8 @@ lexically one greater:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>1,$ za#r</strong>
-<strong>,za#r</strong></code></pre>
+<pre class="highlight"><code>1,$ za#r
+,za#r</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2021,7 +2052,7 @@ if the first line of a buffer is</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>za#r</strong></code></pre>
+<pre class="highlight"><code>za#r</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2029,7 +2060,7 @@ if the first line of a buffer is</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>-5,.\bz</strong></code></pre>
+<pre class="highlight"><code>-5,.\bz</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2043,18 +2074,18 @@ such as when generating defined constants for a table:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>a</strong>
-<strong>read</strong>
-<strong>write</strong>
-<strong>open</strong>
-<strong>close</strong>
-<strong>creat</strong>
-<strong>.</strong>
-<strong>" capitalize</strong>
-<strong>?read?,.s/.*/^/p</strong>
+<pre class="highlight"><code>a
+read
+write
+open
+close
+creat
+.
+" capitalize
+?read?,.s/.*/^/p
 	CREAT
-<strong>za#:0</strong>
-<strong>?READ?,.g/^/s/.*/#define &amp;	\cza/p za#+1</strong>
+za#:0
+?READ?,.g/^/s/.*/#define &amp;	\cza/p za#+1
 	#define READ	0
 	#define WRITE	1
 	#define OPEN	2
@@ -2066,6 +2097,7 @@ such as when generating defined constants for a table:</p>
 <p>The <code>^</code> (caret) character in the right hand side of a substitute
 behaves like <code>&amp;</code>, but flips the case of ASCII alphabetics in the matched string.</p>
 </div>
+<div style="page-break-after: always;"></div>
 </div>
 </div>
 <div class="sect1">
@@ -2094,7 +2126,7 @@ For example,</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>G/.'.*	./w</strong></code></pre>
+<pre class="highlight"><code>G/.'.*	./w</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2108,7 +2140,7 @@ Here&#8217;s a fancier example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>G/./ g/thing/ ""\cB \cf: " p</strong></code></pre>
+<pre class="highlight"><code>G/./ g/thing/ ""\cB \cf: " p</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2155,7 +2187,7 @@ It has four forms:</p>
 </div>
 <div class="paragraph">
 <p>is guaranteed to execute zero times. An infinite loop
-can be halted by sending <code>^C</code> from the terminal.</p>
+can be halted by sending <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span> from the terminal.</p>
 </div>
 <div class="paragraph">
 <p>The <em>truth flag</em> is set by substitutions, and comparison operations
@@ -2171,7 +2203,7 @@ To fix the problem,</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>g/^/ hf s/.#//</strong></code></pre>
+<pre class="highlight"><code>g/^/ hf s/.#//</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2198,10 +2230,10 @@ To build an alphabet in register <code>A</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>za:a</strong>
-<strong>zA:</strong>
-<strong>h26 zAs/$/\cza/ za+1</strong>
-<strong>zAp</strong>
+<pre class="highlight"><code>za:a
+zA:
+h26 zAs/$/\cza/ za+1
+zAp
 	abcdefghijklmnopqrstuvwxyz</code></pre>
 </div>
 </div>
@@ -2212,10 +2244,10 @@ is back-quote (<code>`</code>), you could also build the alphabet with:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>za:`</strong>
-<strong>zA:</strong>
-<strong>h26 za+1 zAs/$/\cza/</strong>
-<strong>zAp</strong>
+<pre class="highlight"><code>za:`
+zA:
+h26 za+1 zAs/$/\cza/
+zAp
 	abcdefghijklmnopqrstuvwxyz</code></pre>
 </div>
 </div>
@@ -2225,10 +2257,10 @@ things further:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>za:`</strong>
-<strong>zA:</strong>
-<strong>h26 zAs/$/\cz+a/</strong>
-<strong>zAp</strong>
+<pre class="highlight"><code>za:`
+zA:
+h26 zAs/$/\cz+a/
+zAp
 	abcdefghijklmnopqrstuvwxyz</code></pre>
 </div>
 </div>
@@ -2240,8 +2272,8 @@ before being placed in the input stream:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>za:moose</strong>
-<strong>""\z+a</strong>
+<pre class="highlight"><code>za:moose
+""\z+a
 	npptf</code></pre>
 </div>
 </div>
@@ -2258,7 +2290,7 @@ command <code>.ul 5</code> to five <code>.ul</code>-s, one after each affected l
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>g/^\.ul <span class="0-9">/ zn/[0-9]</span>/ zn#-1 s/ [0-9]+// h\czn +a .ul</strong></code></pre>
+<pre class="highlight"><code>g/^\.ul [0-9]+/ zn/[0-9]+/ zn#-1 s/ [0-9]+// h\czn +a .ul</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2283,9 +2315,9 @@ would make the job much more pleasant.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>h20 \bz</strong>
-<strong>" or "</strong>
-<strong>h20 \cbz</strong></code></pre>
+<pre class="highlight"><code>h20 \bz
+" or "
+h20 \cbz</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2320,9 +2352,9 @@ For example,</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>za#:1</strong>
-<strong>h50 za#+1 za#&gt;20 yto</strong>
-<strong>zap</strong>
+<pre class="highlight"><code>za#:1
+h50 za#+1 za#&gt;20 yto
+zap
 	21</code></pre>
 </div>
 </div>
@@ -2442,6 +2474,7 @@ up to and including the next newline.
 It can also be used as a shorthand in buffers,
 but such usage is discouraged.</p>
 </div>
+<div style="page-break-after: always;"></div>
 </div>
 </div>
 <div class="sect1">
@@ -2456,12 +2489,12 @@ character, as if the command <code>\'zU</code> was issued:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>!echo fun</strong>
+<pre class="highlight"><code>!echo fun
 	fun
 	!
-<strong>zUp</strong>
+zUp
 	echo fun
-<strong>!!</strong>
+!!
 	fun
 	!</code></pre>
 </div>
@@ -2471,10 +2504,10 @@ character, as if the command <code>\'zU</code> was issued:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>!! | wc -c</strong>
+<pre class="highlight"><code>!! | wc -c
 	4
 	!
-<strong>zUp</strong>
+zUp
 	echo fun | wc -c</code></pre>
 </div>
 </div>
@@ -2483,11 +2516,11 @@ character, as if the command <code>\'zU</code> was issued:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>zUs/fun/funny/</strong>
-<strong>!!</strong>
+<pre class="highlight"><code>zUs/fun/funny/
+!!
 	6
 	!
-<strong>zUp</strong>
+zUp
 	echo funny | wc -c</code></pre>
 </div>
 </div>
@@ -2505,7 +2538,7 @@ can be reinvoked, as a <em>crunch</em>, with <code>&lt;&lt;</code>.)</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>&lt; ls</strong>
+<pre class="highlight"><code>&lt; ls
 	!</code></pre>
 </div>
 </div>
@@ -2519,7 +2552,7 @@ create a to-do list, by a command such as</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>&lt; grep "FIX ME!" *.c</strong>
+<pre class="highlight"><code>&lt; grep "FIX ME!" *.c
 	!</code></pre>
 </div>
 </div>
@@ -2529,8 +2562,8 @@ capturing diagnostic output from a compiler, say:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>bz Z</strong>
-<strong>&lt; cc -c *.c | tee /dev/tty</strong>
+<pre class="highlight"><code>bz Z
+&lt; cc -c *.c | tee /dev/tty
 	... diagnostic messages ...
 	!</code></pre>
 </div>
@@ -2549,7 +2582,7 @@ and then sent easily by</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>&gt; mail joe</strong>
+<pre class="highlight"><code>&gt; mail joe
 	!</code></pre>
 </div>
 </div>
@@ -2558,7 +2591,7 @@ and then sent easily by</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>&gt; nroff | mail joe</strong>
+<pre class="highlight"><code>&gt; nroff | mail joe
 	!</code></pre>
 </div>
 </div>
@@ -2572,10 +2605,10 @@ and sending it out to (another ancient command) <code>args</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>&lt; ls</strong>
+<pre class="highlight"><code>&lt; ls
 	!
-<strong>... editing commands ...</strong>
-<strong>&gt; args rm</strong>
+... editing commands ...
+&gt; args rm
 	!</code></pre>
 </div>
 </div>
@@ -2590,10 +2623,10 @@ a dependency-list file for <code>make</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>&lt;grep "#include" *.c</strong>
+<pre class="highlight"><code>&lt;grep "#include" *.c
 	!
-<strong>,s/:#include[ 	]"/ 	//</strong>
-<strong>,s/"$//p</strong>
+,s/:#include[ 	]"/ 	//
+,s/"$//p
 	utfio.c	qed.h</code></pre>
 </div>
 </div>
@@ -2604,12 +2637,12 @@ the commands it is executing, which works nicely with <em>zap:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>a</strong>
-<strong>command1</strong>
-<strong>command2</strong>
-<strong>command3</strong>
-<strong>.</strong>
-<strong>&gt; sh -e</strong>
+<pre class="highlight"><code>a
+command1
+command2
+command3
+.
+&gt; sh -e
 	% command1
 	% command2
 	% command3
@@ -2630,6 +2663,7 @@ so the command <code>&lt; ls</code> will append a directory listing to the curre
 buffer, but the command <code>| ls</code> will <em>replace</em> the contents of the
 buffer with the directory listing.</p>
 </div>
+<div style="page-break-after: always;"></div>
 </div>
 </div>
 <div class="sect1">
@@ -2647,8 +2681,8 @@ buffer in Section 3, define register <code>f</code> (for <em>function</em>):</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>zf:?^[a-zA-Z_].*(?</strong>
-<strong>zfp</strong>
+<pre class="highlight"><code>zf:?^[a-zA-Z_].*(?
+zfp
 	?^[a-zA-Z_].*(?</code></pre>
 </div>
 </div>
@@ -2677,7 +2711,7 @@ to see which function&#8217;s source is being browsed:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>\zf</strong>
+<pre class="highlight"><code>\zf
 	function(x)</code></pre>
 </div>
 </div>
@@ -2686,9 +2720,9 @@ to see which function&#8217;s source is being browsed:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>p</strong>
+<pre class="highlight"><code>p
 	    variable=0;
-<strong>\zf/variable/</strong>
+\zf/variable/
 	    int variable;</code></pre>
 </div>
 </div>
@@ -2703,7 +2737,7 @@ function currently being browsed:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>\zf, /^}/ &gt; lpr</strong></code></pre>
+<pre class="highlight"><code>\zf, /^}/ &gt; lpr</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2713,7 +2747,7 @@ we can again use <code>\zf</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>g/proc()/\zf</strong>
+<pre class="highlight"><code>g/proc()/\zf
 	func1(x)
 	func2(y)
 	func3()</code></pre>
@@ -2731,7 +2765,7 @@ Typing
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>$ <strong>qed -x qfile file1 file2</strong></code></pre>
+<pre class="highlight"><code>$ qed -x qfile file1 file2</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2762,15 +2796,15 @@ If no <code>-x</code> option is given when <strong>Qed</strong> is invoked,
 <div class="paragraph">
 <p>Browsing through the startup files of a few experienced <strong>Qed</strong> hacks,
 a few interesting things come to light.
-One simple but rather pretty option is</p>
+One simple but rather pretty option was</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>ob""\x1a"+p</strong></code></pre>
+<pre class="highlight"><code>ob""\x1a"+p</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>ASCII <code>0x1A</code> is a reverse line-feed on most of the U. of T. terminals;
+<p>Character <code>\x1A</code> was a <em>reverse line-feed</em> on most of the U. of T. terminals;
 The <em>browse option</em> (<code>ob</code>) defines a special register
 which is executed, if defined, when a simple newline
 is typed at the terminal, rather than doing the default <code>+p</code>
@@ -2788,14 +2822,14 @@ with line numbers at the beginning of the line:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>22i Line	22</strong>
-<strong>p</strong>
+<pre class="highlight"><code>22i Line	22
+p
 	Line	22
-<strong>l</strong>
+l
 	Line\t22
-<strong>P</strong>
+P
 	22	Line	22
-<strong>L</strong>
+L
 	22	Line\t22</code></pre>
 </div>
 </div>
@@ -2804,7 +2838,7 @@ with line numbers at the beginning of the line:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>g/proc()/ \zf P</strong>
+<pre class="highlight"><code>g/proc()/ \zf P
 	104	func1(x)
 	118	func2(y)
 	221	func3()</code></pre>
@@ -2816,7 +2850,7 @@ command we saw earlier:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>zc:s@$@	/* \cl */@ p</strong></code></pre>
+<pre class="highlight"><code>zc:s@$@	/* \cl */@ p</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2824,18 +2858,18 @@ command we saw earlier:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>p</strong>
+<pre class="highlight"><code>p
 	bizarre();
-<strong>\zc(A Kludge)</strong>
+\zc(A Kludge)
 	bizarre();	/* (A Kludge) */
-<strong>g/xxxxx/ p \czc</strong>
+g/xxxxx/ p \czc
 	yyy xxxxx yyy
-<strong>needles</strong>
+needles
 	yyy xxxxx yyy	/* needles */
 	zzz xxxxx zzz
-<strong>haystacks</strong>
+haystacks
 	zzz xxxxx zzz	/* haystacks */
-<strong>...</strong></code></pre>
+...</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2844,8 +2878,8 @@ find a buffer by its file name:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>zb:G/\cl/ f\cN</strong>
-<strong>\zbfile</strong>
+<pre class="highlight"><code>zb:G/\cl/ f\cN
+\zbfile
 	g'.34	file.c</code></pre>
 </div>
 </div>
@@ -2867,20 +2901,20 @@ register <code>s</code>, with the listing that follows!</p>
 <div class="listingblock">
 <div class="title">writing to zs at the terminal (with escaped newlines)</div>
 <div class="content">
-<pre class="highlight"><code><strong>zs:zB:\cB\</strong>
-<strong>zP:\cl\</strong>
-<strong>zI:`\</strong>
-<strong>h26 zI+1 b\cczI $zD#a=0 yt g/\czP/ ""\ccB:" P zB:\ccB\</strong>
-<strong>b\czB</strong></code></pre>
+<pre class="highlight"><code>zs:zB:\cB\
+zP:\cl\
+zI:`\
+h26 zI+1 b\cczI $zD#a=0 yt g/\czP/ ""\ccB:" P zB:\ccB\
+b\czB</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Or worse (!):</p>
+<p>Or worse (this is all on <strong>one</strong> line!):</p>
 </div>
 <div class="listingblock">
 <div class="title">writing to zs at the terminal (with delayed newlines)</div>
 <div class="content">
-<pre class="highlight"><code><strong>zs:zB:\cB\cN zP:\cl\cN zI:`\cN h26 zI+1 b\cczI $zD#a=0 yt g/\czP/ ""\ccB:" P zB:\ccB\cN b\czB</strong></code></pre>
+<pre class="highlight"><code>zs:zB:\cB\cN zP:\cl\cN zI:`\cN h26 zI+1 b\cczI $zD#a=0 yt g/\czP/ ""\ccB:" P zB:\ccB\cN b\czB</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3001,7 +3035,7 @@ how to program <strong>Qed</strong>, just a pedagogical one.
 Here&#8217;s how to <em>really</em> do it:</p>
 </div>
 <div class="listingblock">
-<div class="title">global search program listing</div>
+<div class="title">globuf search program listing</div>
 <div class="content">
 <pre class="highlight"><code>G/^[a-z]/ g/\l/ ""\cB:" P</code></pre>
 </div>
@@ -3025,10 +3059,10 @@ just type <code>\zs</code> followed by the pattern being searched for:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>\zs^func()</strong>
+<pre class="highlight"><code>\zs^func()
 	a:86	func()
 	b:102	func() {
-<strong>f</strong>
+f
 	b .209	junk.c</code></pre>
 </div>
 </div>
@@ -3061,7 +3095,7 @@ working directory.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>zd:ovr zB:\cB\cN bX &lt;pwd \cN ze. d b\czB ovs zep zB:</strong></code></pre>
+<pre class="highlight"><code>zd:ovr zB:\cB\cN bX &lt;pwd \cN ze. d b\czB ovs zep zB:</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3090,6 +3124,7 @@ turn verbose mode back on (<code>ovs</code>);
 print the saved directory (<code>zep</code>);
 and clear register <code>B</code> (<code>zB:</code>).</p>
 </div>
+<div style="page-break-after: always;"></div>
 </div>
 </div>
 <div class="sect1">
@@ -3109,7 +3144,7 @@ Called as</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>\zrbuffer</strong></code></pre>
+<pre class="highlight"><code>\zrbuffer</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3122,7 +3157,7 @@ so</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>\zrcommand</strong></code></pre>
+<pre class="highlight"><code>\zrcommand</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3183,7 +3218,7 @@ particular buffer file, which we will describe immediately afterwards:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>zr:zL#r z}:\cB\cN ovr b~e \czqrun\cN \cb~\cN b\cz}</strong></code></pre>
+<pre class="highlight"><code>zr:zL#r z}:\cB\cN ovr b~e \czqrun\cN \cb~\cN b\cz}</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3300,7 +3335,7 @@ If the user types</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>\zr grep expr</strong></code></pre>
+<pre class="highlight"><code>\zr grep expr</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3375,8 +3410,8 @@ one to a line, we save it away in
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>ba	" where the data is</strong>
-<strong>,p</strong>
+<pre class="highlight"><code>ba	" where the data is
+,p
 	excle
 	ficatings
 	criminter
@@ -3388,9 +3423,9 @@ one to a line, we save it away in
 	shispensitment
 	dedgearing
 	expers
-<strong>" yes, they're random words</strong>
-<strong>\zrright</strong>
-<strong>,p</strong>
+" yes, they're random words
+\zrright
+,p
 	         excle
 	     ficatings
 	     criminter
@@ -3456,7 +3491,7 @@ through any arbitrary pipeline, such as</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>,p</strong>
+<pre class="highlight"><code>,p
 	excle
 	ficatings
 	criminter
@@ -3468,9 +3503,9 @@ through any arbitrary pipeline, such as</p>
 	shispensitment
 	dedgearing
 	expers
-<strong>\zrun sort</strong>
+\zrun sort
 	!
-<strong>,p</strong>
+,p
 	con
 	criminter
 	dedgearing
@@ -3490,9 +3525,10 @@ the usual convention is used:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code><strong>.,/ful/ \zrun sort</strong></code></pre>
+<pre class="highlight"><code>.,/ful/ \zrun sort</code></pre>
 </div>
 </div>
+<div style="page-break-after: always;"></div>
 </div>
 </div>
 <div class="sect1">
@@ -3512,11 +3548,14 @@ By striking a harmonious balance between
 the intelligent user will find <strong>Qed</strong>
 powerful, flexible, easy to master, and fun!</p>
 </div>
+<div style="page-break-after: always;"></div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_bugs">12. BUGS</h2>
+<h2 id="_editors_notes">12. Editor&#8217;s Notes</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_remarks">12.1. Remarks</h3>
 <div class="paragraph">
 <p>The Tutorial really does assume fluency in <strong>Ed</strong>. An
 updated Tutorial for a modern audience should certainly begin
@@ -3540,21 +3579,18 @@ considering that many of the examples had <strong>Qed</strong> code interspersed
 with <em>troff</em> code!</p>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_history">13. HISTORY</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_history">12.2. History</h3>
 <div class="paragraph">
-<p>Originally written by Robert Pike.</p>
+<p>Originally written by <strong>Robert Pike</strong> at U. of T. in 1992..</p>
 </div>
 <div class="paragraph">
-<p>This version was edited and updated by Sean Jensen.</p>
+<p>Converted to <code>asciidoc</code>, edited,
+and updated by <em>Sean Jensen</em> in February 2021.</p>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_resources">14. RESOURCES</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_resources">12.3. Resources</h3>
 <div class="paragraph">
 <p>Rob Pike&#8217;s original U. of T. Qed tarball:
 <a href="https://github.com/arnoldrobbins/qed-archive/unix-1992" class="bare">https://github.com/arnoldrobbins/qed-archive/unix-1992</a></p>
@@ -3566,9 +3602,10 @@ with <em>troff</em> code!</p>
 </div>
 </div>
 </div>
+</div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-02-19 01:12:12 UTC
+Last updated 2021-02-20 11:19:04 UTC
 </div>
 </div>
 </body>
