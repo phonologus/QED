@@ -63,7 +63,8 @@ the manpage, and the tutorial. The tutorial is installed as
 Edit the `Makefile` to change where this all goes. 
 
 To regenerate the `html`, `pdf`, and manpage versions of the tutorial,
-`cd doc && make`. This depends on an `asciidoctor` and `asciidoctor-pdf`
+`cd doc/src && make && make release`.
+This depends on an `asciidoctor` and `asciidoctor-pdf`
 toolchain being installed.
 
 The `doc/historical/read.me` file is Rob Pike's, accompanying his original tarball. It
