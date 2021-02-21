@@ -1464,6 +1464,7 @@ behaves like `&`, but flips the case of ASCII alphabetics in the matched string.
 <<<
 == Control Structures
 
+The most commonly used control structure in *Qed* is certainly
 the global command, `g`, which is remarkably powerful and versatile,
 as the previous example demonstrates.
 The ability to place several commands on a line,
