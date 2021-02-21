@@ -2083,7 +2083,7 @@ One simple but rather pretty option was
 
 [source]
 ----
-ob""\x1a"+p
+ob""\cx1a"+p
 ----
 
 Character `\x1A` was a _reverse line-feed_ on most of the U. of T. terminals;
@@ -2094,6 +2094,14 @@ is typed at the terminal, rather than doing the default `+p`
 Printing a reverse line-feed before the `+p` means
 that no empty lines appear on the screen when browsing through
 text.
+
+On a modern terminal the equivalent ANSI escape sequence version
+would be:
+
+[source]
+----
+ob""\x1b[F"+p
+----
 
 It is sometimes useful to set the browse register to
 something like `+b` for easy paging through text,

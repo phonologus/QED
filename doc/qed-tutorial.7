@@ -2577,7 +2577,7 @@ One simple but rather pretty option was
 .if n .RS 4
 .nf
 .fam C
-ob""\(rsx1a"+p
+ob""\(rscx1a"+p
 .fam
 .fi
 .if n .RE
@@ -2590,6 +2590,17 @@ is typed at the terminal, rather than doing the default \f(CR+p\fP
 Printing a reverse line\-feed before the \f(CR+p\fP means
 that no empty lines appear on the screen when browsing through
 text.
+.sp
+On a modern terminal the equivalent ANSI escape sequence version
+would be:
+.sp
+.if n .RS 4
+.nf
+.fam C
+ob""\(rsx1b[F"+p
+.fam
+.fi
+.if n .RE
 .sp
 It is sometimes useful to set the browse register to
 something like \f(CR+b\fP for easy paging through text,

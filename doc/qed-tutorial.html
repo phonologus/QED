@@ -2801,7 +2801,7 @@ One simple but rather pretty option was</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>ob""\x1a"+p</code></pre>
+<pre class="highlight"><code>ob""\cx1a"+p</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2813,6 +2813,15 @@ is typed at the terminal, rather than doing the default <code>+p</code>
 Printing a reverse line-feed before the <code>+p</code> means
 that no empty lines appear on the screen when browsing through
 text.</p>
+</div>
+<div class="paragraph">
+<p>On a modern terminal the equivalent ANSI escape sequence version
+would be:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>ob""\x1b[F"+p</code></pre>
+</div>
 </div>
 <div class="paragraph">
 <p>It is sometimes useful to set the browse register to
