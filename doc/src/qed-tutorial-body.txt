@@ -624,7 +624,7 @@ Perhaps it's simplest just to state the rules:
 .special characters
 ****
 * `*\X*` is a special character if `X` is one of
-`*b*`, `*B*`, `*c*`, `*f*`, `*F*`, `*l*`, `*N*`, `*p*`, `*r*`, `*u*`, `*U*`, `*z*`, or `*"*`,
+`*b*`, `*B*`, `*c*`, `*f*`, `*F*`, `*l*`, `*N*`, `*p*`, `*r*`, `*u*`, `*U*`, `*x*`, `*z*`, or `*"*`,
 sometimes (as with `\b`) followed by a buffer name. It
 is interpreted _immediately_.
 (We will see what all these special characters are in due course.)
@@ -2745,7 +2745,7 @@ with _troff_ code!
 
 === History
 
-Originally written by *Robert Pike* at U. of T. in 1992..
+Originally written by *Robert Pike* at U. of T. in 1992.
 
 Converted to `asciidoc`, edited,
 and updated by _Sean Jensen_ in February 2021.

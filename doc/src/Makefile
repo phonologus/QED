@@ -12,6 +12,7 @@ AD2MAN=asciidoctor -b manpage
 AD2PDF=asciidoctor-pdf
 
 TUTORIAL=qed-tutorial
+MANPAGE=qed.1
 
 TCOMMON= \
   $(TUTORIAL)-body.$(TXT)
@@ -26,10 +27,15 @@ TIN= \
   $(TUTORIAL)-manpage.$(TXT) \
   $(TUTORIAL).$(TXT)
 
-all: tutorial
+all: tutorial manpage
+
+manpage: $(MANPAGE)
+	man -t ./$(MANPAGE) | ps2pdf - > $<.$(PDF)
 
 release: all
 	mv $(TOUT) $(RELDIR)/
+	cp $(MANPAGE) $(RELDIR)/
+	mv $(MANPAGE).$(PDF) $(RELDIR)/
 
 tutorial: $(TOUT)
 
