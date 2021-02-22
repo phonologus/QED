@@ -189,6 +189,7 @@ restor(void)
 	ninbuf = 0;
 	append(getfile, dol);
 	exfile();
+
 	if((fi = open((char *)utf8(fileb()),O_RDONLY)) < 0)
 		error('o'|FILERR);
 	if(read(fi,(byte *)buffer,sizeof buffer) != sizeof buffer

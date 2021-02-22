@@ -1,6 +1,16 @@
 #include "qed.h"
 
+char tftemplate[]="/tmp/qXXXXXX";
 char tfname[]="/tmp/qXXXXXX";
+
+void
+resetfn(void)
+{
+  char *p, *q;
+  p=tftemplate;
+  q=tfname;
+  while((*q++=*p++)) ;
+}
 
 void
 quit(void)
@@ -123,8 +133,11 @@ error(int code)
 void
 init(void)
 {
-	if(tfile > 0)
+	if(tfile > 0){
 		close(tfile);
+		unlink(tfname);
+		resetfn();
+	}
 	if((tfile=mkstemp(tfname))<0) {
 		putchr('?');
 		putchr('T');
