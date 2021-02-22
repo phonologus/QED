@@ -29,7 +29,7 @@ sub-directory, which is from a tarball
 of Rob Pike's original sources of the University of Toronto version of QED.
 
 The updated [Qed tutorial](doc/qed-tutorial.pdf) 
-and original [manpage](doc/qed.1.pdf)
+and [manpage](doc/qed.1.pdf)
 in the `doc` subdirectory are essential reading.
 
 The tutorial is a heavily edited an updated version of Rob Pike's
@@ -49,9 +49,10 @@ work-flow, for instance). I will be writing a new _Qed Book_
 from scratch out-of-tree, so the updated tutorial here will
 not receive any more revisions.
 
-Unlike the original tutorial, the original manpage is up-to-date,
-except for the new Unicode functionality.
-This new functionality is described below.
+Unlike the original tutorial, the original manpage was pretty much
+up-to-date, except for the new Unicode functionality.
+I have updated the manpage so that it accurately describes this `qed`. 
+The new functionality is also described below.
 
 The `Makefile` provides a simple way to build a `qed` binary.
 `make clean && make` will build a fully stand-alone binary `qed`, which
@@ -65,9 +66,11 @@ Edit the `Makefile` to change where this all goes.
 To regenerate the `html`, `pdf`, and manpage versions of the tutorial,
 `cd doc/src && make && make release`.
 This depends on an `asciidoctor` and `asciidoctor-pdf`
-toolchain being installed.
+toolchain being installed. The `pdf` version of the actual manpage, `qed(1)`,
+requires `ps2pdf` to regenerate.
 
-The `doc/historical/read.me` file is Rob Pike's, accompanying his original tarball. It
+The `doc/historical/read.me` file is Rob Pike's,
+accompanying his original tarball. It
 provides an interesting snapshot into the work-in-progress at the time, and the
 relationship between the QED and ED editors.
 
@@ -99,7 +102,7 @@ through the tutorial.
   codepoint falls outside the legitimate range, this `qed` generates
   a `?U` error.
 
-+ The program `qedbufs` referred to in the manpage is not ported,
++ The program `qedbufs` referred to in the original manpage is not ported,
   and likely won't be.
 
 + When reading in a file which does not terminate in a newline, this
