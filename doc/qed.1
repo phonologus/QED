@@ -1540,7 +1540,10 @@ Files of the form
 and
 .RI <name> :bq
 are created when
-the `S <name>' command is issued. They can be read back in
+the `S <name>' command is issued.
+If the editor receives a SIGHUP signal, it creates the
+save files `qed.hup:aq' and `qed.hup:bq'.
+The `*:[ab]q' files can be read back in
 with `R <name>'.
 .SH DIAGNOSTICS
 Diagnostics are in the form of `?' followed by a single letter code.
