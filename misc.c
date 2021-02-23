@@ -9,7 +9,7 @@ resetfn(void)
   char *p, *q;
   p=tftemplate;
   q=tfname;
-  while((*q++=*p++)) ;
+  do;while((*q++=*p++));
 }
 
 void
