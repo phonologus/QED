@@ -2,6 +2,7 @@
 Robert Pike, Sean Jensen (ed.)
 v1.0.0
 :doctype: manpage
+:reproducible:
 
 == NAME
 

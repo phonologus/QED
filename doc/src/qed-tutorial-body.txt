@@ -2100,7 +2100,7 @@ would be:
 
 [source]
 ----
-ob""\x1b[F"+p
+ob""\cx1b[F"+p
 ----
 
 It is sometimes useful to set the browse register to

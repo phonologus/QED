@@ -3,6 +3,7 @@ Robert Pike; Sean Jensen (ed.)
 :description: A tutorial introduction to the Qed editor.
 :sectnums:
 :toc:
+:reproducible:
 
 include::qed-tutorial-body.txt[]
 
