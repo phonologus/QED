@@ -1,4 +1,5 @@
 #include "qed.h"
+#include <stddef.h>
 
 #define	strfree string[NSTRING].str
 int *strstart;
@@ -45,9 +46,9 @@ shiftstring(int up)
 	struct string *sp;
 	for(sp=string; sp<=string+NSTRING; sp++)
 		if(up)
-			sp->str += (long)strarea;
+			sp->str = (ptrdiff_t)(sp->str) + strarea;
 		else
-			sp->str -= (long)strarea;
+			sp->str = (int*)((sp->str)-strarea);
 }
 
 void
