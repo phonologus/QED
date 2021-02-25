@@ -11,7 +11,7 @@
 #include "qed.h"
 
 utfio *
-uioinit(int fd, utfio *io)    /* initialise empty buffer */
+uioinit(int fd, utfio *io)    /* initialise empty W then RW buffer */
 {
   io->fd=fd;
   io->i=0;
@@ -20,7 +20,7 @@ uioinit(int fd, utfio *io)    /* initialise empty buffer */
 }
 
 utfio *
-uioinitrd(int fd, utfio *io)    /* initialise empty read buffer */
+uioinitrd(int fd, utfio *io)    /* initialise empty R then RW buffer */
 {
   io->fd=fd;
   io->i=UBSIZE;

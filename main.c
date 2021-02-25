@@ -185,7 +185,7 @@ restor(void)
 	initio();
 	init();
 	io = t;
-	uioinit(io,uio);
+	uioinitrd(io,uio);
 	ninbuf = 0;
 	append(getfile, dol);
 	exfile();
