@@ -48,6 +48,7 @@ $(TUTORIAL).$(HTML): $(TUTORIAL).$(TXT) $(TCOMMON)
 $(TUTORIAL).$(PDF): $(TUTORIAL).$(TXT) $(TCOMMON)
 	$(AD2PDF) -a as_article -o $@ $<
 
-$(TUTORIAL).$(SECTION): $(TUTORIAL).$(TXT) $(TCOMMON)
+$(TUTORIAL).$(SECTION): $(TUTORIAL).$(TXT) $(TCOMMON) fix.q
 	$(AD2MAN) -a as_manpage -o $@ $< 
+	echo '\\bb' | qed $@ fix.q 
 
