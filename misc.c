@@ -154,7 +154,7 @@ init(void)
 	 */
 	fendcore=0;
 	endcore=fendcore-1;
-	bufinit(fendcore);
+	bufinit(fendcore+1);	/* can't be 0 */
 	newbuf(0);
 	lastdol=dol;
 	stackp=stack;
