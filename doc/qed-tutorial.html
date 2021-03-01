@@ -752,7 +752,7 @@ or delete an empty line, and do another <code>f</code>:</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>f
-	a'.82	ddress.c</code></pre>
+	a'.82	address.c</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1241,22 +1241,40 @@ interpreted when buffers are read from or written to files,
 or moved or copied with the <code>m</code> or <code>t</code> commands.
 Experience is a great help here, so let&#8217;s look at some examples:</p>
 </div>
-<div class="listingblock">
-<div class="title">delay and substitution</div>
+<div class="sidebarblock">
 <div class="content">
-<pre>bx				"switch to buffer x
-s/$/\B/			"appends x to current line
-s/$/\cB/		"appends \B to current line
-s/$/\ccB/		"appends \cB to current line</pre>
+<div class="title">delay and substitution</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>bx</code> switch to buffer x</p>
+</li>
+<li>
+<p><code>s/$/\B/</code> appends x to current line</p>
+</li>
+<li>
+<p><code>s/$/\cB/</code> appends \B to current line</p>
+</li>
+<li>
+<p><code>s/$/\ccB/</code> appends \cB to current line</p>
+</li>
+</ul>
+</div>
 </div>
 </div>
 <div class="paragraph">
 <p>but:</p>
 </div>
-<div class="listingblock">
-<div class="title">delay and global</div>
+<div class="sidebarblock">
 <div class="content">
-<pre>g/xxxx/ s/$/\ccB/	"appends \B to all lines matching /xxxx/</pre>
+<div class="title">delay and global</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>g/xxxx/ s/$/\ccB/</code> appends \B to all lines matching /xxxx/</p>
+</li>
+</ul>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -1267,11 +1285,11 @@ There are two ways:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>,s/\n/\n\t/
+<pre class="highlight"><code>,s/\n/\n\t/
 " equivalent to
 ,s/\cn/\cn\ct/
 " or
-g/\n/ s/\n/\n\t/</pre>
+g/\n/ s/\n/\n\t/</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1293,8 +1311,8 @@ The <strong>Ed</strong> sequence</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>g/xxxx/ r\
-.=</pre>
+<pre class="highlight"><code>g/xxxx/ r\
+.=</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1302,7 +1320,7 @@ The <strong>Ed</strong> sequence</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>g/xxxx/ r\cN .=</pre>
+<pre class="highlight"><code>g/xxxx/ r\cN .=</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2162,16 +2180,16 @@ It has four forms:</p>
 <div class="ulist">
 <ul>
 <li>
-<p><code><strong>hN</strong></code>        executes the line N times</p>
+<p><code><strong>hN</strong></code> executes the line N times</p>
 </li>
 <li>
-<p><code><strong>ht</strong></code>        executes the line until the <em>truth flag</em> is true</p>
+<p><code><strong>ht</strong></code> executes the line until the <em>truth flag</em> is true</p>
 </li>
 <li>
-<p><code><strong>hf</strong></code>        executes the line until the <em>truth flag</em> is false</p>
+<p><code><strong>hf</strong></code> executes the line until the <em>truth flag</em> is false</p>
 </li>
 <li>
-<p><code><strong>ha</strong></code>        (for <em>always</em>) executes the line forever, or until an error</p>
+<p><code><strong>ha</strong></code> (for <em>always</em>) executes the line forever, or until an error</p>
 </li>
 </ul>
 </div>
@@ -2974,22 +2992,22 @@ prior to <code>a</code> in Unicode.</p>
 <div class="ulist">
 <ul>
 <li>
-<p><code><strong>zI+1</strong></code> increment I (iterates over the alphabet)</p>
+<p><code><strong>zI+1</strong></code> increment <code>I</code> (iterates over the alphabet)</p>
 </li>
 <li>
-<p><code><strong>b\czI</strong></code> switch to (new) buffer \zI</p>
+<p><code><strong>b\czI</strong></code> switch to (new) buffer <code>\zI</code></p>
 </li>
 <li>
-<p><code><strong>$zD#a</strong></code> set D to the address of the last line of the buffer</p>
+<p><code><strong>$zD#a</strong></code> set <code>D</code> to the address of the last line of the buffer</p>
 </li>
 <li>
-<p><code><strong>=0</strong></code> test for D = 0 ?</p>
+<p><code><strong>=0</strong></code> test for <code>D=0</code> ?</p>
 </li>
 <li>
-<p><code><strong>yt</strong></code> <em>if</em> (D=0) is true <em>then</em> skip the rest of the line, resuming the next iteration</p>
+<p><code><strong>yt</strong></code> <em>if</em> (<code>D=0</code>) is true <em>then</em> skip the rest of the line, resuming the next iteration</p>
 </li>
 <li>
-<p><code><strong>g/\zP/</strong></code> <em>else</em> <em>for</em> every line matching the given pattern \zP <em>do</em></p>
+<p><code><strong>g/\zP/</strong></code> <em>else</em> <em>for</em> every line matching the given pattern <code>\zP</code> <em>do</em></p>
 <div class="ulist">
 <ul>
 <li>
@@ -2999,7 +3017,7 @@ prior to <code>a</code> in Unicode.</p>
 <p><code><strong>P</strong></code> print the matched line, with line number</p>
 </li>
 <li>
-<p><code><strong>zB:\cB</strong></code> set register B to the current buffer name</p>
+<p><code><strong>zB:\cB</strong></code> set register <code>B</code> to the current buffer name</p>
 </li>
 </ul>
 </div>
