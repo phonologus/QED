@@ -259,7 +259,7 @@ or delete an empty line, and do another `f`:
 [source]
 ----
 f
-	a'.82	ddress.c
+	a'.82	address.c
 ----
 
 The prime tells you that the contents of the buffer are
@@ -690,28 +690,26 @@ or moved or copied with the `m` or `t` commands.
 Experience is a great help here, so let's look at some examples:
 
 .delay and substitution
-[code]
-----
-bx				"switch to buffer x
-s/$/\B/			"appends x to current line
-s/$/\cB/		"appends \B to current line
-s/$/\ccB/		"appends \cB to current line
-----
+****
+* `bx` switch to buffer x
+* `s/$/\B/` appends x to current line
+* `s/$/\cB/` appends \B to current line
+* `s/$/\ccB/` appends \cB to current line
+****
 
 but:
 
 .delay and global
-[code]
-----
-g/xxxx/ s/$/\ccB/	"appends \B to all lines matching /xxxx/
-----
+****
+* `g/xxxx/ s/$/\ccB/` appends \B to all lines matching /xxxx/
+****
 
 appends `\B` to all lines with `xxxx`;
 the extra `c` is because the command is in a global command string.
 Let's say we want to change all the `\n`-s to be `\n\t`.
 There are two ways:
 
-[code]
+[source]
 ----
 ,s/\n/\n\t/
 " equivalent to
@@ -735,7 +733,7 @@ be followed by a newline, but can be dealt with using `\N`
 in globals.
 The *Ed* sequence
 
-[code]
+[source]
 ----
 g/xxxx/ r\
 .=
@@ -743,7 +741,7 @@ g/xxxx/ r\
 
 can be put all on one line in *Qed*:
 
-[code]
+[source]
 ----
 g/xxxx/ r\cN .=
 ----
@@ -1514,10 +1512,10 @@ It has four forms:
 
 .loop
 ****
-* `*hN*`        executes the line N times
-* `*ht*`        executes the line until the _truth flag_ is true 
-* `*hf*`        executes the line until the _truth flag_ is false 
-* `*ha*`        (for _always_) executes the line forever, or until an error 
+* `*hN*` executes the line N times
+* `*ht*` executes the line until the _truth flag_ is true 
+* `*hf*` executes the line until the _truth flag_ is false 
+* `*ha*` (for _always_) executes the line forever, or until an error 
 ****
 
 Although the loop is an _until_,
@@ -2227,15 +2225,15 @@ One step at a time:
 The next line does all the work, and reads something like:
 
 * `*h26*` _for_ 26 iterations _do_
-** `*zI+1*` increment I (iterates over the alphabet)
-** `*b\czI*` switch to (new) buffer \zI
-** `*$zD#a*` set D to the address of the last line of the buffer
-** `*=0*` test for D = 0 ?
-** `*yt*` _if_ (D=0) is true _then_ skip the rest of the line, resuming the next iteration
-** `*g/\zP/*` _else_ _for_ every line matching the given pattern \zP _do_
+** `*zI+1*` increment `I` (iterates over the alphabet)
+** `*b\czI*` switch to (new) buffer `\zI`
+** `*$zD#a*` set `D` to the address of the last line of the buffer
+** `*=0*` test for `D=0` ?
+** `*yt*` _if_ (`D=0`) is true _then_ skip the rest of the line, resuming the next iteration
+** `*g/\zP/*` _else_ _for_ every line matching the given pattern `\zP` _do_
 *** `*""\cB:"*` print the current buffer name and a colon
 *** `*P*` print the matched line, with line number
-*** `*zB:\cB*` set register B to the current buffer name
+*** `*zB:\cB*` set register `B` to the current buffer name
 
 Finally, the last command
 

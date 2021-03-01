@@ -7,12 +7,15 @@ SECTION=7
 
 RELDIR=..
 
+QED=qed - -e
+
 AD2HTML=asciidoctor
 AD2MAN=asciidoctor -b manpage
 AD2PDF=asciidoctor-pdf
 
 TUTORIAL=qed-tutorial
 MANPAGE=qed.1
+TFIX=fix.q
 
 TCOMMON= \
   $(TUTORIAL)-body.$(TXT)
@@ -50,5 +53,5 @@ $(TUTORIAL).$(PDF): $(TUTORIAL).$(TXT) $(TCOMMON)
 
 $(TUTORIAL).$(SECTION): $(TUTORIAL).$(TXT) $(TCOMMON) fix.q
 	$(AD2MAN) -a as_manpage -o $@ $< 
-	echo '\\bb' | qed $@ fix.q 
+	$(QED) -x $(TFIX) $@ > /dev/null 2>&1
 
