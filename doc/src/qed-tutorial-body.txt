@@ -1915,7 +1915,7 @@ and sending it out to (another ancient command) `args`:
 ----
 
 (`args` was a command that took each line on its standard input
-and maked it an argument to the command,
+and made it an argument to the command,
 which was then `exec`-ed in the normal manner.)
 
 The following commands can initiate the construction of
