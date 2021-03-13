@@ -135,7 +135,7 @@ struct string{
 	int *str;
 };
 
-#define NSTRCHARS 1024
+#define NSTRCHARS 4096
 
 extern struct string string[NSTRING+1];
 extern int strarea[NSTRCHARS + 2];
