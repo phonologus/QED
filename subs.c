@@ -229,6 +229,7 @@ join(void)
 	int *p, *q;
 	int rep;
 	int autop=FALSE;
+	int nc;
 
 	rep=FALSE;
 	if(nextchar() == '/'){
@@ -236,21 +237,24 @@ join(void)
 		rep=TRUE;
 	}
 	p = genbuf;
+	nc=0;
 	for (l=addr1; ;) {
 		q = getline(core[l++], linebuf);
 		while (*q) {
-			*p++ = *q++;
-			if (p >= genbuf + sizeof genbuf)
+			if (nc >= LBSIZE)
 				error('l');
+			*p++ = *q++;
+			++nc;
 		}
 		if(l > addr2)
 			break;
 		if(rep) {
 			q = string[SAVRHS].str;
 			while (*q) {
-				*p++ = *q++;
-				if (p >= genbuf + sizeof genbuf)
+				if (nc >= LBSIZE)
 					error('l');
+				*p++ = *q++;
+				++nc;
 			}
 		}
 	}

@@ -143,6 +143,7 @@ Unix(int type)
         union pint_t uc;
 	int pid, rpid;
 	int *s;
+	int nc;
 	int c;
 	addr_i a;
 	void (*onpipe)(int);
@@ -255,9 +256,11 @@ Unix(int type)
 		a=addr1;
 		do{
 			s=getline(core[a++], linebuf);
-			do; while(*s++);
+			nc=0;
+			while(*s++)
+				++nc;
 			*--s='\n';
-			n=utf8nstring(linebuf,utf8buff,s-(linebuf-1));
+			n=utf8nstring(linebuf,utf8buff,nc);
 			if (write(pipe1[1],utf8buff,n)<0){
 				putstr(utfstr_queryo);
 				break;
