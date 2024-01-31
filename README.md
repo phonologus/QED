@@ -1,5 +1,7 @@
 # QED for Unix, UTF-8/Unicode aware.
 
+# This port is now obsolete. All development has moved to the new port [phonologus/qed-new](https://github.com/phonologus/qed-new).
+
 This is a port of the University of Toronto Unix version of the QED editor,
 which was originally written by Rob Pike, David Tilbrook, Hugh
 Redelmeier and Tom Duff. I have updated it to work with UTF-8 and Unicode.
